@@ -11,13 +11,11 @@ export function useAuthGuard(type: GuardType) {
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const hasHydrated = useAuthStore((s) => s._hasHydrated)
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isComplete = useOnboardingStore((s) => s.isComplete)
 
   useEffect(() => {
-    // persist에서 복원될 때까지 대기
     if (!hasHydrated) return
-
-    const isAuthenticated = useAuthStore.getState().isAuthenticated
-    const isComplete = useOnboardingStore.getState().isComplete
 
     if (type === 'auth') {
       if (isAuthenticated && isComplete) {
@@ -49,7 +47,7 @@ export function useAuthGuard(type: GuardType) {
     }
 
     setReady(true)
-  }, [type, router, hasHydrated])
+  }, [type, router, hasHydrated, isAuthenticated, isComplete])
 
   return ready
 }
