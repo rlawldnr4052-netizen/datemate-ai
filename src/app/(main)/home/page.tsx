@@ -17,72 +17,39 @@ const categories: {
   label: string
   emoji: string
   description: string
-  // 배경 그라디언트 (더 진하게 - 글래스모피즘용)
+  // 배경 — 훨씬 진하게 (유리에 비칠 수 있도록)
   bg1: string
   bg2: string
   bg3: string
-  // 액센트
   accent: string
-  accentSoft: string
   accentText: string
-  // 글래스 카드
-  glassBg: string
-  glassBorder: string
-  glassHighlight: string
-  // 태그
-  tagBg: string
-  tagText: string
 }[] = [
   {
     id: 'solo',
     label: '혼놀족',
     emoji: '🎧',
     description: '나만의 감성 아지트를 찾아서',
-    bg1: '#ddd6fe',
-    bg2: '#c4b5fd',
-    bg3: '#f5f3ff',
+    bg1: '#c4b5fd', bg2: '#a78bfa', bg3: '#8b5cf6',
     accent: '#7c3aed',
-    accentSoft: 'rgba(139,92,246,0.15)',
     accentText: '#6d28d9',
-    glassBg: 'rgba(255,255,255,0.55)',
-    glassBorder: 'rgba(167,139,250,0.25)',
-    glassHighlight: 'rgba(139,92,246,0.08)',
-    tagBg: 'rgba(139,92,246,0.12)',
-    tagText: '#7c3aed',
   },
   {
     id: 'couple',
     label: '연인과 데이트',
     emoji: '💕',
     description: '설렘 가득한 둘만의 코스',
-    bg1: '#fecdd3',
-    bg2: '#fda4af',
-    bg3: '#fff1f2',
+    bg1: '#fda4af', bg2: '#fb7185', bg3: '#f43f5e',
     accent: '#e11d48',
-    accentSoft: 'rgba(236,72,153,0.12)',
     accentText: '#be123c',
-    glassBg: 'rgba(255,255,255,0.55)',
-    glassBorder: 'rgba(251,113,133,0.25)',
-    glassHighlight: 'rgba(236,72,153,0.06)',
-    tagBg: 'rgba(236,72,153,0.10)',
-    tagText: '#be123c',
   },
   {
     id: 'friends',
     label: '친구와 놀기',
     emoji: '🎉',
     description: '고민 없이 바로 놀자!',
-    bg1: '#fde68a',
-    bg2: '#fcd34d',
-    bg3: '#fffbeb',
+    bg1: '#fcd34d', bg2: '#fbbf24', bg3: '#f59e0b',
     accent: '#d97706',
-    accentSoft: 'rgba(245,158,11,0.12)',
     accentText: '#b45309',
-    glassBg: 'rgba(255,255,255,0.55)',
-    glassBorder: 'rgba(252,211,77,0.3)',
-    glassHighlight: 'rgba(245,158,11,0.06)',
-    tagBg: 'rgba(245,158,11,0.12)',
-    tagText: '#b45309',
   },
 ]
 
@@ -110,6 +77,20 @@ export default function HomePage() {
     router.push(mode === 'blind' ? `/course/${courseId}/blind` : `/course/${courseId}`)
   }
 
+  // 공통 글래스 스타일
+  const glass = {
+    background: 'rgba(255, 255, 255, 0.22)',
+    backdropFilter: 'blur(40px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+    border: '1px solid rgba(255, 255, 255, 0.35)',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)',
+  }
+
+  const glassCard = {
+    ...glass,
+    background: 'rgba(255, 255, 255, 0.3)',
+  }
+
   return (
     <PageTransition>
       <AnimatePresence mode="wait">
@@ -119,30 +100,27 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
-          className="min-h-screen pb-28 relative overflow-hidden"
+          className="min-h-screen pb-28 relative"
         >
-          {/* 배경 그라디언트 — 위에서 아래로 점점 연해짐 */}
+          {/* 배경 — 진한 색상 (글래스에 비칠 수 있도록 충분히 vivid) */}
           <div
-            className="fixed inset-0 -z-10 transition-all duration-500"
+            className="fixed inset-0 -z-10 transition-all duration-700"
             style={{
               background: `
-                radial-gradient(ellipse 120% 60% at 50% -10%, ${cat.bg2}90 0%, transparent 60%),
-                radial-gradient(ellipse 80% 40% at 80% 20%, ${cat.bg1}60 0%, transparent 50%),
-                radial-gradient(ellipse 80% 40% at 20% 30%, ${cat.bg1}40 0%, transparent 50%),
-                linear-gradient(180deg, ${cat.bg3} 0%, #ffffff 50%)
+                radial-gradient(ellipse 140% 70% at 30% -5%, ${cat.bg3}88 0%, transparent 55%),
+                radial-gradient(ellipse 100% 50% at 90% 10%, ${cat.bg2}70 0%, transparent 45%),
+                radial-gradient(ellipse 90% 50% at 10% 50%, ${cat.bg1}50 0%, transparent 50%),
+                radial-gradient(ellipse 120% 60% at 70% 80%, ${cat.bg1}35 0%, transparent 50%),
+                linear-gradient(180deg, ${cat.bg1}40 0%, #f8f8fa 55%, #ffffff 100%)
               `,
             }}
           />
 
-          {/* ── 유형 탭 (최상단, 글래스) ── */}
+          {/* ── 유형 탭 (글래스 컨테이너) ── */}
           <div className="sticky top-0 z-20 pt-12 pb-3 px-5">
             <div
-              className="flex gap-1.5 p-1.5 rounded-2xl backdrop-blur-xl"
-              style={{
-                background: 'rgba(255,255,255,0.45)',
-                border: `1px solid ${cat.glassBorder}`,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)',
-              }}
+              className="flex gap-1.5 p-1.5 rounded-2xl"
+              style={glass}
             >
               {categories.map((c) => {
                 const isActive = activeCategory === c.id
@@ -151,15 +129,15 @@ export default function HomePage() {
                     key={c.id}
                     whileTap={{ scale: 0.96 }}
                     onClick={() => setActiveCategory(c.id)}
-                    className="flex-1 relative rounded-xl overflow-hidden transition-all duration-300"
+                    className="flex-1 relative rounded-xl overflow-hidden"
                   >
                     {isActive && (
                       <motion.div
                         layoutId="activeTabBg"
                         className="absolute inset-0 rounded-xl"
                         style={{
-                          background: `linear-gradient(135deg, ${cat.accent}, ${cat.accent}cc)`,
-                          boxShadow: `0 4px 16px ${cat.accent}30`,
+                          background: `linear-gradient(135deg, ${cat.accent}dd, ${cat.accent}aa)`,
+                          boxShadow: `0 4px 16px ${cat.accent}25`,
                         }}
                         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                       />
@@ -168,7 +146,7 @@ export default function HomePage() {
                       <span className="text-lg leading-none">{c.emoji}</span>
                       <span
                         className="text-[11px] font-bold transition-colors duration-200"
-                        style={{ color: isActive ? 'white' : '#9ca3af' }}
+                        style={{ color: isActive ? 'white' : 'rgba(60,60,67,0.45)' }}
                       >
                         {c.label}
                       </span>
@@ -204,16 +182,12 @@ export default function HomePage() {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => router.push('/chat')}
-                className="flex-1 flex items-center gap-3 p-4 rounded-2xl backdrop-blur-lg transition-shadow"
-                style={{
-                  background: cat.glassBg,
-                  border: `1px solid ${cat.glassBorder}`,
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)',
-                }}
+                className="flex-1 flex items-center gap-3 p-4 rounded-2xl"
+                style={glassCard}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm"
-                  style={{ background: cat.accentSoft }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: `${cat.accent}18` }}
                 >
                   <MessageCircle className="w-5 h-5" style={{ color: cat.accent }} />
                 </div>
@@ -226,16 +200,12 @@ export default function HomePage() {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => router.push('/course/generate')}
-                className="flex-1 flex items-center gap-3 p-4 rounded-2xl backdrop-blur-lg transition-shadow"
-                style={{
-                  background: cat.glassBg,
-                  border: `1px solid ${cat.glassBorder}`,
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)',
-                }}
+                className="flex-1 flex items-center gap-3 p-4 rounded-2xl"
+                style={glassCard}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm"
-                  style={{ background: cat.accentSoft }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: `${cat.accent}18` }}
                 >
                   <Plus className="w-5 h-5" style={{ color: cat.accent }} />
                 </div>
@@ -283,28 +253,26 @@ export default function HomePage() {
                         transition={{ delay: i * 0.07, type: 'spring', stiffness: 300, damping: 25 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleCourseClick(course.id)}
-                        className="flex gap-4 p-3 rounded-2xl backdrop-blur-lg cursor-pointer transition-all active:shadow-lg"
-                        style={{
-                          background: cat.glassBg,
-                          border: `1px solid ${cat.glassBorder}`,
-                          boxShadow: '0 2px 12px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.4)',
-                        }}
+                        className="flex gap-4 p-3 rounded-2xl cursor-pointer transition-all"
+                        style={glassCard}
                       >
-                        {/* 썸네일 */}
-                        <div className="w-[76px] h-[76px] rounded-xl bg-cover bg-center flex-shrink-0 relative overflow-hidden">
+                        <div className="w-[76px] h-[76px] rounded-xl flex-shrink-0 relative overflow-hidden">
                           <div
                             className="w-full h-full bg-cover bg-center"
                             style={{ backgroundImage: `url(${course.heroImageUrl})` }}
                           />
                           <div
-                            className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white backdrop-blur-sm"
-                            style={{ background: `${cat.accent}cc` }}
+                            className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white"
+                            style={{
+                              background: `${cat.accent}cc`,
+                              backdropFilter: 'blur(8px)',
+                              WebkitBackdropFilter: 'blur(8px)',
+                            }}
                           >
                             {matchPercent}%
                           </div>
                         </div>
 
-                        {/* 정보 */}
                         <div className="flex-1 min-w-0 flex flex-col justify-center">
                           <h3 className="text-body-1 font-semibold text-neutral-900 truncate">
                             {mode === 'blind' ? course.blindTitle : course.title}
@@ -324,8 +292,11 @@ export default function HomePage() {
                             {course.tags.slice(0, 3).map((tag) => (
                               <span
                                 key={tag}
-                                className="px-2 py-0.5 text-[10px] rounded-full font-medium backdrop-blur-sm"
-                                style={{ background: cat.tagBg, color: cat.tagText }}
+                                className="px-2 py-0.5 text-[10px] rounded-full font-medium"
+                                style={{
+                                  background: `${cat.accent}14`,
+                                  color: cat.accentText,
+                                }}
                               >
                                 {tag}
                               </span>
@@ -338,11 +309,8 @@ export default function HomePage() {
                 </div>
               ) : (
                 <div
-                  className="text-center py-12 rounded-2xl backdrop-blur-lg"
-                  style={{
-                    background: cat.glassBg,
-                    border: `1px solid ${cat.glassBorder}`,
-                  }}
+                  className="text-center py-12 rounded-2xl"
+                  style={glassCard}
                 >
                   <p className="text-2xl mb-2">{cat.emoji}</p>
                   <p className="text-body-2 text-neutral-600 mb-1">{cat.label} 코스를 준비 중이에요</p>
