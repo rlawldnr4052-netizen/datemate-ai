@@ -1,11 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Info, Lightbulb } from 'lucide-react'
+import { Send, Info, Lightbulb, MapPin, Clock, ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useChatStore } from '@/stores/useChatStore'
+import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import TopBar from '@/components/ui/TopBar'
 import PageTransition from '@/components/motion/PageTransition'
+import { CourseRecommendation } from '@/types/chat'
 
 function TypingIndicator() {
   return (
@@ -27,24 +30,81 @@ function TypingIndicator() {
   )
 }
 
+function CourseCard({ course }: { course: CourseRecommendation }) {
+  const router = useRouter()
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-2 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 border border-primary-200/50 overflow-hidden"
+    >
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <MapPin className="w-4 h-4 text-primary-500" />
+          <span className="text-caption font-semibold text-primary-600">{course.region}</span>
+          <span className="text-neutral-300">·</span>
+          <Clock className="w-3.5 h-3.5 text-neutral-400" />
+          <span className="text-caption text-neutral-500">{Math.floor(course.estimatedDuration / 60)}시간</span>
+        </div>
+        <h4 className="text-body-1 font-bold text-neutral-900 mb-1">{course.title}</h4>
+        <p className="text-caption text-neutral-500 mb-3">{course.description}</p>
+
+        <div className="flex flex-col gap-1.5">
+          {course.places.map((place, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <div className="w-5 h-5 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                {i + 1}
+              </div>
+              <div>
+                <span className="text-caption font-medium text-neutral-800">{place.name}</span>
+                <span className="text-[10px] text-neutral-400 ml-1.5">{place.category}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={() => router.push('/course/generate')}
+        className="w-full flex items-center justify-center gap-1 py-3 bg-primary-500 text-white text-caption font-semibold hover:bg-primary-600 transition-colors"
+      >
+        이 코스로 시작하기 <ChevronRight className="w-3.5 h-3.5" />
+      </button>
+    </motion.div>
+  )
+}
+
 export default function ChatPage() {
   const { messages, isTyping, isTMIEnabled, quickReplies, sendMessage, toggleTMI } = useChatStore()
+  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe } = useOnboardingStore()
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const userProfile = useMemo(() => ({
+    dateType,
+    likedTags,
+    dislikedTags,
+    mbti,
+    birthday,
+    location,
+    selectedVibe,
+  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])
 
   const handleSend = () => {
-    if (!input.trim()) return
-    sendMessage(input.trim())
+    if (!input.trim() || isTyping) return
+    sendMessage(input.trim(), userProfile)
     setInput('')
   }
 
   const handleQuickReply = (label: string) => {
-    sendMessage(label)
+    if (isTyping) return
+    sendMessage(label, userProfile)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -105,6 +165,11 @@ export default function ChatPage() {
                   {msg.content}
                 </div>
 
+                {/* Course Recommendation Card */}
+                {msg.courseRecommendation && (
+                  <CourseCard course={msg.courseRecommendation} />
+                )}
+
                 {/* TMI Card */}
                 {msg.tmiData && (
                   <motion.div
@@ -158,7 +223,8 @@ export default function ChatPage() {
               key={qr.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleQuickReply(qr.label)}
-              className="flex-shrink-0 px-4 py-2 bg-primary-50 text-primary-500 rounded-pill text-caption font-medium hover:bg-primary-100 transition-colors"
+              disabled={isTyping}
+              className="flex-shrink-0 px-4 py-2 bg-primary-50 text-primary-500 rounded-pill text-caption font-medium hover:bg-primary-100 transition-colors disabled:opacity-50"
             >
               {qr.label}
             </motion.button>
@@ -173,15 +239,16 @@ export default function ChatPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요"
-            className="flex-1 h-11 px-4 bg-neutral-100 rounded-pill text-body-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-300 transition-all"
+            disabled={isTyping}
+            className="flex-1 h-11 px-4 bg-neutral-100 rounded-pill text-body-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-300 transition-all disabled:opacity-50"
           />
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isTyping}
             className={`
               w-11 h-11 rounded-full flex items-center justify-center transition-colors
-              ${input.trim()
+              ${input.trim() && !isTyping
                 ? 'bg-primary-500 text-white shadow-md'
                 : 'bg-neutral-200 text-neutral-400'
               }

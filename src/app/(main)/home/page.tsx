@@ -315,7 +315,7 @@ export default function HomePage() {
 
             <Card
               hover
-              onClick={() => router.push('/course')}
+              onClick={() => router.push('/course/generate')}
               className="flex flex-col items-center gap-3 py-6"
             >
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-300 to-accent-500 flex items-center justify-center">
@@ -323,7 +323,7 @@ export default function HomePage() {
               </div>
               <div className="text-center">
                 <p className="text-body-2 font-semibold text-neutral-900">새 코스 만들기</p>
-                <p className="text-caption text-neutral-400 mt-0.5">AI가 추천해요</p>
+                <p className="text-caption text-neutral-400 mt-0.5">AI가 실시간 생성</p>
               </div>
             </Card>
           </motion.div>
