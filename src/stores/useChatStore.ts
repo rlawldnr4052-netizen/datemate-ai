@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { ChatMessage, QuickReply, CourseRecommendation } from '@/types/chat'
+import { useCourseStore } from '@/stores/useCourseStore'
 
 const defaultQuickReplies: QuickReply[] = [
   { id: 'q1', label: '오늘 데이트 코스 추천해줘', action: 'recommend' },
@@ -98,18 +99,63 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       const courseRecommendation = parseCourseRecommendation(responseText)
       const cleanContent = stripCourseJson(responseText)
 
+      const aiMsgId = `ai-${Date.now()}`
       const aiMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
+        id: aiMsgId,
         role: 'ai',
         content: cleanContent,
         timestamp: new Date().toISOString(),
         courseRecommendation: courseRecommendation || undefined,
+        isGeneratingCourse: !!courseRecommendation,
       }
 
       set((s) => ({
         messages: [...s.messages, aiMsg],
         isTyping: false,
       }))
+
+      // 코스 추천이 있으면 실제 코스 생성
+      if (courseRecommendation) {
+        try {
+          const courseRes = await fetch('/api/course/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userProfile: userProfile || null,
+              region: courseRecommendation.region || userProfile?.location?.district || '강남구',
+              dateType: userProfile?.dateType || 'couple',
+              vibe: userProfile?.selectedVibe || 'romantic',
+            }),
+          })
+
+          if (courseRes.ok) {
+            const courseData = await courseRes.json()
+            const course = courseData.course
+            useCourseStore.getState().addCourse(course)
+            useCourseStore.getState().setActiveCourse(course.id)
+
+            set((s) => ({
+              messages: s.messages.map((m) =>
+                m.id === aiMsgId
+                  ? { ...m, generatedCourseId: course.id, isGeneratingCourse: false }
+                  : m
+              ),
+            }))
+          } else {
+            set((s) => ({
+              messages: s.messages.map((m) =>
+                m.id === aiMsgId ? { ...m, isGeneratingCourse: false } : m
+              ),
+            }))
+          }
+        } catch {
+          set((s) => ({
+            messages: s.messages.map((m) =>
+              m.id === aiMsgId ? { ...m, isGeneratingCourse: false } : m
+            ),
+          }))
+        }
+      }
     } catch (error) {
       console.error('Chat error:', error)
 

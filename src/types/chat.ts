@@ -5,6 +5,8 @@ export interface ChatMessage {
   timestamp: string
   tmiData?: TMIData
   courseRecommendation?: CourseRecommendation
+  generatedCourseId?: string
+  isGeneratingCourse?: boolean
 }
 
 export interface TMIData {

@@ -2,13 +2,12 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Info, Lightbulb, MapPin, Clock, ChevronRight } from 'lucide-react'
+import { Send, Info, Lightbulb, MapPin, ChevronRight, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useChatStore } from '@/stores/useChatStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import TopBar from '@/components/ui/TopBar'
 import PageTransition from '@/components/motion/PageTransition'
-import { CourseRecommendation } from '@/types/chat'
 
 function TypingIndicator() {
   return (
@@ -30,8 +29,28 @@ function TypingIndicator() {
   )
 }
 
-function CourseCard({ course }: { course: CourseRecommendation }) {
+function GeneratedCourseCard({ courseId, isGenerating }: { courseId?: string; isGenerating?: boolean }) {
   const router = useRouter()
+
+  if (isGenerating) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-2 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 border border-primary-200/50 overflow-hidden"
+      >
+        <div className="p-4 flex items-center gap-3">
+          <Loader2 className="w-5 h-5 text-primary-500 animate-spin flex-shrink-0" />
+          <div>
+            <p className="text-body-2 font-semibold text-neutral-800">코스를 만들고 있어요...</p>
+            <p className="text-caption text-neutral-400">실제 장소 검색 중</p>
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
+
+  if (!courseId) return null
 
   return (
     <motion.div
@@ -39,37 +58,20 @@ function CourseCard({ course }: { course: CourseRecommendation }) {
       animate={{ opacity: 1, y: 0 }}
       className="mt-2 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 border border-primary-200/50 overflow-hidden"
     >
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <MapPin className="w-4 h-4 text-primary-500" />
-          <span className="text-caption font-semibold text-primary-600">{course.region}</span>
-          <span className="text-neutral-300">·</span>
-          <Clock className="w-3.5 h-3.5 text-neutral-400" />
-          <span className="text-caption text-neutral-500">{Math.floor(course.estimatedDuration / 60)}시간</span>
+      <div className="p-4 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+          <MapPin className="w-5 h-5 text-green-600" />
         </div>
-        <h4 className="text-body-1 font-bold text-neutral-900 mb-1">{course.title}</h4>
-        <p className="text-caption text-neutral-500 mb-3">{course.description}</p>
-
-        <div className="flex flex-col gap-1.5">
-          {course.places.map((place, i) => (
-            <div key={i} className="flex items-start gap-2">
-              <div className="w-5 h-5 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
-                {i + 1}
-              </div>
-              <div>
-                <span className="text-caption font-medium text-neutral-800">{place.name}</span>
-                <span className="text-[10px] text-neutral-400 ml-1.5">{place.category}</span>
-              </div>
-            </div>
-          ))}
+        <div className="flex-1">
+          <p className="text-body-2 font-semibold text-neutral-800">코스가 완성됐어!</p>
+          <p className="text-caption text-neutral-400">자세한 정보를 확인해봐</p>
         </div>
       </div>
-
       <button
-        onClick={() => router.push('/course/generate')}
+        onClick={() => router.push(`/course/${courseId}`)}
         className="w-full flex items-center justify-center gap-1 py-3 bg-primary-500 text-white text-caption font-semibold hover:bg-primary-600 transition-colors"
       >
-        이 코스로 시작하기 <ChevronRight className="w-3.5 h-3.5" />
+        코스 보러가기 <ChevronRight className="w-3.5 h-3.5" />
       </button>
     </motion.div>
   )
@@ -135,7 +137,7 @@ export default function ChatPage() {
       />
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 pb-40">
+      <div className="flex-1 overflow-y-auto px-5 py-4 pb-44">
         <AnimatePresence>
           {messages.map((msg) => (
             <motion.div
@@ -165,9 +167,12 @@ export default function ChatPage() {
                   {msg.content}
                 </div>
 
-                {/* Course Recommendation Card */}
-                {msg.courseRecommendation && (
-                  <CourseCard course={msg.courseRecommendation} />
+                {/* Generated Course Card */}
+                {(msg.isGeneratingCourse || msg.generatedCourseId) && (
+                  <GeneratedCourseCard
+                    courseId={msg.generatedCourseId}
+                    isGenerating={msg.isGeneratingCourse}
+                  />
                 )}
 
                 {/* TMI Card */}
@@ -215,9 +220,9 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-t border-neutral-100 safe-bottom">
+      <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-t border-neutral-100">
         {/* Quick Replies */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 py-3">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 py-2">
           {quickReplies.map((qr) => (
             <motion.button
               key={qr.id}
@@ -232,7 +237,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="flex items-center gap-3 px-5 pb-4">
+        <div className="flex items-center gap-3 px-5 pb-3">
           <input
             ref={inputRef}
             value={input}
