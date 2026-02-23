@@ -220,7 +220,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-t border-neutral-100">
+      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-t border-neutral-100">
         {/* Quick Replies */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 py-2">
           {quickReplies.map((qr) => (

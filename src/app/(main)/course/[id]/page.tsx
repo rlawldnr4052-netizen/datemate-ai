@@ -338,7 +338,7 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
+      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
         <Button className="w-full" onClick={handleStartCourse}>
           이 코스로 시작
         </Button>
