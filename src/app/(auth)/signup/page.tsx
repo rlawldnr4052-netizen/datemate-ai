@@ -34,7 +34,7 @@ export default function SignupPage() {
     if (!validate()) return
     const result = signup(name.trim(), email.trim(), password)
     if (result.success) {
-      router.push('/type')
+      router.push('/profile-details')
     } else {
       setErrors({ email: result.error || '회원가입에 실패했습니다' })
     }

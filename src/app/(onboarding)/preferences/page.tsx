@@ -64,7 +64,7 @@ export default function PreferencesPage() {
   return (
     <PageTransition className="min-h-screen flex flex-col bg-neutral-50">
       <TopBar title="취향 선택" />
-      <ProgressBar progress={3 / 4} className="mx-5" />
+      <ProgressBar progress={2 / 3} className="mx-5" />
 
       <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32">
         <motion.div

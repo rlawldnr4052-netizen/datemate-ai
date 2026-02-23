@@ -43,7 +43,7 @@ export function useAuthGuard(type: GuardType) {
         return
       }
       if (isAuthenticated && !isComplete) {
-        router.replace('/type')
+        router.replace('/profile-details')
         return
       }
     }
@@ -61,7 +61,7 @@ export function useAuthGuard(type: GuardType) {
         return
       }
       if (!isComplete) {
-        router.replace('/type')
+        router.replace('/profile-details')
         return
       }
     }

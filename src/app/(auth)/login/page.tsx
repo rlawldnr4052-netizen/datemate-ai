@@ -49,7 +49,7 @@ export default function LoginPage() {
     const result = login(email.trim(), password)
     if (result.success) {
       const isComplete = useOnboardingStore.getState().isComplete
-      router.push(isComplete ? '/home' : '/type')
+      router.push(isComplete ? '/home' : '/profile-details')
     } else {
       setErrors({ email: result.error || '로그인에 실패했습니다' })
     }

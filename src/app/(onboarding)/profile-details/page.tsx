@@ -22,25 +22,21 @@ export default function ProfileDetailsPage() {
   const [birthDay, setBirthDay] = useState(birthday ? birthday.split('-')[2] : '')
   const [city, setCity] = useState(location?.city || '')
   const [district, setDistrict] = useState(location?.district || '')
-  const [step, setStep] = useState<'mbti' | 'birthday' | 'location'>('mbti')
+  const [step, setStep] = useState<'mbti' | 'info'>('mbti')
 
   const handleMBTISelect = (type: MBTIType) => {
     setSelectedMBTI(type)
     setMBTI(type)
   }
 
-  const handleBirthdayNext = () => {
+  const handleNext = () => {
     if (birthYear && birthMonth && birthDay) {
       setBirthday(`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`)
-      setStep('location')
     }
-  }
-
-  const handleLocationNext = () => {
     if (city && district) {
       setLocation({ city, district })
-      router.push('/preferences')
     }
+    router.push('/preferences')
   }
 
   const years = Array.from({ length: 50 }, (_, i) => String(2006 - i))
@@ -48,10 +44,13 @@ export default function ProfileDetailsPage() {
   const days = Array.from({ length: 31 }, (_, i) => String(i + 1))
   const districts = city ? districtsByCity[city] || [] : []
 
+  const selectClass = 'w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all'
+  const canFinish = birthYear && birthMonth && birthDay && city && district
+
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="프로필 설정" />
-      <ProgressBar progress={2 / 4} className="mx-5" />
+      <ProgressBar progress={step === 'mbti' ? 1 / 3 : 1.5 / 3} className="mx-5" />
 
       <div className="flex-1 px-5 pt-6 pb-6 flex flex-col">
         <AnimatePresence mode="wait">
@@ -105,7 +104,7 @@ export default function ProfileDetailsPage() {
                   fullWidth
                   size="lg"
                   disabled={!selectedMBTI}
-                  onClick={() => setStep('birthday')}
+                  onClick={() => setStep('info')}
                 >
                   다음
                 </Button>
@@ -113,84 +112,93 @@ export default function ProfileDetailsPage() {
             </motion.div>
           )}
 
-          {/* Birthday Step */}
-          {step === 'birthday' && (
+          {/* Birthday + Location Step (combined) */}
+          {step === 'info' && (
             <motion.div
-              key="birthday"
+              key="info"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               className="flex-1 flex flex-col"
             >
-              <h1 className="text-title-1 text-neutral-900 mb-2">생년월일을 알려주세요</h1>
-              <p className="text-body-2 text-neutral-500 mb-8">
-                나이대에 맞는 장소를 추천해 드릴게요
+              <h1 className="text-title-1 text-neutral-900 mb-2">기본 정보를 알려주세요</h1>
+              <p className="text-body-2 text-neutral-500 mb-6">
+                나이와 지역에 맞는 장소를 추천해 드릴게요
               </p>
 
-              <div className="flex gap-3 mb-8">
-                {/* Year */}
+              {/* Birthday */}
+              <p className="text-caption font-semibold text-neutral-400 mb-2">생년월일</p>
+              <div className="flex gap-3 mb-5">
                 <div className="flex-1">
-                  <label className="text-caption font-medium text-neutral-500 mb-1.5 block">년도</label>
                   <div className="relative">
-                    <select
-                      value={birthYear}
-                      onChange={(e) => setBirthYear(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
-                    >
-                      <option value="">선택</option>
-                      {years.map((y) => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
+                    <select value={birthYear} onChange={(e) => setBirthYear(e.target.value)} className={selectClass}>
+                      <option value="">년도</option>
+                      {years.map((y) => <option key={y} value={y}>{y}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                   </div>
                 </div>
-
-                {/* Month */}
                 <div className="flex-1">
-                  <label className="text-caption font-medium text-neutral-500 mb-1.5 block">월</label>
                   <div className="relative">
-                    <select
-                      value={birthMonth}
-                      onChange={(e) => setBirthMonth(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
-                    >
-                      <option value="">선택</option>
-                      {months.map((m) => (
-                        <option key={m} value={m}>{m}월</option>
-                      ))}
+                    <select value={birthMonth} onChange={(e) => setBirthMonth(e.target.value)} className={selectClass}>
+                      <option value="">월</option>
+                      {months.map((m) => <option key={m} value={m}>{m}월</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                   </div>
                 </div>
-
-                {/* Day */}
                 <div className="flex-1">
-                  <label className="text-caption font-medium text-neutral-500 mb-1.5 block">일</label>
                   <div className="relative">
-                    <select
-                      value={birthDay}
-                      onChange={(e) => setBirthDay(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
-                    >
-                      <option value="">선택</option>
-                      {days.map((d) => (
-                        <option key={d} value={d}>{d}일</option>
-                      ))}
+                    <select value={birthDay} onChange={(e) => setBirthDay(e.target.value)} className={selectClass}>
+                      <option value="">일</option>
+                      {days.map((d) => <option key={d} value={d}>{d}일</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                   </div>
                 </div>
               </div>
 
-              {birthYear && birthMonth && birthDay && (
+              {/* Location */}
+              <p className="text-caption font-semibold text-neutral-400 mb-2">거주지역</p>
+              <div className="flex gap-3 mb-5">
+                <div className="flex-1">
+                  <div className="relative">
+                    <select
+                      value={city}
+                      onChange={(e) => { setCity(e.target.value); setDistrict('') }}
+                      className={selectClass}
+                    >
+                      <option value="">시/도</option>
+                      {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="relative">
+                    <select
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      className={selectClass}
+                      disabled={!city}
+                    >
+                      <option value="">시/군/구</option>
+                      {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary */}
+              {birthYear && birthMonth && birthDay && city && district && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="px-5 py-4 rounded-2xl bg-primary-50 mb-4"
                 >
                   <p className="text-body-2 text-primary-600 text-center font-medium">
-                    {birthYear}년 {birthMonth}월 {birthDay}일생 ({2026 - Number(birthYear)}세)
+                    {2026 - Number(birthYear)}세 · {city} {district}
                   </p>
                 </motion.div>
               )}
@@ -209,102 +217,8 @@ export default function ProfileDetailsPage() {
                 <Button
                   fullWidth
                   size="lg"
-                  disabled={!birthYear || !birthMonth || !birthDay}
-                  onClick={handleBirthdayNext}
-                >
-                  다음
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Location Step */}
-          {step === 'location' && (
-            <motion.div
-              key="location"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              className="flex-1 flex flex-col"
-            >
-              <h1 className="text-title-1 text-neutral-900 mb-2">어디에 살고 계세요?</h1>
-              <p className="text-body-2 text-neutral-500 mb-8">
-                가까운 지역의 코스를 우선 추천해 드릴게요
-              </p>
-
-              {/* City Select */}
-              <div className="mb-4">
-                <label className="text-caption font-medium text-neutral-500 mb-1.5 block">시/도</label>
-                <div className="relative">
-                  <select
-                    value={city}
-                    onChange={(e) => { setCity(e.target.value); setDistrict('') }}
-                    className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
-                  >
-                    <option value="">시/도 선택</option>
-                    {cities.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* District Select */}
-              <AnimatePresence>
-                {city && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mb-4"
-                  >
-                    <label className="text-caption font-medium text-neutral-500 mb-1.5 block">시/군/구</label>
-                    <div className="relative">
-                      <select
-                        value={district}
-                        onChange={(e) => setDistrict(e.target.value)}
-                        className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
-                      >
-                        <option value="">시/군/구 선택</option>
-                        {districts.map((d) => (
-                          <option key={d} value={d}>{d}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {city && district && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="px-5 py-4 rounded-2xl bg-primary-50 mb-4"
-                >
-                  <p className="text-body-2 text-primary-600 text-center font-medium">
-                    📍 {city} {district}
-                  </p>
-                </motion.div>
-              )}
-
-              <div className="flex-1" />
-
-              <div className="pt-4 flex gap-3">
-                <Button
-                  fullWidth
-                  size="lg"
-                  variant="secondary"
-                  onClick={() => setStep('birthday')}
-                >
-                  이전
-                </Button>
-                <Button
-                  fullWidth
-                  size="lg"
-                  disabled={!city || !district}
-                  onClick={handleLocationNext}
+                  disabled={!canFinish}
+                  onClick={handleNext}
                 >
                   다음
                 </Button>

@@ -39,7 +39,7 @@ export default function ProfilePage() {
 
   const handleReset = () => {
     reset()
-    router.push('/type')
+    router.push('/profile-details')
   }
 
   const handleLogout = () => {

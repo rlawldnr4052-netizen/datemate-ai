@@ -39,7 +39,7 @@ export default function SplashPage() {
       return () => clearTimeout(timer)
     }
     if (isAuthenticated && !isComplete) {
-      const timer = setTimeout(() => router.push('/type'), 1500)
+      const timer = setTimeout(() => router.push('/profile-details'), 1500)
       return () => clearTimeout(timer)
     }
   }, [hydrated, router])
