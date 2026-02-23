@@ -12,7 +12,7 @@ import PageTransition from '@/components/motion/PageTransition'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login } = useAuthStore()
+  const { login, _hasHydrated } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -27,6 +27,22 @@ export default function LoginPage() {
 
   const handleSubmit = () => {
     if (!validate()) return
+
+    if (!_hasHydrated) {
+      setErrors({ email: '잠시만 기다려주세요...' })
+      // 잠시 후 재시도
+      setTimeout(() => {
+        const result = useAuthStore.getState().login(email.trim(), password)
+        if (result.success) {
+          const isComplete = useOnboardingStore.getState().isComplete
+          router.push(isComplete ? '/home' : '/type')
+        } else {
+          setErrors({ email: result.error || '로그인에 실패했습니다' })
+        }
+      }, 300)
+      return
+    }
+
     const result = login(email.trim(), password)
     if (result.success) {
       const isComplete = useOnboardingStore.getState().isComplete

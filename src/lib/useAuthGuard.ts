@@ -10,13 +10,16 @@ type GuardType = 'auth' | 'onboarding' | 'main'
 export function useAuthGuard(type: GuardType) {
   const router = useRouter()
   const [ready, setReady] = useState(false)
+  const hasHydrated = useAuthStore((s) => s._hasHydrated)
 
   useEffect(() => {
+    // persist에서 복원될 때까지 대기
+    if (!hasHydrated) return
+
     const isAuthenticated = useAuthStore.getState().isAuthenticated
     const isComplete = useOnboardingStore.getState().isComplete
 
     if (type === 'auth') {
-      // Auth pages: if already logged in, redirect away
       if (isAuthenticated && isComplete) {
         router.replace('/home')
         return
@@ -28,7 +31,6 @@ export function useAuthGuard(type: GuardType) {
     }
 
     if (type === 'onboarding') {
-      // Onboarding pages: must be authenticated
       if (!isAuthenticated) {
         router.replace('/login')
         return
@@ -36,7 +38,6 @@ export function useAuthGuard(type: GuardType) {
     }
 
     if (type === 'main') {
-      // Main pages: must be authenticated + onboarding complete
       if (!isAuthenticated) {
         router.replace('/login')
         return
@@ -48,7 +49,7 @@ export function useAuthGuard(type: GuardType) {
     }
 
     setReady(true)
-  }, [type, router])
+  }, [type, router, hasHydrated])
 
   return ready
 }
