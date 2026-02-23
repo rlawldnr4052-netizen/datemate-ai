@@ -1,21 +1,192 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Clock, MapPin, Star, ChevronRight, ArrowRight, Shuffle } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Clock, MapPin, Star, ArrowRight, X, ExternalLink, Navigation } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { useQuestStore } from '@/stores/useQuestStore'
 import TopBar from '@/components/ui/TopBar'
 import Button from '@/components/ui/Button'
 import Tag from '@/components/ui/Tag'
 import PageTransition from '@/components/motion/PageTransition'
+import { Place } from '@/types/course'
+
+interface PlaceDetail {
+  place_name: string
+  category_name: string
+  phone: string
+  address_name: string
+  road_address_name: string
+  place_url: string
+  x: string
+  y: string
+}
+
+function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => void }) {
+  const [kakaoData, setKakaoData] = useState<PlaceDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchPlaceDetail = async () => {
+      try {
+        const res = await fetch(`/api/places/search?query=${encodeURIComponent(place.name)}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.places && data.places.length > 0) {
+            setKakaoData(data.places[0])
+          }
+        }
+      } catch {
+        // ignore
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPlaceDetail()
+  }, [place.name])
+
+  const kakaoMapUrl = kakaoData?.place_url || `https://map.kakao.com/link/search/${encodeURIComponent(place.name)}`
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50" />
+
+      {/* Popup */}
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden safe-bottom"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Handle */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div className="w-10 h-1 rounded-full bg-neutral-300" />
+        </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center z-10"
+        >
+          <X className="w-4 h-4 text-neutral-500" />
+        </button>
+
+        {/* Place image */}
+        {place.imageUrls.length > 0 && (
+          <div
+            className="w-full h-[180px] bg-cover bg-center"
+            style={{ backgroundImage: `url(${place.imageUrls[0]})` }}
+          />
+        )}
+
+        <div className="px-5 py-4 max-h-[60vh] overflow-y-auto">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <h3 className="text-title-1 text-neutral-900 mb-1">{place.name}</h3>
+              <span className="text-caption text-primary-500 font-medium">{place.category}</span>
+            </div>
+            <div className="flex items-center gap-1 bg-accent-50 px-2 py-1 rounded-lg">
+              <Star className="w-3.5 h-3.5 text-accent-500 fill-accent-500" />
+              <span className="text-body-2 font-bold text-accent-600">{place.rating}</span>
+            </div>
+          </div>
+
+          {/* Description */}
+          <p className="text-body-2 text-neutral-500 mb-4">{place.description}</p>
+
+          {/* Address */}
+          <div className="flex items-start gap-2 mb-3">
+            <MapPin className="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5" />
+            <span className="text-body-2 text-neutral-600">
+              {loading ? '주소 불러오는 중...' : (kakaoData?.road_address_name || kakaoData?.address_name || place.address || '주소 정보 없음')}
+            </span>
+          </div>
+
+          {/* Phone */}
+          {kakaoData?.phone && (
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-body-2 text-neutral-400">📞</span>
+              <a href={`tel:${kakaoData.phone}`} className="text-body-2 text-primary-500 underline">
+                {kakaoData.phone}
+              </a>
+            </div>
+          )}
+
+          {/* Category from Kakao */}
+          {kakaoData?.category_name && (
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-body-2 text-neutral-400">🏷️</span>
+              <span className="text-caption text-neutral-500">{kakaoData.category_name}</span>
+            </div>
+          )}
+
+          {/* Recommended menus */}
+          {place.recommendedMenus.length > 0 && (
+            <div className="mb-4">
+              <p className="text-caption font-semibold text-neutral-700 mb-2">추천 메뉴</p>
+              <div className="flex gap-2 flex-wrap">
+                {place.recommendedMenus.map((menu) => (
+                  <span key={menu} className="px-3 py-1.5 bg-accent-50 text-accent-600 text-caption font-medium rounded-xl">
+                    {menu}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Estimated time */}
+          <div className="flex items-center gap-2 mb-5">
+            <Clock className="w-4 h-4 text-neutral-400" />
+            <span className="text-caption text-neutral-500">예상 소요시간 {place.estimatedTime}분</span>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 pb-4">
+            <a
+              href={kakaoMapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#FEE500] text-neutral-900 rounded-2xl text-body-2 font-bold"
+            >
+              <ExternalLink className="w-4 h-4" />
+              카카오맵에서 보기
+            </a>
+            {kakaoData?.x && kakaoData?.y && (
+              <a
+                href={`https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${kakaoData.y},${kakaoData.x}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-primary-500 text-white rounded-2xl text-body-2 font-bold"
+              >
+                <Navigation className="w-4 h-4" />
+                길찾기
+              </a>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
 export default function CourseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { courses, setMode } = useCourseStore()
+  const { courses } = useCourseStore()
   const { startQuest } = useQuestStore()
   const course = courses.find((c) => c.id === params.id)
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
 
   if (!course) return null
 
@@ -25,11 +196,6 @@ export default function CourseDetailPage() {
       .map((s) => s.questMission!)
     startQuest(course.id, missions)
     router.push('/quest')
-  }
-
-  const handleSwitchToBlind = () => {
-    setMode('blind')
-    router.push(`/course/${course.id}/blind`)
   }
 
   return (
@@ -42,11 +208,7 @@ export default function CourseDetailPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         <div className="absolute top-0 left-0 right-0 z-10">
-          <TopBar transparent rightAction={
-            <button onClick={handleSwitchToBlind} className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur-md">
-              <Shuffle className="w-5 h-5 text-white" />
-            </button>
-          } />
+          <TopBar transparent />
         </div>
         <div className="absolute bottom-6 left-5 right-5">
           <h1 className="text-display text-white mb-2">{course.title}</h1>
@@ -91,19 +253,24 @@ export default function CourseDetailPage() {
                 {stop.order}
               </div>
 
-              {/* Content */}
+              {/* Content - clickable */}
               <div className="flex-1 pb-6">
-                <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+                <button
+                  onClick={() => setSelectedPlace(stop.place)}
+                  className="w-full text-left bg-white rounded-2xl shadow-card overflow-hidden active:scale-[0.98] transition-transform"
+                >
                   {/* Place images */}
-                  <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory">
-                    {stop.place.imageUrls.map((url, imgI) => (
-                      <div
-                        key={imgI}
-                        className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start"
-                        style={{ backgroundImage: `url(${url})` }}
-                      />
-                    ))}
-                  </div>
+                  {stop.place.imageUrls.length > 0 && (
+                    <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory">
+                      {stop.place.imageUrls.map((url, imgI) => (
+                        <div
+                          key={imgI}
+                          className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start"
+                          style={{ backgroundImage: `url(${url})` }}
+                        />
+                      ))}
+                    </div>
+                  )}
 
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-1">
@@ -119,7 +286,7 @@ export default function CourseDetailPage() {
                     </p>
 
                     {stop.place.recommendedMenus.length > 0 && (
-                      <div className="mb-3">
+                      <div className="mb-2">
                         <p className="text-caption font-medium text-neutral-600 mb-1">추천 메뉴</p>
                         <div className="flex gap-1.5 flex-wrap">
                           {stop.place.recommendedMenus.map((menu) => (
@@ -131,15 +298,9 @@ export default function CourseDetailPage() {
                       </div>
                     )}
 
-                    {stop.alternatives.length > 0 && (
-                      <button className="flex items-center gap-1 text-body-2 text-primary-500 font-medium">
-                        <Shuffle className="w-4 h-4" />
-                        대안 보기
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    )}
+                    <p className="text-[11px] text-neutral-300 mt-2">탭하여 자세히 보기</p>
                   </div>
-                </div>
+                </button>
 
                 {/* Walking duration */}
                 {i < course.stops.length - 1 && course.stops[i + 1].walkingMinutesFromPrev && (
@@ -158,15 +319,20 @@ export default function CourseDetailPage() {
 
       {/* Bottom CTA */}
       <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
-        <div className="flex gap-3">
-          <Button variant="secondary" className="flex-1" onClick={handleSwitchToBlind}>
-            블라인드로 전환
-          </Button>
-          <Button className="flex-1" onClick={handleStartCourse}>
-            이 코스로 시작
-          </Button>
-        </div>
+        <Button className="w-full" onClick={handleStartCourse}>
+          이 코스로 시작
+        </Button>
       </div>
+
+      {/* Place Detail Popup */}
+      <AnimatePresence>
+        {selectedPlace && (
+          <PlaceDetailPopup
+            place={selectedPlace}
+            onClose={() => setSelectedPlace(null)}
+          />
+        )}
+      </AnimatePresence>
     </PageTransition>
   )
 }
