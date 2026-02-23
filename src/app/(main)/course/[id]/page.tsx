@@ -157,7 +157,7 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
+      <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
         <div className="flex gap-3">
           <Button variant="secondary" className="flex-1" onClick={handleSwitchToBlind}>
             블라인드로 전환
