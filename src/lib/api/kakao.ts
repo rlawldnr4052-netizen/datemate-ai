@@ -1,4 +1,5 @@
 const KAKAO_BASE_URL = 'https://dapi.kakao.com/v2/local'
+const KAKAO_SEARCH_URL = 'https://dapi.kakao.com/v2/search'
 
 export interface KakaoPlace {
   id: string
@@ -97,4 +98,21 @@ export async function searchPlacesByCategory(
 
   const data: KakaoSearchResponse = await res.json()
   return data.documents
+}
+
+// 카카오 이미지 검색 API - 장소 사진 가져오기
+export interface KakaoImage {
+  collection: string
+  thumbnail_url: string
+  image_url: string
+  width: number
+  height: number
+}
+
+export async function searchImages(query: string, size: number = 3): Promise<KakaoImage[]> {
+  const params = new URLSearchParams({ query, sort: 'accuracy', size: String(size) })
+  const res = await fetch(`${KAKAO_SEARCH_URL}/image?${params.toString()}`, { headers: getHeaders() })
+  if (!res.ok) return []
+  const data = await res.json()
+  return data.documents || []
 }

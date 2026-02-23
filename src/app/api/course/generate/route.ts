@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateStructuredResponse } from '@/lib/api/gemini'
-import { searchPlacesByKeyword } from '@/lib/api/kakao'
+import { searchPlacesByKeyword, searchImages } from '@/lib/api/kakao'
 import { searchByArea, searchByKeyword, areaCodes, type TourSpot } from '@/lib/api/tourApi'
 import { getCourseGenerationPrompt } from '@/lib/prompts'
 
@@ -104,7 +104,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 5. Course 형식으로 변환
+    // 5. 각 장소별 이미지 검색 (병렬)
+    const stopsRaw = courseData.stops || []
+    const imageResults = await Promise.allSettled(
+      stopsRaw.map((stop: Record<string, unknown>) =>
+        searchImages(String(stop.name), 3)
+      )
+    )
+
+    // 6. Course 형식으로 변환
     const course = {
       id: `ai-${Date.now()}`,
       title: courseData.title,
@@ -115,32 +123,43 @@ export async function POST(req: NextRequest) {
       heroImageUrl: tourSpots[0]?.firstimage || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop',
       totalDuration: courseData.totalDuration || 240,
       totalDistance: 0,
-      stops: (courseData.stops || []).map((stop: Record<string, unknown>, i: number) => ({
-        order: i + 1,
-        place: {
-          id: `ai-place-${Date.now()}-${i}`,
-          name: stop.name,
-          category: stop.category,
-          imageUrls: [],
-          rating: 4.5,
-          description: stop.description || '',
-          address: stop.address || '',
-          latitude: Number(stop.latitude) || 0,
-          longitude: Number(stop.longitude) || 0,
-          recommendedMenus: (stop.recommendedMenus as string[]) || [],
-          estimatedTime: Number(stop.estimatedTime) || 60,
-          blindHint: (stop.blindHint as string) || '숨겨진 매력이 있는 곳',
-          blindTitle: (stop.blindTitle as string) || '???',
-        },
-        walkingMinutesFromPrev: i === 0 ? null : 10,
-        questMission: null,
-        alternatives: [],
-        isUnlocked: true,
-      })),
+      stops: stopsRaw.map((stop: Record<string, unknown>, i: number) => {
+        const imgResult = imageResults[i]
+        const images = imgResult.status === 'fulfilled' ? imgResult.value : []
+        const imageUrls = images.map((img: { image_url: string }) => img.image_url).filter(Boolean)
+
+        return {
+          order: i + 1,
+          place: {
+            id: `ai-place-${Date.now()}-${i}`,
+            name: stop.name,
+            category: stop.category,
+            imageUrls,
+            rating: 4.5,
+            description: stop.description || '',
+            address: stop.address || '',
+            latitude: Number(stop.latitude) || 0,
+            longitude: Number(stop.longitude) || 0,
+            recommendedMenus: (stop.recommendedMenus as string[]) || [],
+            estimatedTime: Number(stop.estimatedTime) || 60,
+            blindHint: (stop.blindHint as string) || '숨겨진 매력이 있는 곳',
+            blindTitle: (stop.blindTitle as string) || '???',
+          },
+          walkingMinutesFromPrev: i === 0 ? null : 10,
+          questMission: null,
+          alternatives: [],
+          isUnlocked: true,
+        }
+      }),
       vibe: vibe || userProfile?.selectedVibe || 'romantic',
       dateType: dateType || userProfile?.dateType || 'couple',
       region,
       createdAt: new Date().toISOString(),
+    }
+
+    // Use first place image as hero if available
+    if (course.stops.length > 0 && course.stops[0].place.imageUrls.length > 0) {
+      course.heroImageUrl = course.stops[0].place.imageUrls[0]
     }
 
     // Calculate approximate distance from coordinates

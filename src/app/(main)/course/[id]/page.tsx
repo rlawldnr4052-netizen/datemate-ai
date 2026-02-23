@@ -215,7 +215,7 @@ export default function CourseDetailPage() {
       .filter((s) => s.questMission)
       .map((s) => s.questMission!)
     startQuest(course.id, missions)
-    router.push('/quest')
+    router.push(`/course/${course.id}/map`)
   }
 
   return (
