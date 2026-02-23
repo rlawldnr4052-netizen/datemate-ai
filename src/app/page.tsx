@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { Heart, Sparkles } from 'lucide-react'
 
@@ -19,14 +20,21 @@ export default function SplashPage() {
 
   useEffect(() => {
     if (!hydrated) return
+    const isAuthenticated = useAuthStore.getState().isAuthenticated
     const isComplete = useOnboardingStore.getState().isComplete
-    if (isComplete) {
+    if (isAuthenticated && isComplete) {
       const timer = setTimeout(() => router.push('/home'), 1500)
+      return () => clearTimeout(timer)
+    }
+    if (isAuthenticated && !isComplete) {
+      const timer = setTimeout(() => router.push('/type'), 1500)
       return () => clearTimeout(timer)
     }
   }, [hydrated, router])
 
+  const isAuthenticated = hydrated ? useAuthStore.getState().isAuthenticated : false
   const isComplete = hydrated ? useOnboardingStore.getState().isComplete : false
+  const isReturningUser = isAuthenticated && isComplete
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
@@ -103,14 +111,14 @@ export default function SplashPage() {
 
         {/* CTA */}
         <AnimatePresence>
-          {showContent && !isComplete && (
+          {showContent && !isReturningUser && (
             <motion.button
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: 0.3, type: 'spring', stiffness: 200, damping: 25 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => router.push('/type')}
+              onClick={() => router.push('/signup')}
               style={{
                 marginTop: '16px',
                 padding: '16px 40px',
@@ -130,7 +138,7 @@ export default function SplashPage() {
         </AnimatePresence>
 
         {/* Loading indicator for returning users */}
-        {isComplete && (
+        {isReturningUser && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

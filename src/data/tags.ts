@@ -1,38 +1,62 @@
 import { PreferenceTag, BalanceQuestion, VibeOption } from '@/types/onboarding'
 
 export const preferenceTags: PreferenceTag[] = [
-  { id: 't1', label: '#모노톤', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop', category: 'vibe' },
-  { id: 't2', label: '#LP바', imageUrl: 'https://images.unsplash.com/photo-1485579149621-3123dd979885?w=600&h=800&fit=crop', category: 'place' },
-  { id: 't3', label: '#루프탑', imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=800&fit=crop', category: 'place' },
-  { id: 't4', label: '#빈티지', imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=800&fit=crop', category: 'vibe' },
-  { id: 't5', label: '#오마카세', imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&h=800&fit=crop', category: 'food' },
-  { id: 't6', label: '#자연', imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=800&fit=crop', category: 'vibe' },
-  { id: 't7', label: '#야경', imageUrl: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&h=800&fit=crop', category: 'vibe' },
-  { id: 't8', label: '#전시', imageUrl: 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=600&h=800&fit=crop', category: 'activity' },
-  { id: 't9', label: '#와인', imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&h=800&fit=crop', category: 'food' },
-  { id: 't10', label: '#한옥', imageUrl: 'https://images.unsplash.com/photo-1583167615645-8e72a0c34a96?w=600&h=800&fit=crop', category: 'place' },
-  { id: 't11', label: '#카페', imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&h=800&fit=crop', category: 'place' },
-  { id: 't12', label: '#브런치', imageUrl: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&h=800&fit=crop', category: 'food' },
-  { id: 't13', label: '#피크닉', imageUrl: 'https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=600&h=800&fit=crop', category: 'activity' },
-  { id: 't14', label: '#북카페', imageUrl: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=800&fit=crop', category: 'place' },
-  { id: 't15', label: '#스트릿푸드', imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=800&fit=crop', category: 'food' },
+  // Vibe (분위기)
+  { id: 't1', label: '#모노톤', description: '차분하고 세련된 분위기', category: 'vibe', gradient: 'linear-gradient(135deg, #374151, #6b7280)', emoji: '🖤' },
+  { id: 't2', label: '#빈티지', description: '레트로 감성이 물씬', category: 'vibe', gradient: 'linear-gradient(135deg, #92400e, #d97706)', emoji: '📻' },
+  { id: 't3', label: '#자연', description: '초록빛 힐링 스팟', category: 'vibe', gradient: 'linear-gradient(135deg, #059669, #34d399)', emoji: '🌿' },
+  { id: 't4', label: '#야경', description: '반짝이는 밤의 낭만', category: 'vibe', gradient: 'linear-gradient(135deg, #1e3a5f, #3b82f6)', emoji: '🌃' },
+  { id: 't5', label: '#레트로', description: '과거로 떠나는 타임슬립', category: 'vibe', gradient: 'linear-gradient(135deg, #b45309, #f59e0b)', emoji: '🎞️' },
+  { id: 't6', label: '#미니멀', description: '군더더기 없는 깔끔함', category: 'vibe', gradient: 'linear-gradient(135deg, #d1d5db, #9ca3af)', emoji: '◻️' },
+
+  // Place (장소)
+  { id: 't7', label: '#LP바', description: '아날로그 감성 한 잔', category: 'place', gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)', emoji: '🎵' },
+  { id: 't8', label: '#루프탑', description: '하늘 가까운 핫플', category: 'place', gradient: 'linear-gradient(135deg, #0ea5e9, #67e8f9)', emoji: '🏙️' },
+  { id: 't9', label: '#한옥', description: '전통과 현대의 만남', category: 'place', gradient: 'linear-gradient(135deg, #78350f, #b45309)', emoji: '🏛️' },
+  { id: 't10', label: '#카페', description: '커피 한 잔의 여유', category: 'place', gradient: 'linear-gradient(135deg, #a16207, #eab308)', emoji: '☕' },
+  { id: 't11', label: '#북카페', description: '책과 커피의 조합', category: 'place', gradient: 'linear-gradient(135deg, #166534, #4ade80)', emoji: '📚' },
+  { id: 't12', label: '#갤러리', description: '예술 작품 속 데이트', category: 'place', gradient: 'linear-gradient(135deg, #9333ea, #c084fc)', emoji: '🖼️' },
+
+  // Food (음식)
+  { id: 't13', label: '#오마카세', description: '셰프가 이끄는 미식', category: 'food', gradient: 'linear-gradient(135deg, #dc2626, #f87171)', emoji: '🍣' },
+  { id: 't14', label: '#와인', description: '한 잔에 담긴 로맨스', category: 'food', gradient: 'linear-gradient(135deg, #7f1d1d, #b91c1c)', emoji: '🍷' },
+  { id: 't15', label: '#브런치', description: '여유로운 아침 식사', category: 'food', gradient: 'linear-gradient(135deg, #ea580c, #fb923c)', emoji: '🥞' },
+  { id: 't16', label: '#스트릿푸드', description: '길거리 먹방 투어', category: 'food', gradient: 'linear-gradient(135deg, #e11d48, #fb7185)', emoji: '🌮' },
+  { id: 't17', label: '#파인다이닝', description: '특별한 날의 코스 요리', category: 'food', gradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)', emoji: '🍽️' },
+  { id: 't18', label: '#이자카야', description: '일본식 감성 술집', category: 'food', gradient: 'linear-gradient(135deg, #c2410c, #f97316)', emoji: '🏮' },
+
+  // Activity (활동)
+  { id: 't19', label: '#전시', description: '문화 예술 나들이', category: 'activity', gradient: 'linear-gradient(135deg, #db2777, #f472b6)', emoji: '🎨' },
+  { id: 't20', label: '#피크닉', description: '도시락 들고 공원으로', category: 'activity', gradient: 'linear-gradient(135deg, #16a34a, #86efac)', emoji: '🧺' },
+  { id: 't21', label: '#영화', description: '팝콘과 함께하는 시간', category: 'activity', gradient: 'linear-gradient(135deg, #1d4ed8, #60a5fa)', emoji: '🎬' },
+  { id: 't22', label: '#공방체험', description: '함께 만드는 추억', category: 'activity', gradient: 'linear-gradient(135deg, #b45309, #fbbf24)', emoji: '🎭' },
+
+  // Style (스타일)
+  { id: 't23', label: '#사진맛집', description: '인스타 감성 폭발', category: 'style', gradient: 'linear-gradient(135deg, #ec4899, #f9a8d4)', emoji: '📸' },
+  { id: 't24', label: '#힙플레이스', description: '트렌드 세터의 선택', category: 'style', gradient: 'linear-gradient(135deg, #f43f5e, #fda4af)', emoji: '🔥' },
+  { id: 't25', label: '#로컬맛집', description: '현지인만 아는 숨은 맛집', category: 'style', gradient: 'linear-gradient(135deg, #d97706, #fde68a)', emoji: '📍' },
+
+  // Time (시간대)
+  { id: 't26', label: '#선셋', description: '노을 속 황금빛 데이트', category: 'time', gradient: 'linear-gradient(135deg, #ea580c, #fdba74)', emoji: '🌅' },
+  { id: 't27', label: '#낮산책', description: '햇살 아래 여유 산책', category: 'time', gradient: 'linear-gradient(135deg, #0d9488, #5eead4)', emoji: '☀️' },
+  { id: 't28', label: '#밤문화', description: '밤이 더 빛나는 도시', category: 'time', gradient: 'linear-gradient(135deg, #312e81, #818cf8)', emoji: '🌙' },
 ]
 
 export const balanceQuestions: BalanceQuestion[] = [
   {
     id: 'bq1',
-    optionA: { id: 'bq1a', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop', label: '조용한 골목 카페' },
-    optionB: { id: 'bq1b', imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=500&fit=crop', label: '활기찬 루프탑 바' },
+    optionA: { id: 'bq1a', label: '조용한 골목 카페', emoji: '☕', gradient: 'linear-gradient(135deg, #a16207, #eab308)' },
+    optionB: { id: 'bq1b', label: '활기찬 루프탑 바', emoji: '🍸', gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)' },
   },
   {
     id: 'bq2',
-    optionA: { id: 'bq2a', imageUrl: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=500&fit=crop', label: '노을 지는 한강' },
-    optionB: { id: 'bq2b', imageUrl: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&h=500&fit=crop', label: '반짝이는 도시 야경' },
+    optionA: { id: 'bq2a', label: '노을 지는 한강', emoji: '🌅', gradient: 'linear-gradient(135deg, #ea580c, #fdba74)' },
+    optionB: { id: 'bq2b', label: '반짝이는 도시 야경', emoji: '🌃', gradient: 'linear-gradient(135deg, #1e3a5f, #3b82f6)' },
   },
   {
     id: 'bq3',
-    optionA: { id: 'bq3a', imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=500&fit=crop', label: '분위기 있는 파인다이닝' },
-    optionB: { id: 'bq3b', imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=500&fit=crop', label: '정겨운 포장마차' },
+    optionA: { id: 'bq3a', label: '분위기 있는 파인다이닝', emoji: '🍽️', gradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)' },
+    optionB: { id: 'bq3b', label: '정겨운 포장마차', emoji: '🏮', gradient: 'linear-gradient(135deg, #c2410c, #f97316)' },
   },
 ]
 

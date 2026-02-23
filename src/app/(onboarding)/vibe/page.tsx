@@ -30,7 +30,7 @@ export default function VibePage() {
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="무드 선택" />
-      <ProgressBar progress={3 / 3} className="mx-5" />
+      <ProgressBar progress={4 / 4} className="mx-5" />
 
       <div className="flex-1 px-5 pt-8 pb-6 flex flex-col">
         <motion.div

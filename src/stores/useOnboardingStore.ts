@@ -1,16 +1,21 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DateType, Vibe } from '@/types/onboarding'
+import { DateType, MBTIType, KoreanRegion, Vibe } from '@/types/onboarding'
 
 interface OnboardingState {
   dateType: DateType | null
+  mbti: MBTIType | null
+  birthday: string | null
+  location: KoreanRegion | null
   likedTags: string[]
   dislikedTags: string[]
   balanceAnswers: Record<string, string>
   selectedVibe: Vibe | null
   isComplete: boolean
-  userName: string
   setDateType: (type: DateType) => void
+  setMBTI: (mbti: MBTIType) => void
+  setBirthday: (date: string) => void
+  setLocation: (region: KoreanRegion) => void
   addLikedTag: (tagId: string) => void
   addDislikedTag: (tagId: string) => void
   setBalanceAnswer: (questionId: string, optionId: string) => void
@@ -23,14 +28,19 @@ export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set) => ({
       dateType: null,
+      mbti: null,
+      birthday: null,
+      location: null,
       likedTags: [],
       dislikedTags: [],
       balanceAnswers: {},
       selectedVibe: null,
       isComplete: false,
-      userName: '지욱',
 
       setDateType: (type) => set({ dateType: type }),
+      setMBTI: (mbti) => set({ mbti }),
+      setBirthday: (date) => set({ birthday: date }),
+      setLocation: (region) => set({ location: region }),
       addLikedTag: (tagId) => set((s) => ({ likedTags: [...s.likedTags, tagId] })),
       addDislikedTag: (tagId) => set((s) => ({ dislikedTags: [...s.dislikedTags, tagId] })),
       setBalanceAnswer: (questionId, optionId) =>
@@ -39,6 +49,9 @@ export const useOnboardingStore = create<OnboardingState>()(
       completeOnboarding: () => set({ isComplete: true }),
       reset: () => set({
         dateType: null,
+        mbti: null,
+        birthday: null,
+        location: null,
         likedTags: [],
         dislikedTags: [],
         balanceAnswers: {},

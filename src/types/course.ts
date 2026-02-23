@@ -48,5 +48,6 @@ export interface Course {
   stops: CourseStop[]
   vibe: Vibe
   dateType: DateType
+  region: string
   createdAt: string
 }

@@ -3,15 +3,23 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { X, Heart, ArrowRight } from 'lucide-react'
+import { X, Heart } from 'lucide-react'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { preferenceTags, balanceQuestions } from '@/data/tags'
 import TopBar from '@/components/ui/TopBar'
 import ProgressBar from '@/components/ui/ProgressBar'
-import Button from '@/components/ui/Button'
 import PageTransition from '@/components/motion/PageTransition'
 
 type Phase = 'swipe' | 'balance'
+
+const categoryLabels: Record<string, string> = {
+  vibe: '분위기',
+  place: '장소',
+  food: '음식',
+  activity: '활동',
+  style: '스타일',
+  time: '시간대',
+}
 
 export default function PreferencesPage() {
   const router = useRouter()
@@ -68,21 +76,21 @@ export default function PreferencesPage() {
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="취향 스캔" />
-      <ProgressBar progress={2 / 3} className="mx-5" />
+      <ProgressBar progress={3 / 4} className="mx-5" />
 
       <div className="flex-1 px-5 pt-6 pb-6 flex flex-col">
         {phase === 'swipe' ? (
           <>
             <div className="text-center mb-6">
-              <h2 className="text-title-2 text-neutral-900 mb-1">좋아하는 분위기를 골라주세요</h2>
+              <h2 className="text-title-2 text-neutral-900 mb-1">좋아하는 키워드를 골라주세요</h2>
               <p className="text-body-2 text-neutral-500">
-                오른쪽으로 밀면 좋아요, 왼쪽으로 밀면 패스
+                오른쪽 = 좋아요, 왼쪽 = 별로예요
               </p>
             </div>
 
             {/* Card Stack */}
             <div className="relative flex-1 flex items-center justify-center mb-6">
-              <div className="relative w-full max-w-[320px] aspect-[3/4]">
+              <div className="relative w-full max-w-[300px] aspect-[3/4]">
                 {/* Background cards */}
                 {preferenceTags.slice(currentCardIndex + 1, currentCardIndex + 3).reverse().map((tag, i) => (
                   <motion.div
@@ -91,13 +99,10 @@ export default function PreferencesPage() {
                     style={{
                       scale: 0.95 - (1 - i) * 0.03,
                       y: (1 - i) * 8,
+                      background: tag.gradient,
+                      opacity: 0.6,
                     }}
-                  >
-                    <div
-                      className="w-full h-full bg-cover bg-center"
-                      style={{ backgroundImage: `url(${tag.imageUrl})` }}
-                    />
-                  </motion.div>
+                  />
                 ))}
 
                 {/* Current card */}
@@ -119,35 +124,44 @@ export default function PreferencesPage() {
                         rotate: direction === 'right' ? 15 : -15,
                       }}
                       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                      style={{ rotate: dragX * 0.05 }}
+                      style={{ rotate: dragX * 0.05, background: currentTag.gradient }}
                     >
-                      <div
-                        className="w-full h-full bg-cover bg-center relative"
-                        style={{ backgroundImage: `url(${currentTag.imageUrl})` }}
-                      >
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="w-full h-full relative flex flex-col items-center justify-center p-6">
+                        {/* Category badge */}
+                        <div className="absolute top-5 left-5">
+                          <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/90 text-xs font-medium">
+                            {categoryLabels[currentTag.category] || currentTag.category}
+                          </span>
+                        </div>
 
                         {/* Swipe indicators */}
                         <motion.div
-                          className="absolute top-6 left-6 px-4 py-2 rounded-pill border-2 border-red-400 bg-red-400/20"
+                          className="absolute top-5 right-5 px-3 py-1.5 rounded-full border-2 border-red-300 bg-red-400/20"
                           style={{ opacity: Math.min(Math.max(-dragX / 100, 0), 1) }}
                         >
-                          <span className="text-red-400 font-bold text-lg">NOPE</span>
+                          <span className="text-red-300 font-bold text-sm">NOPE</span>
                         </motion.div>
                         <motion.div
-                          className="absolute top-6 right-6 px-4 py-2 rounded-pill border-2 border-green-400 bg-green-400/20"
+                          className="absolute top-5 left-5 px-3 py-1.5 rounded-full border-2 border-green-300 bg-green-400/20"
                           style={{ opacity: Math.min(Math.max(dragX / 100, 0), 1) }}
                         >
-                          <span className="text-green-400 font-bold text-lg">LIKE</span>
+                          <span className="text-green-300 font-bold text-sm">LIKE</span>
                         </motion.div>
 
-                        {/* Tag info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <span className="inline-block px-4 py-2 bg-white/20 backdrop-blur-md rounded-pill text-white font-semibold text-title-2">
-                            {currentTag.label}
-                          </span>
-                        </div>
+                        {/* Main content */}
+                        <motion.span
+                          className="text-6xl mb-4"
+                          animate={{ y: [0, -6, 0] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                        >
+                          {currentTag.emoji}
+                        </motion.span>
+                        <h3 className="text-white font-bold text-2xl mb-2 text-center">
+                          {currentTag.label}
+                        </h3>
+                        <p className="text-white/80 text-sm text-center">
+                          {currentTag.description}
+                        </p>
                       </div>
                     </motion.div>
                   )}
@@ -155,7 +169,8 @@ export default function PreferencesPage() {
                   {direction && currentTag && (
                     <motion.div
                       key={`exit-${currentTag.id}`}
-                      className="absolute inset-0 rounded-3xl overflow-hidden shadow-float"
+                      className="absolute inset-0 rounded-3xl overflow-hidden shadow-float flex items-center justify-center"
+                      style={{ background: currentTag.gradient }}
                       initial={{ x: 0, rotate: 0 }}
                       animate={{
                         x: direction === 'right' ? 400 : -400,
@@ -164,10 +179,7 @@ export default function PreferencesPage() {
                       }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: `url(${currentTag.imageUrl})` }}
-                      />
+                      <span className="text-6xl">{currentTag.emoji}</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -225,21 +237,18 @@ export default function PreferencesPage() {
                       <motion.button
                         key={option.id}
                         whileTap={{ scale: 0.97 }}
+                        whileHover={{ scale: 1.02 }}
                         onClick={() => handleBalanceSelect(option.id)}
                         className="flex-1 relative rounded-3xl overflow-hidden shadow-card group"
+                        style={{ background: option.gradient }}
                       >
-                        <div
-                          className="w-full h-full bg-cover bg-center min-h-[180px]"
-                          style={{ backgroundImage: `url(${option.imageUrl})` }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent group-hover:from-black/70 transition-all" />
-                          <div className="absolute bottom-0 left-0 right-0 p-5">
-                            <span className="text-white font-semibold text-title-2">{option.label}</span>
-                          </div>
+                        <div className="w-full h-full min-h-[160px] flex flex-col items-center justify-center gap-3 p-6">
+                          <span className="text-5xl">{option.emoji}</span>
+                          <span className="text-white font-bold text-xl">{option.label}</span>
                         </div>
                         {i === 0 && (
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-[calc(100%+8px)] z-10">
-                            <span className="text-body-2 font-bold text-neutral-400">VS</span>
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-10">
+                            <span className="text-body-2 font-bold text-neutral-300 bg-white px-3 py-1 rounded-full shadow-sm text-xs">VS</span>
                           </div>
                         )}
                       </motion.button>
@@ -248,14 +257,6 @@ export default function PreferencesPage() {
                 )}
               </AnimatePresence>
             </div>
-
-            {currentBalanceIndex >= balanceQuestions.length - 1 && (
-              <div className="pt-4">
-                <Button fullWidth size="lg" onClick={() => router.push('/vibe')} icon={<ArrowRight className="w-5 h-5" />}>
-                  다음으로
-                </Button>
-              </div>
-            )}
           </motion.div>
         )}
       </div>

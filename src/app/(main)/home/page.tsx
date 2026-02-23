@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, MessageCircle, Plus, Clock, MapPin, Star, Heart, User, Users, ChevronRight } from 'lucide-react'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useCourseStore } from '@/stores/useCourseStore'
+import { getRecommendedCourses, getMatchPercent } from '@/lib/courseRecommender'
 import ModeToggle from '@/components/ui/ModeToggle'
 import Card from '@/components/ui/Card'
 import PageContainer from '@/components/layout/PageContainer'
@@ -44,29 +46,35 @@ const categories: { id: CategoryTab; label: string; icon: typeof Heart; emoji: s
   },
 ]
 
-const categoryRecommendations: Record<CategoryTab, { title: string; subtitle: string; tags: string[]; image: string }[]> = {
-  solo: [
-    { title: '혼자만의 북촌 산책', subtitle: '고즈넉한 골목에서 나를 만나는 시간', tags: ['#한옥', '#북카페', '#감성'], image: 'https://images.unsplash.com/photo-1583167615645-8e72a0c34a96?w=400&h=300&fit=crop' },
-    { title: '성수동 카페 호핑', subtitle: '트렌디한 공간에서 혼자만의 여유', tags: ['#카페', '#빈티지', '#포토존'], image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&h=300&fit=crop' },
-    { title: '혼영 & 혼밥 코스', subtitle: '혼자라서 더 완벽한 미식 투어', tags: ['#맛집', '#영화', '#혼밥'], image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400&h=300&fit=crop' },
-  ],
-  couple: [
-    { title: '성수동 감성 투어', subtitle: '빈티지 감성 가득한 로맨틱 하루', tags: ['#카페', '#빈티지', '#와인'], image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=300&fit=crop' },
-    { title: '한강 선셋 데이트', subtitle: '노을과 함께하는 피크닉', tags: ['#한강', '#피크닉', '#노을'], image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=300&fit=crop' },
-    { title: '이태원 루프탑 나이트', subtitle: '도시 야경 아래 특별한 밤', tags: ['#루프탑', '#야경', '#칵테일'], image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&h=300&fit=crop' },
-  ],
-  friends: [
-    { title: '을지로 먹방 투어', subtitle: '레트로 골목에서 먹고 또 먹기', tags: ['#먹방', '#을지로', '#레트로'], image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop' },
-    { title: '홍대 핫플 탐방', subtitle: '핫한 곳만 쏙쏙 골라서', tags: ['#홍대', '#핫플', '#쇼핑'], image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop' },
-    { title: '연남동 힐링 코스', subtitle: '연트럴파크에서 느긋한 하루', tags: ['#연남동', '#피크닉', '#카페'], image: 'https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=400&h=300&fit=crop' },
-  ],
-}
-
 export default function HomePage() {
   const router = useRouter()
-  const userName = useOnboardingStore((s) => s.userName)
+  const currentUser = useAuthStore((s) => s.currentUser)
+  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe } = useOnboardingStore()
   const { courses, mode, setMode, setActiveCourse } = useCourseStore()
-  const [activeCategory, setActiveCategory] = useState<CategoryTab>('couple')
+  const [activeCategory, setActiveCategory] = useState<CategoryTab>(dateType || 'couple')
+
+  const userName = currentUser?.name || '사용자'
+
+  const userProfile = useMemo(() => ({
+    dateType,
+    likedTags,
+    dislikedTags,
+    mbti,
+    birthday,
+    location,
+    selectedVibe,
+  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe])
+
+  // Filter courses by active category, then sort by recommendation score
+  const categoryCourses = useMemo(() => {
+    const filtered = courses.filter((c) => c.dateType === activeCategory)
+    return getRecommendedCourses(filtered, userProfile)
+  }, [courses, activeCategory, userProfile])
+
+  // Top personalized recommendations (across all categories)
+  const topRecommended = useMemo(() => {
+    return getRecommendedCourses(courses, userProfile).slice(0, 3)
+  }, [courses, userProfile])
 
   const handleCourseClick = (courseId: string) => {
     setActiveCourse(courseId)
@@ -96,7 +104,53 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* Category Tabs - 혼놀족 / 연인 / 친구 */}
+        {/* Personalized Picks */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="py-4"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-primary-500" />
+            <h2 className="text-title-2 text-neutral-900">당신을 위한 추천</h2>
+          </div>
+          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-5 px-5 pb-2 snap-x snap-mandatory">
+            {topRecommended.map((course) => {
+              const matchPercent = getMatchPercent(course, userProfile)
+              return (
+                <motion.div
+                  key={course.id}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleCourseClick(course.id)}
+                  className="flex-shrink-0 w-[200px] snap-start cursor-pointer"
+                >
+                  <div className="rounded-2xl overflow-hidden shadow-card bg-white">
+                    <div className="relative h-[120px]">
+                      <div
+                        className="w-full h-full bg-cover bg-center"
+                        style={{ backgroundImage: `url(${course.heroImageUrl})` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      </div>
+                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
+                        style={{ background: 'linear-gradient(90deg, #FF6B52, #FF8A75)' }}
+                      >
+                        {matchPercent}% 매칭
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <h3 className="text-body-2 font-semibold text-neutral-900 truncate">{course.title}</h3>
+                      <p className="text-[10px] text-neutral-400 mt-0.5">{course.region} · {course.stops.length}곳</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </motion.div>
+
+        {/* Category Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -164,7 +218,7 @@ export default function HomePage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Category Recommendations */}
+        {/* Category Courses (personalized) */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`recs-${activeCategory}`}
@@ -181,36 +235,51 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col gap-3 mb-6">
-              {categoryRecommendations[activeCategory].map((rec, i) => (
-                <motion.div
-                  key={rec.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleCourseClick(courses[i % courses.length].id)}
-                  className="flex gap-4 p-3 rounded-2xl bg-white shadow-card cursor-pointer hover:shadow-card-hover transition-shadow"
-                >
-                  <div
-                    className="w-20 h-20 rounded-2xl bg-cover bg-center flex-shrink-0"
-                    style={{ backgroundImage: `url(${rec.image})` }}
-                  />
-                  <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h3 className="text-body-1 font-semibold text-neutral-900 truncate">{rec.title}</h3>
-                    <p className="text-caption text-neutral-500 mt-0.5">{rec.subtitle}</p>
-                    <div className="flex gap-1.5 mt-2 flex-wrap">
-                      {rec.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 bg-primary-50 text-primary-500 text-[10px] rounded-pill font-medium"
+              {categoryCourses.length > 0 ? (
+                categoryCourses.map((course, i) => {
+                  const matchPercent = getMatchPercent(course, userProfile)
+                  return (
+                    <motion.div
+                      key={course.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleCourseClick(course.id)}
+                      className="flex gap-4 p-3 rounded-2xl bg-white shadow-card cursor-pointer hover:shadow-card-hover transition-shadow"
+                    >
+                      <div
+                        className="w-20 h-20 rounded-2xl bg-cover bg-center flex-shrink-0 relative"
+                        style={{ backgroundImage: `url(${course.heroImageUrl})` }}
+                      >
+                        <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white"
+                          style={{ background: 'linear-gradient(90deg, #FF6B52, #FF8A75)' }}
                         >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                          {matchPercent}%
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <h3 className="text-body-1 font-semibold text-neutral-900 truncate">{course.title}</h3>
+                        <p className="text-caption text-neutral-500 mt-0.5">{course.description.slice(0, 30)}...</p>
+                        <div className="flex gap-1.5 mt-2 flex-wrap">
+                          {course.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 bg-primary-50 text-primary-500 text-[10px] rounded-pill font-medium"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )
+                })
+              ) : (
+                <div className="text-center py-8 text-neutral-400 text-body-2">
+                  이 카테고리에 맞는 코스를 준비 중이에요
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

@@ -48,14 +48,14 @@ export default function TypePage() {
 
   const handleNext = () => {
     if (selected) {
-      router.push('/preferences')
+      router.push('/profile-details')
     }
   }
 
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar showBack={true} onBack={() => router.push('/')} />
-      <ProgressBar progress={1 / 3} className="mx-5" />
+      <ProgressBar progress={1 / 4} className="mx-5" />
 
       <div className="flex-1 px-5 pt-8 pb-6 flex flex-col">
         <motion.div

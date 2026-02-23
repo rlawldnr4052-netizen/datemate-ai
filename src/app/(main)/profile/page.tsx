@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ChevronRight, Bell, MapPin, Palette, RotateCcw, Heart } from 'lucide-react'
+import { ChevronRight, Bell, MapPin, Palette, RotateCcw, Heart, LogOut, Calendar, Brain } from 'lucide-react'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useQuestStore } from '@/stores/useQuestStore'
 import { preferenceTags } from '@/data/tags'
+import { mbtiOptions } from '@/data/mbti'
 import TopBar from '@/components/ui/TopBar'
 import Card from '@/components/ui/Card'
 import Tag from '@/components/ui/Tag'
@@ -21,15 +23,27 @@ const dateTypeLabels = {
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { userName, dateType, likedTags, reset } = useOnboardingStore()
+  const { currentUser, logout } = useAuthStore()
+  const { dateType, likedTags, mbti, birthday, location, reset } = useOnboardingStore()
   const { totalCourses, totalPlaces, totalShortForms } = useQuestStore()
+
+  const userName = currentUser?.name || '사용자'
 
   const likedTagLabels = preferenceTags
     .filter((t) => likedTags.includes(t.id))
     .map((t) => t.label)
 
+  const mbtiInfo = mbti ? mbtiOptions.find((o) => o.type === mbti) : null
+
+  const age = birthday ? (2026 - Number(birthday.split('-')[0])) : null
+
   const handleReset = () => {
     reset()
+    router.push('/type')
+  }
+
+  const handleLogout = () => {
+    logout()
     router.push('/')
   }
 
@@ -62,12 +76,51 @@ export default function ProfilePage() {
             </div>
             <div>
               <h1 className="text-title-1 text-neutral-900">{userName}님</h1>
-              {dateType && (
-                <span className="inline-block mt-1 px-3 py-1 bg-primary-50 text-primary-500 text-caption font-medium rounded-pill">
-                  {dateTypeLabels[dateType]}
-                </span>
-              )}
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                {dateType && (
+                  <span className="inline-block px-3 py-1 bg-primary-50 text-primary-500 text-caption font-medium rounded-pill">
+                    {dateTypeLabels[dateType]}
+                  </span>
+                )}
+                {mbtiInfo && (
+                  <span className="inline-block px-3 py-1 bg-violet-50 text-violet-500 text-caption font-medium rounded-pill">
+                    {mbtiInfo.emoji} {mbtiInfo.type}
+                  </span>
+                )}
+              </div>
             </div>
+          </motion.div>
+
+          {/* Profile Details */}
+          <motion.div variants={staggerItem} className="mb-6">
+            <Card padding="sm">
+              <div className="flex flex-col gap-3 py-2 px-2">
+                {mbtiInfo && (
+                  <div className="flex items-center gap-3">
+                    <Brain className="w-4 h-4 text-violet-400" />
+                    <span className="text-body-2 text-neutral-600">
+                      {mbtiInfo.type} · {mbtiInfo.label} · {mbtiInfo.description}
+                    </span>
+                  </div>
+                )}
+                {birthday && age && (
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4 text-primary-400" />
+                    <span className="text-body-2 text-neutral-600">
+                      {birthday.replace(/-/g, '.')} ({age}세)
+                    </span>
+                  </div>
+                )}
+                {location && (
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-green-400" />
+                    <span className="text-body-2 text-neutral-600">
+                      {location.city} {location.district}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </Card>
           </motion.div>
 
           {/* Taste Tags */}
@@ -136,14 +189,21 @@ export default function ProfilePage() {
             </Card>
           </motion.div>
 
-          {/* Reset */}
-          <motion.div variants={staggerItem} className="pb-8">
+          {/* Actions */}
+          <motion.div variants={staggerItem} className="pb-8 flex flex-col gap-2">
             <button
               onClick={handleReset}
               className="w-full flex items-center justify-center gap-2 py-4 text-body-2 text-neutral-400 hover:text-neutral-600 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
               온보딩 다시하기
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 py-4 text-body-2 text-red-400 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              로그아웃
             </button>
           </motion.div>
         </StaggerChildren>
