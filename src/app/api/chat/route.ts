@@ -3,6 +3,23 @@ import { chatWithGemini, type GeminiMessage } from '@/lib/api/gemini'
 import { searchPlacesByKeyword } from '@/lib/api/kakao'
 import { getChatSystemPrompt } from '@/lib/prompts'
 
+// AI 응답에서 외국어 문자를 제거하는 후처리 함수
+function cleanForeignCharacters(text: string): string {
+  // course_json 블록은 보존 (영어 key 이름 포함)
+  const jsonBlocks: string[] = []
+  const cleaned = text.replace(/```course_json[\s\S]*?```/g, (match) => {
+    jsonBlocks.push(match)
+    return `__JSON_BLOCK_${jsonBlocks.length - 1}__`
+  })
+
+  // 허용: 한글, 숫자, 한국어 문장부호, 공백, 이모지, 줄바꿈, 기본 기호
+  // 제거: 태국어, 베트남어 톤마크, 한자, 일본어, 아랍어 등
+  const result = cleaned.replace(/[\u0E00-\u0E7F\u0300-\u036F\u0250-\u02AF\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\u0600-\u06FF\u0900-\u097F\u0400-\u04FF]/g, '')
+
+  // JSON 블록 복원
+  return result.replace(/__JSON_BLOCK_(\d+)__/g, (_, idx) => jsonBlocks[Number(idx)])
+}
+
 // 추천 요청인지 판별하는 키워드
 const RECOMMENDATION_KEYWORDS = [
   '추천', '맛집', '카페', '레스토랑', '식당', '밥', '먹',
@@ -51,16 +68,41 @@ export async function POST(req: NextRequest) {
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === 'user')
     const searchQuery = lastUserMessage ? extractSearchQuery(lastUserMessage.content, userProfile?.location) : null
 
-    // 추천 요청이면 카카오 API로 실제 장소 검색
+    // 추천 요청이면 카카오 API로 실제 장소 검색 (코스용으로 다양한 카테고리)
     let placeContext = ''
     if (searchQuery && process.env.KAKAO_REST_API_KEY) {
       try {
-        const places = await searchPlacesByKeyword(searchQuery, { size: 15 })
-        if (places.length > 0) {
-          const placeList = places.map((p, i) =>
+        // 메인 검색어로 검색
+        const mainPlaces = await searchPlacesByKeyword(searchQuery, { size: 10 })
+
+        // 코스를 위해 추가 카테고리도 검색 (카페, 관광지 등)
+        const region = searchQuery.split(' ')[0] // 지역명 추출
+        const extraSearches = []
+        if (region) {
+          extraSearches.push(
+            searchPlacesByKeyword(`${region} 카페`, { size: 5 }).catch(() => []),
+            searchPlacesByKeyword(`${region} 관광지`, { size: 5 }).catch(() => []),
+            searchPlacesByKeyword(`${region} 디저트`, { size: 5 }).catch(() => []),
+          )
+        }
+        const extraResults = await Promise.all(extraSearches)
+        const allExtraPlaces = extraResults.flat()
+
+        // 중복 제거
+        const seenNames = new Set(mainPlaces.map(p => p.place_name))
+        const uniqueExtras = allExtraPlaces.filter(p => {
+          if (seenNames.has(p.place_name)) return false
+          seenNames.add(p.place_name)
+          return true
+        })
+
+        const allPlaces = [...mainPlaces, ...uniqueExtras]
+
+        if (allPlaces.length > 0) {
+          const placeList = allPlaces.map((p, i) =>
             `${i + 1}. ${p.place_name} | 카테고리: ${p.category_name} | 주소: ${p.road_address_name || p.address_name}${p.phone ? ` | 전화: ${p.phone}` : ''}`
           ).join('\n')
-          placeContext = `\n\n## 카카오 맵 실제 검색 결과 (검색어: "${searchQuery}")\n아래는 실제로 존재하는 가게들이야. 반드시 이 목록에서만 골라서 추천해줘:\n${placeList}\n\n위 목록에서 사용자 취향에 맞는 곳을 3~5개 골라서, 각 가게의 이름과 추천 이유를 구체적으로 설명해줘.`
+          placeContext = `\n\n## 카카오 맵 실제 검색 결과\n아래는 "${region}" 지역의 실제 가게들이야. 반드시 이 목록에서만 골라서 추천해줘:\n${placeList}\n\n중요: 단순히 가게 목록만 나열하지 말고, 위 목록에서 다양한 카테고리(카페, 식당, 관광지, 디저트 등)를 골라서 시간 순서대로 **완전한 데이트 코스**를 만들어줘! 각 장소의 방문 시간, 추천 메뉴, 이동 방법을 포함해줘.`
         }
       } catch (e) {
         console.error('Kakao search error in chat:', e)
@@ -85,7 +127,8 @@ export async function POST(req: NextRequest) {
       content: m.content,
     }))
 
-    const response = await chatWithGemini(geminiMessages, systemPrompt)
+    const rawResponse = await chatWithGemini(geminiMessages, systemPrompt)
+    const response = cleanForeignCharacters(rawResponse)
 
     return NextResponse.json({ message: response })
   } catch (error) {
