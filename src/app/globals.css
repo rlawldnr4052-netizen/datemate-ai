@@ -2,26 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* ── Primary (Coral) ── */
+    --color-primary-50: #FFF5F3;
+    --color-primary-100: #FFE8E3;
+    --color-primary-200: #FFD0C7;
+    --color-primary-300: #FFAFA0;
+    --color-primary-400: #FF8A75;
+    --color-primary-500: #FF6B52;
+    --color-primary-600: #E8523A;
+    --color-primary-700: #C43D28;
+
+    /* ── Secondary (Rose) ── */
+    --color-secondary-50: #FFF5F7;
+    --color-secondary-100: #FFE8ED;
+    --color-secondary-300: #FFB3C4;
+    --color-secondary-500: #FF6B8A;
+
+    /* ── Accent (Peach/Amber) ── */
+    --color-accent-100: #FFF3E0;
+    --color-accent-300: #FFCC80;
+    --color-accent-500: #FFA726;
+
+    /* ── Neutrals (Warm Gray) ── */
+    --color-neutral-0: #FFFFFF;
+    --color-neutral-50: #FFFBF8;
+    --color-neutral-100: #F7F3F0;
+    --color-neutral-200: #EDE8E4;
+    --color-neutral-300: #D6CFC9;
+    --color-neutral-400: #A9A29B;
+    --color-neutral-500: #7D756E;
+    --color-neutral-600: #5C554F;
+    --color-neutral-700: #3D3833;
+    --color-neutral-800: #2A2622;
+    --color-neutral-900: #1A1715;
+
+    /* ── Semantic ── */
+    --color-success: #4CAF50;
+    --color-warning: #FF9800;
+    --color-error: #FF5252;
+
+    /* ── Surfaces ── */
+    --color-bg: var(--color-neutral-0);
+    --color-bg-subtle: var(--color-neutral-50);
+    --color-card: var(--color-neutral-0);
+
+    /* ── Text ── */
+    --color-text-primary: var(--color-neutral-900);
+    --color-text-secondary: var(--color-neutral-500);
+    --color-text-muted: var(--color-neutral-400);
   }
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-primary-200);
+  color: var(--color-neutral-900);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
   }
 }

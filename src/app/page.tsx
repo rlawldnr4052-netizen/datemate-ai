@@ -1,101 +1,162 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useOnboardingStore } from '@/stores/useOnboardingStore'
+import { Heart, Sparkles } from 'lucide-react'
+
+export default function SplashPage() {
+  const router = useRouter()
+  const [showContent, setShowContent] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setHydrated(true)
+    const timer = setTimeout(() => setShowContent(true), 600)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    const isComplete = useOnboardingStore.getState().isComplete
+    if (isComplete) {
+      const timer = setTimeout(() => router.push('/home'), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [hydrated, router])
+
+  const isComplete = hydrated ? useOnboardingStore.getState().isComplete : false
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      style={{ background: 'linear-gradient(to bottom, #ffffff, #FFF5F3, #FFF5F7)' }}
+    >
+      {/* Background decorations */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${60 + i * 40}px`,
+              height: `${60 + i * 40}px`,
+              background: i % 2 === 0
+                ? 'radial-gradient(circle, #FFE8E3 0%, transparent 70%)'
+                : 'radial-gradient(circle, #FFD0C7 0%, transparent 70%)',
+              left: `${10 + i * 15}%`,
+              top: `${20 + (i % 3) * 25}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              scale: [1, 1.1, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 3 + i * 0.5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: i * 0.3,
+            }}
+          />
+        ))}
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <motion.div className="relative z-10 flex flex-col items-center gap-8 px-8">
+        {/* Logo */}
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
+          className="relative"
+        >
+          <div className="w-24 h-24 rounded-3xl flex items-center justify-center shadow-float"
+            style={{ background: 'linear-gradient(135deg, #FF8A75, #E8523A)' }}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Heart className="w-12 h-12 text-white" fill="white" />
+          </div>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.6, type: 'spring' }}
+            className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
+            style={{ background: '#FFA726' }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+            <Sparkles className="w-4 h-4 text-white" />
+          </motion.div>
+        </motion.div>
+
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="text-center"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.3, color: '#1A1715', marginBottom: '8px' }}>
+            데이트메이트
+          </h1>
+          <p style={{ fontSize: '1rem', lineHeight: 1.5, color: '#7D756E' }}>
+            AI가 만드는 완벽한 데이트 코스
+          </p>
+        </motion.div>
+
+        {/* CTA */}
+        <AnimatePresence>
+          {showContent && !isComplete && (
+            <motion.button
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ delay: 0.3, type: 'spring', stiffness: 200, damping: 25 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push('/type')}
+              style={{
+                marginTop: '16px',
+                padding: '16px 40px',
+                background: 'linear-gradient(90deg, #FF6B52, #FF8A75)',
+                color: 'white',
+                fontSize: '0.9375rem',
+                fontWeight: 600,
+                borderRadius: '9999px',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 12px 40px rgba(255, 107, 82, 0.3)',
+              }}
+            >
+              시작하기
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* Loading indicator for returning users */}
+        {isComplete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex gap-1.5 mt-4"
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF8A75' }}
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Bottom tagline */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        style={{ position: 'absolute', bottom: 40, fontSize: '0.75rem', color: '#A9A29B' }}
+      >
+        결정 피로는 끝, AI가 코스를 결정합니다
+      </motion.p>
     </div>
-  );
+  )
 }
