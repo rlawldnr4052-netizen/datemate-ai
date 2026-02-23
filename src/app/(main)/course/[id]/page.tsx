@@ -53,7 +53,7 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-[100] flex items-end justify-center"
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -65,7 +65,7 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden safe-bottom"
+        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle */}
@@ -146,13 +146,32 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
           )}
 
           {/* Estimated time */}
-          <div className="flex items-center gap-2 mb-5">
+          <div className="flex items-center gap-2 mb-4">
             <Clock className="w-4 h-4 text-neutral-400" />
             <span className="text-caption text-neutral-500">예상 소요시간 {place.estimatedTime}분</span>
           </div>
 
+          {/* Review link */}
+          <a
+            href={kakaoMapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block mb-4 p-3 bg-neutral-50 rounded-2xl"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-accent-500 fill-accent-500" />
+                <span className="text-body-2 font-semibold text-neutral-800">리뷰 및 사진 보기</span>
+              </div>
+              <span className="text-caption text-primary-500 font-medium flex items-center gap-1">
+                카카오맵 <ExternalLink className="w-3 h-3" />
+              </span>
+            </div>
+            <p className="text-caption text-neutral-400 mt-1">방문자 리뷰, 블로그 후기, 사진을 확인해보세요</p>
+          </a>
+
           {/* Action buttons */}
-          <div className="flex gap-3 pb-4">
+          <div className="flex gap-3 pb-8">
             <a
               href={kakaoMapUrl}
               target="_blank"
@@ -160,19 +179,20 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
               className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#FEE500] text-neutral-900 rounded-2xl text-body-2 font-bold"
             >
               <ExternalLink className="w-4 h-4" />
-              카카오맵에서 보기
+              카카오맵
             </a>
-            {kakaoData?.x && kakaoData?.y && (
-              <a
-                href={`https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${kakaoData.y},${kakaoData.x}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-primary-500 text-white rounded-2xl text-body-2 font-bold"
-              >
-                <Navigation className="w-4 h-4" />
-                길찾기
-              </a>
-            )}
+            <a
+              href={kakaoData?.x && kakaoData?.y
+                ? `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${kakaoData.y},${kakaoData.x}`
+                : `https://map.kakao.com/link/search/${encodeURIComponent(place.name)}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-primary-500 text-white rounded-2xl text-body-2 font-bold"
+            >
+              <Navigation className="w-4 h-4" />
+              길찾기
+            </a>
           </div>
         </div>
       </motion.div>
