@@ -13,9 +13,21 @@ export default function SplashPage() {
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setHydrated(true)
     const timer = setTimeout(() => setShowContent(true), 600)
     return () => clearTimeout(timer)
+  }, [])
+
+  // persist hydration 대기
+  useEffect(() => {
+    const check = () => {
+      if (useAuthStore.persist.hasHydrated() && useOnboardingStore.persist.hasHydrated()) {
+        setHydrated(true)
+      }
+    }
+    check()
+    const unsub1 = useAuthStore.persist.onFinishHydration(check)
+    const unsub2 = useOnboardingStore.persist.onFinishHydration(check)
+    return () => { unsub1(); unsub2() }
   }, [])
 
   useEffect(() => {

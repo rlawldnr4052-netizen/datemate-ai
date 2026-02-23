@@ -10,12 +10,32 @@ type GuardType = 'auth' | 'onboarding' | 'main'
 export function useAuthGuard(type: GuardType) {
   const router = useRouter()
   const [ready, setReady] = useState(false)
-  const hasHydrated = useAuthStore((s) => s._hasHydrated)
+  const [hydrated, setHydrated] = useState(false)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const isComplete = useOnboardingStore((s) => s.isComplete)
 
+  // Zustand persist hydration 대기 (두 스토어 모두)
   useEffect(() => {
-    if (!hasHydrated) return
+    const check = () => {
+      if (useAuthStore.persist.hasHydrated() && useOnboardingStore.persist.hasHydrated()) {
+        setHydrated(true)
+      }
+    }
+
+    check()
+
+    const unsub1 = useAuthStore.persist.onFinishHydration(check)
+    const unsub2 = useOnboardingStore.persist.onFinishHydration(check)
+
+    return () => {
+      unsub1()
+      unsub2()
+    }
+  }, [])
+
+  // hydration 완료 후 라우팅 결정
+  useEffect(() => {
+    if (!hydrated) return
 
     if (type === 'auth') {
       if (isAuthenticated && isComplete) {
@@ -47,7 +67,7 @@ export function useAuthGuard(type: GuardType) {
     }
 
     setReady(true)
-  }, [type, router, hasHydrated, isAuthenticated, isComplete])
+  }, [hydrated, type, router, isAuthenticated, isComplete])
 
   return ready
 }

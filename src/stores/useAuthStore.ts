@@ -6,7 +6,6 @@ interface AuthState {
   currentUser: User | null
   isAuthenticated: boolean
   users: User[]
-  _hasHydrated: boolean
   login: (email: string, password: string) => { success: boolean; error?: string }
   signup: (name: string, email: string, password: string) => { success: boolean; error?: string }
   logout: () => void
@@ -18,7 +17,6 @@ export const useAuthStore = create<AuthState>()(
       currentUser: null,
       isAuthenticated: false,
       users: [],
-      _hasHydrated: false,
 
       login: (email, password) => {
         const user = get().users.find(
@@ -55,18 +53,6 @@ export const useAuthStore = create<AuthState>()(
         set({ currentUser: null, isAuthenticated: false })
       },
     }),
-    {
-      name: 'datemate-auth',
-      onRehydrateStorage: () => {
-        return () => {
-          useAuthStore.setState({ _hasHydrated: true })
-        }
-      },
-      partialize: (state) => ({
-        currentUser: state.currentUser,
-        isAuthenticated: state.isAuthenticated,
-        users: state.users,
-      }),
-    },
+    { name: 'datemate-auth' },
   ),
 )

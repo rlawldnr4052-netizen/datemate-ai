@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Heart, ArrowRight } from 'lucide-react'
@@ -12,10 +12,23 @@ import PageTransition from '@/components/motion/PageTransition'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login, _hasHydrated } = useAuthStore()
+  const login = useAuthStore((s) => s.login)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [storeReady, setStoreReady] = useState(false)
+
+  useEffect(() => {
+    const check = () => {
+      if (useAuthStore.persist.hasHydrated() && useOnboardingStore.persist.hasHydrated()) {
+        setStoreReady(true)
+      }
+    }
+    check()
+    const unsub1 = useAuthStore.persist.onFinishHydration(check)
+    const unsub2 = useOnboardingStore.persist.onFinishHydration(check)
+    return () => { unsub1(); unsub2() }
+  }, [])
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -28,18 +41,8 @@ export default function LoginPage() {
   const handleSubmit = () => {
     if (!validate()) return
 
-    if (!_hasHydrated) {
+    if (!storeReady) {
       setErrors({ email: '잠시만 기다려주세요...' })
-      // 잠시 후 재시도
-      setTimeout(() => {
-        const result = useAuthStore.getState().login(email.trim(), password)
-        if (result.success) {
-          const isComplete = useOnboardingStore.getState().isComplete
-          router.push(isComplete ? '/home' : '/type')
-        } else {
-          setErrors({ email: result.error || '로그인에 실패했습니다' })
-        }
-      }, 300)
       return
     }
 
