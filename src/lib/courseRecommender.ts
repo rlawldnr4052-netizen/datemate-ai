@@ -1,5 +1,5 @@
 import { Course } from '@/types/course'
-import { DateType, MBTIType, KoreanRegion, Vibe } from '@/types/onboarding'
+import { DateType, MBTIType, KoreanRegion, Vibe, BudgetLevel } from '@/types/onboarding'
 import { preferenceTags } from '@/data/tags'
 
 interface UserProfile {
@@ -10,6 +10,7 @@ interface UserProfile {
   birthday: string | null
   location: KoreanRegion | null
   selectedVibe: Vibe | null
+  selectedBudget: BudgetLevel | null
 }
 
 const compatibleVibes: Record<Vibe, Vibe[]> = {
@@ -35,6 +36,12 @@ const mbtiVibePrefs: Record<string, Vibe[]> = {
   N: ['emotional', 'hip'],
   // Sensing types prefer practical/well-known
   S: ['foodie', 'chill'],
+}
+
+function getCourseBudgetLevel(totalCost: number): BudgetLevel {
+  if (totalCost < 30000) return 'budget'
+  if (totalCost < 70000) return 'moderate'
+  return 'premium'
 }
 
 function getTagLabels(tagIds: string[]): string[] {
@@ -97,6 +104,21 @@ export function scoreCourse(course: Course, profile: UserProfile): number {
     }
   }
 
+  // 6. Budget match (12 bonus points)
+  if (profile.selectedBudget && (course.totalEstimatedCost ?? 0) > 0) {
+    const courseLevel = getCourseBudgetLevel(course.totalEstimatedCost ?? 0)
+    if (courseLevel === profile.selectedBudget) {
+      score += 12
+    } else {
+      const levels: BudgetLevel[] = ['budget', 'moderate', 'premium']
+      const prefIdx = levels.indexOf(profile.selectedBudget)
+      const courseIdx = levels.indexOf(courseLevel)
+      if (Math.abs(prefIdx - courseIdx) === 1) {
+        score += 4
+      }
+    }
+  }
+
   return Math.max(score, 0)
 }
 
@@ -109,6 +131,6 @@ export function getRecommendedCourses(courses: Course[], profile: UserProfile): 
 
 export function getMatchPercent(course: Course, profile: UserProfile): number {
   const score = scoreCourse(course, profile)
-  const maxScore = 100
+  const maxScore = profile.selectedBudget ? 112 : 100
   return Math.min(Math.round((score / maxScore) * 100), 99)
 }

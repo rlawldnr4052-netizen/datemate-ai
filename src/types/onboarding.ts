@@ -42,3 +42,14 @@ export interface VibeOption {
   gradient: string
   description: string
 }
+
+export type BudgetLevel = 'budget' | 'moderate' | 'premium'
+
+export interface BudgetOption {
+  id: BudgetLevel
+  label: string
+  emoji: string
+  gradient: string
+  description: string
+  range: string
+}

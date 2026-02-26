@@ -76,7 +76,7 @@ export default function PreferencesPage() {
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="취향 스캔" />
-      <ProgressBar progress={3 / 4} className="mx-5" />
+      <ProgressBar progress={3 / 5} className="mx-5" />
 
       <div className="flex-1 px-5 pt-6 pb-6 flex flex-col">
         {phase === 'swipe' ? (

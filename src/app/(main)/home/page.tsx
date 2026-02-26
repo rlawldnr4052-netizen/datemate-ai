@@ -3,12 +3,14 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark } from 'lucide-react'
+import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { getRecommendedCourses, getMatchPercent } from '@/lib/courseRecommender'
 import { fetchWeather, WeatherData } from '@/lib/api/weather'
+import { formatCost, BUDGET_RANGES } from '@/lib/formatCost'
+import { BudgetLevel } from '@/types/onboarding'
 import PageTransition from '@/components/motion/PageTransition'
 
 type CategoryTab = 'solo' | 'couple' | 'friends'
@@ -22,8 +24,8 @@ const categories: { id: CategoryTab; label: string }[] = [
 export default function HomePage() {
   const router = useRouter()
   const currentUser = useAuthStore((s) => s.currentUser)
-  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe } = useOnboardingStore()
-  const { courses, mode, setActiveCourse, savedCourseIds, toggleSaveCourse } = useCourseStore()
+  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget } = useOnboardingStore()
+  const { courses, mode, setActiveCourse, savedCourseIds, toggleSaveCourse, budgetFilter, setBudgetFilter } = useCourseStore()
   const [activeCategory, setActiveCategory] = useState<CategoryTab>(dateType || 'couple')
   const [weather, setWeather] = useState<WeatherData | null>(null)
 
@@ -41,13 +43,19 @@ export default function HomePage() {
   const userName = currentUser?.name || '사용자'
 
   const userProfile = useMemo(() => ({
-    dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe,
-  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe])
+    dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget,
+  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget])
 
   const categoryCourses = useMemo(() => {
-    const filtered = courses.filter((c) => c.dateType === activeCategory)
+    let filtered = courses.filter((c) => c.dateType === activeCategory)
+    if (budgetFilter) {
+      const { min, max } = BUDGET_RANGES[budgetFilter]
+      filtered = filtered.filter(
+        (c) => (c.totalEstimatedCost ?? 0) >= min && (c.totalEstimatedCost ?? 0) < max
+      )
+    }
     return getRecommendedCourses(filtered, userProfile)
-  }, [courses, activeCategory, userProfile])
+  }, [courses, activeCategory, budgetFilter, userProfile])
 
   const handleCourseClick = (courseId: string) => {
     setActiveCourse(courseId)
@@ -122,7 +130,7 @@ export default function HomePage() {
           </button>
         </div>
 
-        <div className="flex gap-2 mb-5">
+        <div className="flex gap-2 mb-3">
           {categories.map((c) => {
             const isActive = activeCategory === c.id
             return (
@@ -139,6 +147,34 @@ export default function HomePage() {
               </button>
             )
           })}
+        </div>
+
+        {/* 예산 필터 */}
+        <div className="flex gap-2 mb-5">
+          <button
+            onClick={() => setBudgetFilter(null)}
+            className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
+              !budgetFilter
+                ? 'bg-neutral-800 text-white'
+                : 'bg-white text-neutral-400 border border-neutral-100'
+            }`}
+          >
+            전체
+          </button>
+          {(['budget', 'moderate', 'premium'] as BudgetLevel[]).map((b) => (
+            <button
+              key={b}
+              onClick={() => setBudgetFilter(budgetFilter === b ? null : b)}
+              className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all flex items-center gap-1 ${
+                budgetFilter === b
+                  ? 'bg-neutral-800 text-white'
+                  : 'bg-white text-neutral-400 border border-neutral-100'
+              }`}
+            >
+              <Wallet className="w-3 h-3" />
+              {BUDGET_RANGES[b].label}
+            </button>
+          ))}
         </div>
 
         {/* 코스 리스트 */}
@@ -194,6 +230,12 @@ export default function HomePage() {
                             <MapPin className="w-3 h-3" />
                             {course.stops.length}곳
                           </span>
+                          {(course.totalEstimatedCost ?? 0) > 0 && (
+                            <span className="flex items-center gap-1 text-primary-500 font-medium">
+                              <Wallet className="w-3 h-3" />
+                              {formatCost(course.totalEstimatedCost ?? 0)}
+                            </span>
+                          )}
                         </div>
                       </div>
 

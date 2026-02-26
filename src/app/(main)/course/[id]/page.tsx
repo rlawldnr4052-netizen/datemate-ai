@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2 } from 'lucide-react'
+import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2, Wallet } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { useQuestStore } from '@/stores/useQuestStore'
 import TopBar from '@/components/ui/TopBar'
@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button'
 import Tag from '@/components/ui/Tag'
 import PageTransition from '@/components/motion/PageTransition'
 import { Place, CourseStop } from '@/types/course'
+import { formatCost } from '@/lib/formatCost'
 import {
   NaverTransportMode,
   buildNaverDirectionsUrl,
@@ -237,6 +238,14 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
             <span className="text-caption text-neutral-500">예상 소요시간 {place.estimatedTime}분</span>
           </div>
 
+          {/* Estimated cost */}
+          {(place.estimatedCost ?? 0) > 0 && (
+            <div className="flex items-center gap-2 mb-4">
+              <Wallet className="w-4 h-4 text-primary-400" />
+              <span className="text-caption text-neutral-500">1인 예상 비용 {formatCost(place.estimatedCost ?? 0)}</span>
+            </div>
+          )}
+
           {/* Review link */}
           <a
             href={naverMapUrl}
@@ -356,6 +365,9 @@ export default function CourseDetailPage() {
             <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{Math.floor(course.totalDuration / 60)}시간</span>
             <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{course.stops.length}곳</span>
             <span className="flex items-center gap-1"><Star className="w-4 h-4" />{course.totalDistance}km</span>
+            {(course.totalEstimatedCost ?? 0) > 0 && (
+              <span className="flex items-center gap-1"><Wallet className="w-4 h-4" />{formatCost(course.totalEstimatedCost ?? 0)}</span>
+            )}
           </div>
         </div>
       </div>
@@ -424,6 +436,15 @@ export default function CourseDetailPage() {
                     <p className="text-body-2 text-neutral-500 mb-3 line-clamp-2">
                       {stop.place.description}
                     </p>
+
+                    {(stop.place.estimatedCost ?? 0) > 0 && (
+                      <div className="flex items-center gap-1 mb-2">
+                        <Wallet className="w-3.5 h-3.5 text-primary-400" />
+                        <span className="text-body-2 font-medium text-primary-500">
+                          {formatCost(stop.place.estimatedCost ?? 0)}
+                        </span>
+                      </div>
+                    )}
 
                     {stop.place.recommendedMenus.length > 0 && (
                       <div className="mb-2">

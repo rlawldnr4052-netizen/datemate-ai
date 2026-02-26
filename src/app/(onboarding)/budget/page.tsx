@@ -4,33 +4,33 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
-import { vibeOptions } from '@/data/tags'
-import { Vibe } from '@/types/onboarding'
+import { budgetOptions } from '@/data/tags'
+import { BudgetLevel } from '@/types/onboarding'
 import TopBar from '@/components/ui/TopBar'
 import ProgressBar from '@/components/ui/ProgressBar'
 import Button from '@/components/ui/Button'
 import PageTransition from '@/components/motion/PageTransition'
 
-export default function VibePage() {
+export default function BudgetPage() {
   const router = useRouter()
-  const { selectedVibe, setVibe } = useOnboardingStore()
-  const [selected, setSelected] = useState<Vibe | null>(selectedVibe)
+  const { selectedBudget, setBudget } = useOnboardingStore()
+  const [selected, setSelected] = useState<BudgetLevel | null>(selectedBudget)
 
-  const handleSelect = (vibe: Vibe) => {
-    setSelected(vibe)
-    setVibe(vibe)
+  const handleSelect = (budget: BudgetLevel) => {
+    setSelected(budget)
+    setBudget(budget)
   }
 
   const handleNext = () => {
     if (selected) {
-      router.push('/budget')
+      router.push('/complete')
     }
   }
 
   return (
     <PageTransition className="min-h-screen flex flex-col">
-      <TopBar title="무드 선택" />
-      <ProgressBar progress={4 / 5} className="mx-5" />
+      <TopBar title="예산 설정" />
+      <ProgressBar progress={5 / 5} className="mx-5" />
 
       <div className="flex-1 px-5 pt-8 pb-6 flex flex-col">
         <motion.div
@@ -38,36 +38,41 @@ export default function VibePage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-title-1 text-neutral-900 mb-2">
-            오늘의 무드는?
+            예산은 어느 정도?
           </h1>
           <p className="text-body-2 text-neutral-500 mb-6">
-            원하는 분위기를 선택하면 맞춤 코스를 만들어 드려요
+            1인 기준 예산에 맞는 코스를 추천해 드려요
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-3 flex-1">
-          {vibeOptions.map((vibe, i) => {
-            const isSelected = selected === vibe.id
-
+        <div className="flex flex-col gap-3 flex-1">
+          {budgetOptions.map((option, i) => {
+            const isSelected = selected === option.id
             return (
               <motion.button
-                key={vibe.id}
+                key={option.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ scale: 1.03 }}
-                onClick={() => handleSelect(vibe.id)}
+                transition={{ delay: i * 0.1, type: 'spring', stiffness: 300, damping: 25 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => handleSelect(option.id)}
                 className={`
-                  relative aspect-square rounded-3xl overflow-hidden transition-all duration-200
+                  relative rounded-3xl overflow-hidden transition-all duration-200
                   ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 shadow-card-hover' : 'shadow-card'}
                 `}
               >
-                <div className="absolute inset-0" style={{ background: vibe.gradient, opacity: 0.9 }} />
-                <div className="relative h-full flex flex-col items-center justify-center gap-2 p-4">
-                  <span className="text-4xl">{vibe.emoji}</span>
-                  <span className="text-white font-bold text-title-2">{vibe.label}</span>
-                  <span className="text-white/80 text-caption">{vibe.description}</span>
+                <div
+                  className="flex items-center gap-4 p-5"
+                  style={{ background: option.gradient, opacity: 0.9 }}
+                >
+                  <span className="text-3xl">{option.emoji}</span>
+                  <div className="flex-1 text-left">
+                    <span className="text-white font-bold text-title-2 block">{option.label}</span>
+                    <span className="text-white/80 text-caption block mt-0.5">{option.description}</span>
+                  </div>
+                  <span className="text-white font-bold text-body-2 bg-white/20 px-3 py-1.5 rounded-full">
+                    {option.range}
+                  </span>
                 </div>
                 {isSelected && (
                   <motion.div

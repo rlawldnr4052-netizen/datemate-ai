@@ -17,6 +17,7 @@ interface UserProfileForChat {
   birthday: string | null
   location: { city: string; district: string } | null
   selectedVibe: string | null
+  selectedBudget?: string | null
   geoLocation?: { lat: number; lng: number } | null
 }
 

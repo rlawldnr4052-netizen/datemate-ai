@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Course, CourseMode } from '@/types/course'
+import { BudgetLevel } from '@/types/onboarding'
 import { mockCourses } from '@/data/courses'
 
 interface CourseState {
@@ -9,7 +10,9 @@ interface CourseState {
   mode: CourseMode
   isGenerating: boolean
   savedCourseIds: string[]
+  budgetFilter: BudgetLevel | null
   setMode: (mode: CourseMode) => void
+  setBudgetFilter: (budget: BudgetLevel | null) => void
   setActiveCourse: (id: string) => void
   unlockStop: (courseId: string, stopOrder: number) => void
   getActiveCourse: () => Course | null
@@ -21,6 +24,7 @@ interface CourseState {
     region: string
     dateType?: string
     vibe?: string
+    budget?: string
   }) => Promise<Course | null>
 }
 
@@ -32,8 +36,10 @@ export const useCourseStore = create<CourseState>()(
       mode: 'standard',
       isGenerating: false,
       savedCourseIds: [],
+      budgetFilter: null,
 
       setMode: (mode) => set({ mode }),
+      setBudgetFilter: (budget) => set({ budgetFilter: budget }),
       setActiveCourse: (id) => set({ activeCourseId: id }),
       unlockStop: (courseId, stopOrder) =>
         set((s) => ({

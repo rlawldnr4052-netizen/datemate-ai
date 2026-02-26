@@ -16,6 +16,7 @@ export interface Place {
   estimatedTime: number
   blindHint: string
   blindTitle: string
+  estimatedCost: number
 }
 
 export interface QuestMission {
@@ -50,4 +51,5 @@ export interface Course {
   dateType: DateType
   region: string
   createdAt: string
+  totalEstimatedCost: number
 }

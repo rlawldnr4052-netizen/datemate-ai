@@ -31,7 +31,7 @@ function TypingIndicator() {
 
 export default function ChatPage() {
   const { messages, isTyping, isTMIEnabled, quickReplies, sendMessage, toggleTMI } = useChatStore()
-  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe } = useOnboardingStore()
+  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget } = useOnboardingStore()
   const [input, setInput] = useState('')
   const [geoLocation, setGeoLocation] = useState<{ lat: number; lng: number } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -57,8 +57,9 @@ export default function ChatPage() {
     birthday,
     location,
     selectedVibe,
+    selectedBudget,
     geoLocation,
-  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, geoLocation])
+  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget, geoLocation])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })

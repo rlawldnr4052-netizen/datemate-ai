@@ -25,7 +25,7 @@ type Step = 'region' | 'vibe' | 'generating' | 'done'
 
 export default function CourseGeneratePage() {
   const router = useRouter()
-  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe } = useOnboardingStore()
+  const { dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget } = useOnboardingStore()
   const { generateCourse, activeCourseId } = useCourseStore()
 
   const [step, setStep] = useState<Step>('region')
@@ -41,7 +41,8 @@ export default function CourseGeneratePage() {
     birthday,
     location,
     selectedVibe,
-  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe])
+    selectedBudget,
+  }), [dateType, likedTags, dislikedTags, mbti, birthday, location, selectedVibe, selectedBudget])
 
   const districts = useMemo(() => {
     const city = location?.city || '서울특별시'
@@ -58,6 +59,7 @@ export default function CourseGeneratePage() {
       region: selectedRegion,
       dateType: dateType || 'couple',
       vibe: selectedVibeId || selectedVibe || 'romantic',
+      budget: selectedBudget || undefined,
     })
 
     if (course) {

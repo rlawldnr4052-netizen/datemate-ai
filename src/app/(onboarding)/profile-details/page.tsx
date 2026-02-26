@@ -51,7 +51,7 @@ export default function ProfileDetailsPage() {
   return (
     <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="프로필 설정" />
-      <ProgressBar progress={2 / 4} className="mx-5" />
+      <ProgressBar progress={2 / 5} className="mx-5" />
 
       <div className="flex-1 px-5 pt-6 pb-6 flex flex-col">
         <AnimatePresence mode="wait">

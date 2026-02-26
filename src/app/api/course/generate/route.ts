@@ -19,7 +19,7 @@ const regionSearchTerms: Record<string, string[]> = {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { userProfile, region, dateType, vibe } = body
+    const { userProfile, region, dateType, vibe, budget } = body
 
     if (!region) {
       return NextResponse.json({ error: '지역을 지정해주세요.' }, { status: 400 })
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       },
       naverForPrompt,
       tourForPrompt,
-      { region, vibe, dateType }
+      { region, vibe, dateType, budget }
     )
 
     const systemPrompt = '당신은 한국 데이트 코스 전문가입니다. 주어진 장소 데이터를 분석하여 최적의 코스를 JSON 형식으로 만들어주세요. JSON만 출력하고 다른 텍스트는 포함하지 마세요.'
@@ -144,6 +144,7 @@ export async function POST(req: NextRequest) {
             estimatedTime: Number(stop.estimatedTime) || 60,
             blindHint: (stop.blindHint as string) || '숨겨진 매력이 있는 곳',
             blindTitle: (stop.blindTitle as string) || '???',
+            estimatedCost: Number(stop.estimatedCost) || 10000,
           },
           walkingMinutesFromPrev: i === 0 ? null : 10,
           questMission: null,
@@ -155,7 +156,14 @@ export async function POST(req: NextRequest) {
       dateType: dateType || userProfile?.dateType || 'couple',
       region,
       createdAt: new Date().toISOString(),
+      totalEstimatedCost: 0,
     }
+
+    // Calculate total estimated cost
+    course.totalEstimatedCost = course.stops.reduce(
+      (sum: number, s: { place: { estimatedCost: number } }) => sum + (s.place.estimatedCost || 0),
+      0
+    )
 
     // Use first place image as hero if available
     if (course.stops.length > 0 && course.stops[0].place.imageUrls.length > 0) {

@@ -1,4 +1,4 @@
-import { PreferenceTag, BalanceQuestion, VibeOption } from '@/types/onboarding'
+import { PreferenceTag, BalanceQuestion, VibeOption, BudgetOption } from '@/types/onboarding'
 
 export const preferenceTags: PreferenceTag[] = [
   // Vibe (분위기)
@@ -67,4 +67,10 @@ export const vibeOptions: VibeOption[] = [
   { id: 'adventure', label: '모험적인', emoji: '🗺️', gradient: 'linear-gradient(135deg, #fbbf24, #fb923c)', description: '새로운 발견의 연속' },
   { id: 'emotional', label: '감성적인', emoji: '🎨', gradient: 'linear-gradient(135deg, #f472b6, #fda4af)', description: '감성 충전 코스' },
   { id: 'foodie', label: '맛집 투어', emoji: '🍽️', gradient: 'linear-gradient(135deg, #f87171, #fdba74)', description: '미식가의 하루' },
+]
+
+export const budgetOptions: BudgetOption[] = [
+  { id: 'budget', label: '저예산', emoji: '💰', gradient: 'linear-gradient(135deg, #34d399, #6ee7b7)', description: '가성비 좋은 데이트', range: '~3만원' },
+  { id: 'moderate', label: '보통', emoji: '💳', gradient: 'linear-gradient(135deg, #60a5fa, #93c5fd)', description: '적당한 가격의 데이트', range: '3~7만원' },
+  { id: 'premium', label: '여유', emoji: '💎', gradient: 'linear-gradient(135deg, #f472b6, #fda4af)', description: '특별한 날 럭셔리 데이트', range: '7만원+' },
 ]

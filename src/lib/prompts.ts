@@ -8,6 +8,7 @@ interface UserProfile {
   birthday: string | null
   location: { city: string; district: string } | null
   selectedVibe: string | null
+  selectedBudget?: string | null
 }
 
 function calculateAge(birthday: string | null): number | null {
@@ -34,6 +35,12 @@ const dateTypeLabels: Record<string, string> = {
   couple: '커플 데이트',
   solo: '혼자 놀기',
   friends: '친구와 놀기',
+}
+
+const budgetLabels: Record<string, string> = {
+  budget: '저예산 (3만원 이하)',
+  moderate: '보통 (3~7만원)',
+  premium: '여유 (7만원 이상)',
 }
 
 export function getChatSystemPrompt(
@@ -64,6 +71,7 @@ ${locationLines.join('\n')}
 - 좋아하는 키워드: ${likedLabels.length > 0 ? likedLabels.join(', ') : '미설정'}
 - 싫어하는 키워드: ${dislikedLabels.length > 0 ? dislikedLabels.join(', ') : '없음'}
 - 선호 분위기: ${profile.selectedVibe ? vibeLabels[profile.selectedVibe] || profile.selectedVibe : '미설정'}
+- 예산 선호: ${profile.selectedBudget ? budgetLabels[profile.selectedBudget] || profile.selectedBudget : '미설정'}
 
 ## 위치 인식 규칙
 - "현재 정확한 위치"가 있으면, 사용자가 "내 주변", "근처", "여기" 등을 물어볼 때 해당 위치를 기준으로 추천해줘
@@ -131,7 +139,7 @@ export function getCourseGenerationPrompt(
   profile: UserProfile,
   naverPlaces: Array<{ place_name: string; category_name: string; address_name: string; x: string; y: string }>,
   tourSpots: Array<{ title: string; addr1: string; mapx: string; mapy: string; firstimage: string; contenttypeid: string }>,
-  request: { region: string; vibe?: string; dateType?: string }
+  request: { region: string; vibe?: string; dateType?: string; budget?: string }
 ): string {
   const age = calculateAge(profile.birthday)
   const likedLabels = getTagLabels(profile.likedTags)
@@ -150,16 +158,20 @@ ${JSON.stringify(tourSpots.slice(0, 15), null, 2)}
 ${age ? `- 나이: ${age}세` : ''}
 - 좋아하는 키워드: ${likedLabels.join(', ') || '미설정'}
 - 선호 분위기: ${request.vibe || profile.selectedVibe || '미설정'}
+- 예산 선호: ${request.budget ? budgetLabels[request.budget] || request.budget : '자유'}
 
 ## 요청
 - 지역: ${request.region}
 - 원하는 분위기: ${request.vibe ? vibeLabels[request.vibe] || request.vibe : '자유'}
+- 예산 범위: ${request.budget ? budgetLabels[request.budget] || '자유' : '자유'}
 
 ## 규칙
 1. 위 목록에서 실제로 존재하는 장소만 선택하세요
 2. 4~5곳을 선택하여 이동 동선이 자연스러운 순서로 배치하세요
 3. 카페 → 관광지/활동 → 식당 → 산책/바 등 다양한 카테고리를 섞어주세요
 4. 각 장소를 이 사용자에게 왜 추천하는지 이유를 포함하세요
+5. 각 장소마다 1인 기준 예상 비용(estimatedCost, 원 단위)을 반드시 포함하세요
+6. 예산 선호가 있으면 전체 코스의 1인 예상 비용이 해당 범위에 맞도록 장소를 선택하세요
 
 ## 반드시 아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
 {
@@ -180,6 +192,7 @@ ${age ? `- 나이: ${age}세` : ''}
       "reason": "이 사용자에게 추천하는 이유",
       "recommendedMenus": ["메뉴1", "메뉴2"],
       "estimatedTime": 60,
+      "estimatedCost": 15000,
       "blindHint": "힌트 텍스트",
       "blindTitle": "가려진 제목"
     }
