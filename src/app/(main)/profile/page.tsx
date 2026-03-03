@@ -100,15 +100,24 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
     setTaggingPhotoId(null)
   }
 
-  const handlePublish = () => {
+  const fileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(file)
+    })
+
+  const handlePublish = async () => {
     if (!selectedCourse || !currentUser || uploadedPhotos.length === 0) return
 
-    const photos = uploadedPhotos.map((p) => ({
-      id: p.id,
-      imageUrl: p.previewUrl,
-      placeName: p.taggedPlaceName || '',
-      placeCategory: p.taggedPlaceCategory || '',
-    }))
+    const photos = await Promise.all(
+      uploadedPhotos.map(async (p) => ({
+        id: p.id,
+        imageUrl: await fileToDataUrl(p.file),
+        placeName: p.taggedPlaceName || '',
+        placeCategory: p.taggedPlaceCategory || '',
+      }))
+    )
 
     addPost({
       userId: currentUser.id,
