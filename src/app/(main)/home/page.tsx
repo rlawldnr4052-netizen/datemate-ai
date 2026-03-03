@@ -155,25 +155,8 @@ export default function HomePage() {
         style={{ background: theme.gradient }}
         className="min-h-screen"
       >
-        {/* ── 알림 벨 ── */}
-        <div className="pt-12 px-5 flex justify-end">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => router.push('/friends')}
-            className="relative w-10 h-10 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center"
-            style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-          >
-            <Bell className="w-5 h-5" style={{ color: theme.accent }} />
-            {receivedRequests.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
-                {receivedRequests.length}
-              </span>
-            )}
-          </motion.button>
-        </div>
-
         {/* ── 상단 탭 ── */}
-        <div className="pt-2 px-4">
+        <div className="pt-14 px-4">
           <div className="flex gap-2 p-1.5 bg-white/60 backdrop-blur-sm rounded-2xl">
             {tabOrder.map((tabId) => {
               const t = categoryThemes[tabId]
@@ -203,9 +186,24 @@ export default function HomePage() {
 
         {/* ── 인사 + 타이틀 ── */}
         <div className="px-5 pt-6 pb-2">
-          <p className="text-[13px] font-medium mb-2" style={{ color: theme.accent }}>
-            안녕, {userName}님
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[13px] font-medium" style={{ color: theme.accent }}>
+              안녕, {userName}님
+            </p>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => router.push('/friends')}
+              className="relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center"
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            >
+              <Bell className="w-4.5 h-4.5" style={{ color: theme.accent }} />
+              {receivedRequests.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border-[1.5px] border-white">
+                  {receivedRequests.length}
+                </span>
+              )}
+            </motion.button>
+          </div>
           <h1 className="text-[26px] font-extrabold text-neutral-900 leading-tight flex items-center gap-2">
             <span className="text-[30px]">{theme.emoji}</span> {theme.title}
           </h1>
