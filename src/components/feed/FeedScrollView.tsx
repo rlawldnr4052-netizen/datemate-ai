@@ -17,7 +17,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { useRouter } from 'next/navigation'
 
 /* ───────── Single Feed Item (carousel + actions + comments) ───────── */
-function FeedItem({ postId }: { postId: string }) {
+export function FeedItem({ postId }: { postId: string }) {
   const router = useRouter()
   const { toggleLike, addComment } = useFeedStore()
   const { currentUser } = useAuthStore()

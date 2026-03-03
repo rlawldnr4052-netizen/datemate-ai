@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Users, UserPlus, Bell, Loader2, AlertCircle } from 'lucide-react'
+import { Search, UserPlus, Bell, Loader2, AlertCircle, Check, X, Camera } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFriendStore, FriendUser } from '@/stores/useFriendStore'
+import { useFeedStore } from '@/stores/useFeedStore'
 import FriendCard from '@/components/friend/FriendCard'
+import { FeedItem } from '@/components/feed/FeedScrollView'
 import PageTransition from '@/components/motion/PageTransition'
-
-type Tab = 'friends' | 'requests'
 
 export default function FriendsPage() {
   const currentUser = useAuthStore((s) => s.currentUser)
@@ -18,17 +18,27 @@ export default function FriendsPage() {
     sendRequest, acceptRequest, rejectRequest, cancelRequest,
     removeFriend, setPartner, getPartner,
   } = useFriendStore()
+  const posts = useFeedStore((s) => s.posts)
 
   const [query, setQuery] = useState('')
-  const [activeTab, setActiveTab] = useState<Tab>('friends')
   const [searchResults, setSearchResults] = useState<FriendUser[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [showRequests, setShowRequests] = useState(false)
   const searchTimerRef = useRef<NodeJS.Timeout>()
 
   const myId = currentUser?.id || ''
   const partnerId = getPartner(myId)
+
+  // 친구 피드: 내 포스트 + 친구 포스트를 최신순 정렬
+  const friendIds = useMemo(() => friends.map((f) => f.friend_id), [friends])
+  const feedPosts = useMemo(() => {
+    const relevantIds = new Set([myId, ...friendIds])
+    return posts
+      .filter((p) => relevantIds.has(p.userId))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }, [posts, myId, friendIds])
 
   // 토스트 자동 닫기
   useEffect(() => {
@@ -69,7 +79,7 @@ export default function FriendsPage() {
     return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current) }
   }, [query, doSearch])
 
-  // 액션 후 데이터 새로고침
+  // 액션 후 새로고침
   const refreshAll = useCallback(async () => {
     await Promise.all([fetchFriends(myId), fetchRequests(myId)])
   }, [myId, fetchFriends, fetchRequests])
@@ -117,7 +127,6 @@ export default function FriendsPage() {
     setActionLoading(null)
   }
 
-  // 검색 결과에서 각 유저의 상태
   const getUserStatus = useCallback((userId: string): 'none' | 'pending_sent' | 'pending_received' | 'friend' => {
     if (friends.some((f) => f.friend_id === userId)) return 'friend'
     if (receivedRequests.some((r) => r.from_user_id === userId)) return 'pending_received'
@@ -132,7 +141,6 @@ export default function FriendsPage() {
     return sent?.id
   }, [receivedRequests, sentRequests])
 
-  const friendUsers = friends.map((f) => f.friend).filter(Boolean)
   const requestCount = receivedRequests.length
 
   return (
@@ -147,9 +155,7 @@ export default function FriendsPage() {
             className="fixed top-12 left-4 right-4 z-[100]"
           >
             <div className={`flex items-center gap-2 px-4 py-3 rounded-2xl shadow-lg ${
-              toast.type === 'success'
-                ? 'bg-green-500 text-white'
-                : 'bg-red-500 text-white'
+              toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
             }`}>
               {toast.type === 'error' && <AlertCircle className="w-4 h-4 flex-shrink-0" />}
               <p className="text-[13px] font-semibold">{toast.message}</p>
@@ -158,36 +164,29 @@ export default function FriendsPage() {
         )}
       </AnimatePresence>
 
-      {/* 헤더 */}
-      <div className="pt-14 px-5 pb-3">
-        <div className="flex items-center justify-between mb-5">
-          <h1 className="text-[22px] font-bold text-neutral-900">친구</h1>
-          {requestCount > 0 && (
-            <span className="px-2.5 py-0.5 rounded-full bg-primary-500 text-white text-[11px] font-bold">
-              {requestCount}
-            </span>
-          )}
-        </div>
-
-        {/* 검색바 */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-neutral-300" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="이름 또는 이메일로 검색"
-            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-neutral-50 text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none focus:ring-2 focus:ring-primary-200 transition-all"
-          />
-          {isSearching && (
-            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300 animate-spin" />
-          )}
+      {/* 헤더 + 검색바 */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-neutral-50">
+        <div className="pt-14 px-5 pb-3">
+          {/* 검색바 */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-neutral-300" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="친구 검색"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-neutral-100 text-[14px] text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-primary-200 transition-all"
+            />
+            {isSearching && (
+              <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300 animate-spin" />
+            )}
+          </div>
         </div>
       </div>
 
-      {/* 검색 결과 */}
+      {/* 검색 모드 */}
       {query.trim() ? (
-        <div className="px-5">
+        <div className="px-5 pt-3">
           <p className="text-[13px] text-neutral-400 mb-2">
             검색 결과 ({searchResults.length}명)
           </p>
@@ -225,149 +224,128 @@ export default function FriendsPage() {
         </div>
       ) : (
         <>
-          {/* 탭 */}
-          <div className="px-5 flex gap-2 mb-4">
-            <button
-              onClick={() => setActiveTab('friends')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
-                activeTab === 'friends'
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-neutral-50 text-neutral-400'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5" />
-              내 친구 {friendUsers.length > 0 && `(${friendUsers.length})`}
-            </button>
-            <button
-              onClick={() => setActiveTab('requests')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all relative ${
-                activeTab === 'requests'
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-neutral-50 text-neutral-400'
-              }`}
-            >
-              <Bell className="w-3.5 h-3.5" />
-              요청
-              {requestCount > 0 && (
-                <span className="ml-1 w-5 h-5 rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center">
-                  {requestCount}
-                </span>
-              )}
-            </button>
-          </div>
+          {/* 친구 요청 배너 */}
+          {requestCount > 0 && (
+            <div className="px-5 pt-3">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowRequests(!showRequests)}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-primary-50 border border-primary-100"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center">
+                    <Bell className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[13px] font-semibold text-primary-700">
+                      친구 요청 {requestCount}개
+                    </p>
+                    <p className="text-[11px] text-primary-400">
+                      탭해서 확인하기
+                    </p>
+                  </div>
+                </div>
+                <motion.div animate={{ rotate: showRequests ? 180 : 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-primary-400">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </motion.div>
+              </motion.button>
 
-          <AnimatePresence mode="wait">
-            {activeTab === 'friends' ? (
-              <motion.div
-                key="friends"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="px-5"
-              >
-                {friendUsers.length > 0 ? (
-                  <div className="divide-y divide-neutral-50">
-                    {friendUsers.map((user) => (
-                      <div key={user.id} className={actionLoading === user.id ? 'opacity-50 pointer-events-none' : ''}>
-                        <FriendCard
-                          user={{ id: user.id, name: user.name, email: user.email, password: '', createdAt: '' }}
-                          status="friend"
-                          isPartner={partnerId === user.id}
-                          onRemove={() => handleRemove(user.id)}
-                          onTogglePartner={() =>
-                            setPartner(myId, partnerId === user.id ? null : user.id)
-                          }
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-20">
-                    <div className="w-16 h-16 rounded-full bg-neutral-50 flex items-center justify-center mx-auto mb-4">
-                      <UserPlus className="w-7 h-7 text-neutral-300" />
-                    </div>
-                    <p className="text-[15px] font-semibold text-neutral-700 mb-1">
-                      아직 친구가 없어요
-                    </p>
-                    <p className="text-[13px] text-neutral-400">
-                      위 검색창에서 친구를 찾아보세요
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="requests"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="px-5"
-              >
-                {receivedRequests.length > 0 && (
-                  <div className="mb-6">
-                    <p className="text-[13px] font-semibold text-neutral-500 mb-2">
-                      받은 요청 ({receivedRequests.length})
-                    </p>
-                    <div className="divide-y divide-neutral-50">
+              {/* 요청 목록 (확장) */}
+              <AnimatePresence>
+                {showRequests && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-2 space-y-2">
                       {receivedRequests.map((req) => {
                         const fromUser = req.from_user
                         if (!fromUser) return null
+                        const loading = actionLoading === req.id
                         return (
-                          <div key={req.id} className={actionLoading === req.id ? 'opacity-50 pointer-events-none' : ''}>
-                            <FriendCard
-                              user={{ id: fromUser.id, name: fromUser.name, email: fromUser.email, password: '', createdAt: '' }}
-                              status="pending_received"
-                              isPartner={false}
-                              onAccept={() => handleAccept(req.id)}
-                              onReject={() => handleReject(req.id)}
-                            />
+                          <div
+                            key={req.id}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white border border-neutral-100 ${loading ? 'opacity-50' : ''}`}
+                          >
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-300 to-primary-500 flex items-center justify-center flex-shrink-0">
+                              <span className="text-white text-[13px] font-bold">{fromUser.name.charAt(0)}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[14px] font-semibold text-neutral-900 truncate">{fromUser.name}</p>
+                              <p className="text-[11px] text-neutral-400 truncate">{fromUser.email}</p>
+                            </div>
+                            <div className="flex gap-1.5">
+                              <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => handleAccept(req.id)}
+                                className="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center"
+                              >
+                                <Check className="w-4 h-4" />
+                              </motion.button>
+                              <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => handleReject(req.id)}
+                                className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-400 flex items-center justify-center"
+                              >
+                                <X className="w-4 h-4" />
+                              </motion.button>
+                            </div>
                           </div>
                         )
                       })}
+                      {sentRequests.length > 0 && (
+                        <p className="text-[11px] text-neutral-400 px-1 pt-1">
+                          보낸 요청 {sentRequests.length}개 대기 중
+                        </p>
+                      )}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
+              </AnimatePresence>
+            </div>
+          )}
 
-                {sentRequests.length > 0 && (
-                  <div className="mb-6">
-                    <p className="text-[13px] font-semibold text-neutral-500 mb-2">
-                      보낸 요청 ({sentRequests.length})
-                    </p>
-                    <div className="divide-y divide-neutral-50">
-                      {sentRequests.map((req) => {
-                        const toUser = req.to_user
-                        if (!toUser) return null
-                        return (
-                          <div key={req.id} className={actionLoading === req.id ? 'opacity-50 pointer-events-none' : ''}>
-                            <FriendCard
-                              user={{ id: toUser.id, name: toUser.name, email: toUser.email, password: '', createdAt: '' }}
-                              status="pending_sent"
-                              isPartner={false}
-                              onCancel={() => handleCancel(req.id)}
-                            />
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {receivedRequests.length === 0 && sentRequests.length === 0 && (
-                  <div className="text-center py-20">
-                    <div className="w-16 h-16 rounded-full bg-neutral-50 flex items-center justify-center mx-auto mb-4">
-                      <Bell className="w-7 h-7 text-neutral-300" />
-                    </div>
-                    <p className="text-[15px] font-semibold text-neutral-700 mb-1">
-                      요청이 없어요
-                    </p>
-                    <p className="text-[13px] text-neutral-400">
-                      친구를 검색해서 요청을 보내보세요
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* 피드 */}
+          {feedPosts.length > 0 ? (
+            <div className="mt-3">
+              {feedPosts.map((post) => (
+                <FeedItem key={post.id} postId={post.id} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 px-5">
+              <div className="w-20 h-20 rounded-full bg-neutral-50 flex items-center justify-center mx-auto mb-4">
+                <Camera className="w-8 h-8 text-neutral-200" />
+              </div>
+              <p className="text-[16px] font-bold text-neutral-800 mb-1">
+                피드가 비어있어요
+              </p>
+              <p className="text-[13px] text-neutral-400 leading-relaxed">
+                {friends.length === 0
+                  ? '위 검색창에서 친구를 찾아 추가해보세요'
+                  : '프로필에서 코스 사진을 공유해보세요'}
+              </p>
+              {friends.length === 0 && (
+                <div className="mt-6 flex justify-center">
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      const input = document.querySelector('input[type="text"]') as HTMLInputElement
+                      input?.focus()
+                    }}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-500 text-white text-[13px] font-bold"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    친구 찾기
+                  </motion.button>
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
     </PageTransition>
