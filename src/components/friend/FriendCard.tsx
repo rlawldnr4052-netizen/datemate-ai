@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Heart, UserPlus, Clock, UserMinus, Check, X } from 'lucide-react'
 import { User } from '@/types/auth'
@@ -39,7 +40,12 @@ export default function FriendCard({
   user, status, isPartner,
   onAdd, onCancel, onAccept, onReject, onRemove, onTogglePartner,
 }: FriendCardProps) {
+  const router = useRouter()
   const gradient = getAvatarGradient(user.id)
+
+  const goToProfile = () => {
+    router.push(`/profile/${user.id}`)
+  }
 
   return (
     <motion.div
@@ -48,16 +54,18 @@ export default function FriendCard({
       className="flex items-center gap-3 py-3 px-1"
     >
       {/* 아바타 */}
-      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} p-[2px] flex-shrink-0`}>
-        <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-          <span className="text-[15px] font-bold text-neutral-600">
-            {user.name.charAt(0)}
-          </span>
+      <button onClick={goToProfile} className="flex-shrink-0">
+        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} p-[2px]`}>
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+            <span className="text-[15px] font-bold text-neutral-600">
+              {user.name.charAt(0)}
+            </span>
+          </div>
         </div>
-      </div>
+      </button>
 
       {/* 이름, 이메일 */}
-      <div className="flex-1 min-w-0">
+      <button onClick={goToProfile} className="flex-1 min-w-0 text-left">
         <div className="flex items-center gap-1.5">
           <p className="text-[15px] font-semibold text-neutral-900 truncate">{user.name}</p>
           {isPartner && (
@@ -65,7 +73,7 @@ export default function FriendCard({
           )}
         </div>
         <p className="text-[12px] text-neutral-400 truncate">{user.email}</p>
-      </div>
+      </button>
 
       {/* 액션 버튼 */}
       <div className="flex items-center gap-2 flex-shrink-0">
