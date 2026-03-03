@@ -1,14 +1,14 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Users, MessageCircle, Trophy, User } from 'lucide-react'
+import { Home, Users, MessageCircle, Navigation, User } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const tabs = [
   { id: 'home', icon: Home, path: '/home' },
   { id: 'friends', icon: Users, path: '/friends' },
   { id: 'chat', icon: MessageCircle, path: '/chat' },
-  { id: 'quest', icon: Trophy, path: '/quest' },
+  { id: 'course', icon: Navigation, path: '/course' },
   { id: 'profile', icon: User, path: '/profile' },
 ]
 

@@ -13,10 +13,11 @@ import {
   X,
   Camera,
   Image as ImageIcon,
+  Users,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFeedStore } from '@/stores/useFeedStore'
-import { useFriendStore } from '@/stores/useFriendStore'
+import { useFriendStore, RelationType } from '@/stores/useFriendStore'
 import PageTransition from '@/components/motion/PageTransition'
 import FeedScrollView from '@/components/feed/FeedScrollView'
 
@@ -56,7 +57,7 @@ export default function UserProfilePage() {
     friends, receivedRequests, sentRequests,
     fetchFriends, fetchRequests,
     sendRequest, acceptRequest, rejectRequest, cancelRequest,
-    removeFriend, setPartner, getPartner,
+    removeFriend, setPartner, getPartner, getPartnerType,
   } = useFriendStore()
   const posts = useFeedStore((s) => s.posts)
 
@@ -123,6 +124,15 @@ export default function UserProfilePage() {
   })()
 
   const isPartner = partnerId === userId
+  const partnerType = getPartnerType(myId)
+
+  const handleSetRelation = (type: RelationType) => {
+    if (isPartner && partnerType === type) {
+      setPartner(myId, null)
+    } else {
+      setPartner(myId, userId, type)
+    }
+  }
 
   const handleAction = async (action: () => Promise<unknown>) => {
     setActionLoading(true)
@@ -198,11 +208,20 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        {/* Name + partner badge */}
+        {/* Name + relationship badge */}
         <div className="mt-4">
           <div className="flex items-center gap-1.5">
             <p className="text-[14px] font-semibold text-neutral-900">{profile.name}</p>
-            {isPartner && <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500" />}
+            {isPartner && partnerType === 'lover' && (
+              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 text-[11px] font-semibold">
+                <Heart className="w-3 h-3 fill-pink-500" /> 연인
+              </span>
+            )}
+            {isPartner && partnerType === 'friend' && (
+              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[11px] font-semibold">
+                <Users className="w-3 h-3" /> 친구
+              </span>
+            )}
           </div>
           <p className="text-[12px] text-neutral-400 mt-0.5">{profile.email}</p>
         </div>
@@ -256,15 +275,27 @@ export default function UserProfilePage() {
             <>
               <motion.button
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setPartner(myId, isPartner ? null : userId)}
+                onClick={() => handleSetRelation('friend')}
                 className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-1.5 ${
-                  isPartner
+                  isPartner && partnerType === 'friend'
+                    ? 'bg-blue-50 text-blue-500 border border-blue-200'
+                    : 'bg-neutral-100 text-neutral-600'
+                }`}
+              >
+                <Users className={`w-4 h-4`} />
+                친구
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => handleSetRelation('lover')}
+                className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-1.5 ${
+                  isPartner && partnerType === 'lover'
                     ? 'bg-pink-50 text-pink-500 border border-pink-200'
                     : 'bg-neutral-100 text-neutral-600'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${isPartner ? 'fill-pink-500' : ''}`} />
-                {isPartner ? '내 파트너' : '파트너 설정'}
+                <Heart className={`w-4 h-4 ${isPartner && partnerType === 'lover' ? 'fill-pink-500' : ''}`} />
+                연인
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.96 }}

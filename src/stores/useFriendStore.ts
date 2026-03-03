@@ -25,8 +25,11 @@ interface FriendRequestWithUser {
   to_user?: FriendUser
 }
 
+export type RelationType = 'friend' | 'lover'
+
 interface FriendState {
   partners: Record<string, string | null>
+  partnerTypes: Record<string, RelationType>
   friends: FriendWithUser[]
   receivedRequests: FriendRequestWithUser[]
   sentRequests: FriendRequestWithUser[]
@@ -40,9 +43,10 @@ interface FriendState {
   rejectRequest: (requestId: string, userId: string) => Promise<boolean>
   cancelRequest: (requestId: string, userId: string) => Promise<boolean>
   removeFriend: (userId: string, friendId: string) => Promise<boolean>
-  setPartner: (currentUserId: string, partnerId: string | null) => void
+  setPartner: (currentUserId: string, partnerId: string | null, type?: RelationType) => void
 
   getPartner: (userId: string) => string | null
+  getPartnerType: (userId: string) => RelationType | null
   getFriendUsers: () => FriendUser[]
 }
 
@@ -50,6 +54,7 @@ export const useFriendStore = create<FriendState>()(
   persist(
     (set, get) => ({
       partners: {},
+      partnerTypes: {},
       friends: [],
       receivedRequests: [],
       sentRequests: [],
@@ -178,17 +183,28 @@ export const useFriendStore = create<FriendState>()(
         } catch { return false }
       },
 
-      setPartner: (currentUserId, partnerId) => {
-        set((s) => ({ partners: { ...s.partners, [currentUserId]: partnerId } }))
+      setPartner: (currentUserId, partnerId, type = 'lover') => {
+        set((s) => ({
+          partners: { ...s.partners, [currentUserId]: partnerId },
+          partnerTypes: partnerId
+            ? { ...s.partnerTypes, [currentUserId]: type }
+            : s.partnerTypes,
+        }))
       },
 
       getPartner: (userId) => get().partners[userId] || null,
+      getPartnerType: (userId) => {
+        const partnerId = get().partners[userId]
+        if (!partnerId) return null
+        return get().partnerTypes[userId] || 'lover'
+      },
       getFriendUsers: () => get().friends.map((f) => f.friend),
     }),
     {
       name: 'datemate-friends',
       partialize: (state) => ({
         partners: state.partners,
+        partnerTypes: state.partnerTypes,
       }),
     }
   )
