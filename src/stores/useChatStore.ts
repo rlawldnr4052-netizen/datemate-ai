@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { ChatMessage, QuickReply, CourseRecommendation } from '@/types/chat'
 import { useCourseStore } from '@/stores/useCourseStore'
+import { getPersona } from '@/data/aiPersona'
+import { DateType } from '@/types/onboarding'
 
 const defaultQuickReplies: QuickReply[] = [
   { id: 'q1', label: '오늘 데이트 코스 추천해줘', action: 'recommend' },
@@ -57,28 +59,52 @@ function stripHumanReadableCourse(text: string): string {
     .trim()
 }
 
+function makeWelcomeMessage(dateType: DateType | null): ChatMessage {
+  const persona = getPersona(dateType)
+  return {
+    id: 'welcome',
+    role: 'ai',
+    content: persona.welcome,
+    timestamp: new Date().toISOString(),
+  }
+}
+
 interface ChatState {
   messages: ChatMessage[]
   isTyping: boolean
   isTMIEnabled: boolean
   quickReplies: QuickReply[]
+  currentDateType: DateType | null
   sendMessage: (content: string, userProfile?: UserProfileForChat) => void
+  syncPersona: (dateType: DateType | null) => void
   toggleTMI: () => void
   clearMessages: () => void
 }
 
 export const useChatStore = create<ChatState>()((set, get) => ({
-  messages: [
-    {
-      id: 'welcome',
-      role: 'ai',
-      content: '안녕! 나는 데이트메이트 AI야 💕\n오늘 어떤 데이트를 계획하고 있어? 내가 딱 맞는 코스를 만들어 줄게!',
-      timestamp: new Date().toISOString(),
-    },
-  ],
+  messages: [makeWelcomeMessage(null)],
   isTyping: false,
   isTMIEnabled: false,
-  quickReplies: defaultQuickReplies,
+  quickReplies: getPersona(null).quickReplies ?? defaultQuickReplies,
+  currentDateType: null,
+
+  syncPersona: (dateType: DateType | null) => {
+    const { currentDateType } = get()
+    if (dateType === currentDateType) return
+    const persona = getPersona(dateType)
+    set({
+      currentDateType: dateType,
+      quickReplies: persona.quickReplies ?? defaultQuickReplies,
+      messages: [
+        {
+          id: 'welcome',
+          role: 'ai',
+          content: persona.welcome,
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    })
+  },
 
   sendMessage: async (content: string, userProfile?: UserProfileForChat) => {
     const userMsg: ChatMessage = {
@@ -202,15 +228,18 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   toggleTMI: () => set((s) => ({ isTMIEnabled: !s.isTMIEnabled })),
 
-  clearMessages: () =>
+  clearMessages: () => {
+    const { currentDateType } = get()
+    const persona = getPersona(currentDateType)
     set({
       messages: [
         {
           id: 'welcome',
           role: 'ai',
-          content: '안녕! 나는 데이트메이트 AI야 💕\n오늘 어떤 데이트를 계획하고 있어? 내가 딱 맞는 코스를 만들어 줄게!',
+          content: persona.welcome,
           timestamp: new Date().toISOString(),
         },
       ],
-    }),
+    })
+  },
 }))

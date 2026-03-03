@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -25,16 +26,18 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = () => {
-    if (!validate()) return
+  const handleSubmit = async () => {
+    if (!validate() || isSubmitting) return
+    setIsSubmitting(true)
 
-    const result = login(email.trim(), password)
+    const result = await login(email.trim(), password)
     if (result.success) {
       const isComplete = useOnboardingStore.getState().isComplete
       router.push(isComplete ? '/home' : '/type')
     } else {
       setErrors({ email: result.error || '로그인에 실패했습니다' })
     }
+    setIsSubmitting(false)
   }
 
   return (
@@ -98,9 +101,9 @@ export default function LoginPage() {
           transition={{ delay: 0.4 }}
           className="flex flex-col gap-3"
         >
-          <Button fullWidth size="lg" onClick={handleSubmit}>
-            로그인
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button fullWidth size="lg" onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? '로그인 중...' : '로그인'}
+            {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
           </Button>
           <button
             onClick={() => router.push('/signup')}

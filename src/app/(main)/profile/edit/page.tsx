@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Check, ChevronDown } from 'lucide-react'
+import { Heart, User, Users, Check, ChevronDown } from 'lucide-react'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
-import { MBTIType, Vibe, BudgetLevel } from '@/types/onboarding'
+import { DateType, MBTIType, Vibe, BudgetLevel } from '@/types/onboarding'
 import { preferenceTags, vibeOptions, budgetOptions } from '@/data/tags'
 import { mbtiOptions } from '@/data/mbti'
 import { cities, districtsByCity } from '@/data/regions'
@@ -13,23 +13,22 @@ import TopBar from '@/components/ui/TopBar'
 import Button from '@/components/ui/Button'
 import PageTransition from '@/components/motion/PageTransition'
 
+const typeOptions: { type: DateType; label: string; icon: typeof Heart; gradient: string }[] = [
+  { type: 'couple', label: '연인과', icon: Heart, gradient: 'from-rose-400 to-pink-400' },
+  { type: 'solo', label: '나혼자', icon: User, gradient: 'from-violet-400 to-purple-400' },
+  { type: 'friends', label: '친구와', icon: Users, gradient: 'from-amber-400 to-orange-400' },
+]
+
 const categoryLabels: Record<string, string> = {
   vibe: '분위기', place: '장소', food: '음식', activity: '활동', style: '스타일', time: '시간대',
 }
 
-const currentYear = new Date().getFullYear()
-const years = Array.from({ length: 51 }, (_, i) => currentYear - 10 - i)
-const months = Array.from({ length: 12 }, (_, i) => i + 1)
-const days = Array.from({ length: 31 }, (_, i) => i + 1)
-
-export default function OnboardingPage() {
+export default function ProfileEditPage() {
   const router = useRouter()
   const store = useOnboardingStore()
 
+  const [dateType, setDateType] = useState<DateType | null>(store.dateType)
   const [selectedMBTI, setSelectedMBTI] = useState<MBTIType | null>(store.mbti)
-  const [birthYear, setBirthYear] = useState('')
-  const [birthMonth, setBirthMonth] = useState('')
-  const [birthDay, setBirthDay] = useState('')
   const [city, setCity] = useState(store.location?.city || '')
   const [district, setDistrict] = useState(store.location?.district || '')
   const [selectedTags, setSelectedTags] = useState<string[]>(store.likedTags)
@@ -44,20 +43,17 @@ export default function OnboardingPage() {
     )
   }
 
-  const isValid = selectedTags.length >= 3 && selectedVibe && selectedBudget
+  const isValid = dateType && selectedTags.length >= 3 && selectedVibe && selectedBudget
 
-  const handleComplete = () => {
+  const handleSave = () => {
     if (!isValid) return
-    store.setDateType('couple')
+    store.setDateType(dateType)
     if (selectedMBTI) store.setMBTI(selectedMBTI)
-    if (birthYear && birthMonth && birthDay) {
-      store.setBirthday(`${birthYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`)
-    }
     if (city && district) store.setLocation({ city, district })
     store.setLikedTags(selectedTags)
     store.setVibe(selectedVibe)
     store.setBudget(selectedBudget)
-    router.push('/complete')
+    router.back()
   }
 
   const tagsByCategory = preferenceTags.reduce<Record<string, typeof preferenceTags>>((acc, tag) => {
@@ -66,108 +62,102 @@ export default function OnboardingPage() {
     return acc
   }, {})
 
-  const selectClass = 'w-full appearance-none px-3 py-3 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 outline-none focus:border-primary-400 transition-all'
-
   return (
     <PageTransition className="min-h-screen flex flex-col bg-white">
-      <TopBar title="취향 설정" showBack onBack={() => router.back()} />
+      <TopBar title="프로필 편집" showBack />
 
       <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32">
-        {/* -- 1. 내 정보 (선택) -- */}
+        {/* 1. 데이트 타입 */}
         <section className="mb-8">
-          <h2 className="text-title-2 text-neutral-900 mb-1">나에 대해 알려주세요</h2>
-          <p className="text-caption text-neutral-400 mb-4">선택사항이에요. 넘겨도 괜찮아요!</p>
-
-          {/* MBTI */}
-          <div className="mb-5">
-            <p className="text-xs font-semibold text-neutral-500 mb-2">MBTI</p>
-            <div className="grid grid-cols-4 gap-2">
-              {mbtiOptions.map((opt) => {
-                const active = selectedMBTI === opt.type
-                return (
-                  <motion.button
-                    key={opt.type}
-                    whileTap={{ scale: 0.92 }}
-                    onClick={() => setSelectedMBTI(active ? null : opt.type)}
-                    className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl border-2 transition-all text-xs ${
-                      active
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-neutral-100 bg-white'
-                    }`}
-                  >
-                    <span className="text-base">{opt.emoji}</span>
-                    <span className={`font-bold ${active ? 'text-primary-600' : 'text-neutral-800'}`}>{opt.type}</span>
-                  </motion.button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* 생년월일 */}
-          <div className="mb-5">
-            <p className="text-xs font-semibold text-neutral-500 mb-2">생년월일</p>
-            <div className="flex gap-2">
-              <div className="flex-[2] relative">
-                <select value={birthYear} onChange={(e) => setBirthYear(e.target.value)} className={selectClass}>
-                  <option value="">년도</option>
-                  {years.map((y) => <option key={y} value={y}>{y}년</option>)}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-              </div>
-              <div className="flex-1 relative">
-                <select value={birthMonth} onChange={(e) => setBirthMonth(e.target.value)} className={selectClass}>
-                  <option value="">월</option>
-                  {months.map((m) => <option key={m} value={m}>{m}월</option>)}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-              </div>
-              <div className="flex-1 relative">
-                <select value={birthDay} onChange={(e) => setBirthDay(e.target.value)} className={selectClass}>
-                  <option value="">일</option>
-                  {days.map((d) => <option key={d} value={d}>{d}일</option>)}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-
-          {/* 지역 */}
-          <div>
-            <p className="text-xs font-semibold text-neutral-500 mb-2">지역</p>
-            <div className="flex gap-3">
-              <div className="flex-1 relative">
-                <select
-                  value={city}
-                  onChange={(e) => { setCity(e.target.value); setDistrict('') }}
-                  className={selectClass}
+          <h2 className="text-title-2 text-neutral-900 mb-1">누구와 함께하나요?</h2>
+          <p className="text-caption text-neutral-400 mb-4">하나를 선택해주세요</p>
+          <div className="flex gap-3">
+            {typeOptions.map((opt) => {
+              const Icon = opt.icon
+              const active = dateType === opt.type
+              return (
+                <motion.button
+                  key={opt.type}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setDateType(opt.type)}
+                  className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-2xl border-2 transition-all ${
+                    active
+                      ? 'border-primary-500 bg-primary-50 shadow-sm'
+                      : 'border-neutral-200 bg-white'
+                  }`}
                 >
-                  <option value="">시/도</option>
-                  {cities.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-              </div>
-              {city && (
-                <div className="flex-1 relative">
-                  <select
-                    value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    className={selectClass}
-                  >
-                    <option value="">시/군/구</option>
-                    {districts.map((d) => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
-                </div>
-              )}
-            </div>
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br ${opt.gradient}`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className={`text-sm font-semibold ${active ? 'text-primary-600' : 'text-neutral-700'}`}>
+                    {opt.label}
+                  </span>
+                </motion.button>
+              )
+            })}
           </div>
         </section>
 
-        {/* -- 2. 취향 태그 (필수) -- */}
+        {/* 2. MBTI */}
+        <section className="mb-8">
+          <h2 className="text-title-2 text-neutral-900 mb-1">MBTI <span className="text-caption text-neutral-400 font-normal">(선택)</span></h2>
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            {mbtiOptions.map((opt) => {
+              const active = selectedMBTI === opt.type
+              return (
+                <motion.button
+                  key={opt.type}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={() => setSelectedMBTI(active ? null : opt.type)}
+                  className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl border-2 transition-all text-xs ${
+                    active
+                      ? 'border-primary-500 bg-primary-50'
+                      : 'border-neutral-100 bg-white'
+                  }`}
+                >
+                  <span className="text-base">{opt.emoji}</span>
+                  <span className={`font-bold ${active ? 'text-primary-600' : 'text-neutral-800'}`}>{opt.type}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* 3. 지역 */}
+        <section className="mb-8">
+          <h2 className="text-title-2 text-neutral-900 mb-1">지역 <span className="text-caption text-neutral-400 font-normal">(선택)</span></h2>
+          <div className="flex gap-3 mt-3">
+            <div className="flex-1 relative">
+              <select
+                value={city}
+                onChange={(e) => { setCity(e.target.value); setDistrict('') }}
+                className="w-full appearance-none px-3 py-3 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 outline-none focus:border-primary-400 transition-all"
+              >
+                <option value="">시/도</option>
+                {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+            </div>
+            {city && (
+              <div className="flex-1 relative">
+                <select
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  className="w-full appearance-none px-3 py-3 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 outline-none focus:border-primary-400 transition-all"
+                >
+                  <option value="">시/군/구</option>
+                  {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 4. 취향 태그 */}
         <section className="mb-8">
           <h2 className="text-title-2 text-neutral-900 mb-1">관심 키워드</h2>
           <p className="text-caption text-neutral-400 mb-4">3개 이상 선택해주세요 (현재 {selectedTags.length}개)</p>
-
           {Object.entries(tagsByCategory).map(([category, tags]) => (
             <div key={category} className="mb-4">
               <p className="text-xs font-semibold text-neutral-500 mb-2">{categoryLabels[category]}</p>
@@ -196,7 +186,7 @@ export default function OnboardingPage() {
           ))}
         </section>
 
-        {/* -- 3. 무드 (필수) -- */}
+        {/* 5. 무드 */}
         <section className="mb-8">
           <h2 className="text-title-2 text-neutral-900 mb-1">원하는 무드</h2>
           <p className="text-caption text-neutral-400 mb-4">하나를 선택해주세요</p>
@@ -222,7 +212,7 @@ export default function OnboardingPage() {
           </div>
         </section>
 
-        {/* -- 4. 예산 (필수) -- */}
+        {/* 6. 예산 */}
         <section className="mb-4">
           <h2 className="text-title-2 text-neutral-900 mb-1">예산</h2>
           <p className="text-caption text-neutral-400 mb-4">1인 기준</p>
@@ -250,11 +240,11 @@ export default function OnboardingPage() {
         </section>
       </div>
 
-      {/* -- 하단 고정 버튼 -- */}
+      {/* 하단 저장 버튼 */}
       <div className="fixed bottom-0 left-0 right-0 z-20">
         <div className="mx-auto max-w-app px-5 pb-6 pt-3 bg-gradient-to-t from-white via-white to-white/0">
-          <Button fullWidth size="lg" disabled={!isValid} onClick={handleComplete}>
-            {isValid ? '시작하기' : `조금만 더! (${[selectedTags.length < 3 && '키워드 3개+', !selectedVibe && '무드', !selectedBudget && '예산'].filter(Boolean).join(', ')})`}
+          <Button fullWidth size="lg" disabled={!isValid} onClick={handleSave}>
+            {isValid ? '저장하기' : `조금만 더! (${[!dateType && '타입', selectedTags.length < 3 && '키워드 3개+', !selectedVibe && '무드', !selectedBudget && '예산'].filter(Boolean).join(', ')})`}
           </Button>
         </div>
       </div>

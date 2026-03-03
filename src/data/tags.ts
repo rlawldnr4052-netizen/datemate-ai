@@ -1,4 +1,4 @@
-import { PreferenceTag, BalanceQuestion, VibeOption, BudgetOption } from '@/types/onboarding'
+import { PreferenceTag, VibeOption, BudgetOption } from '@/types/onboarding'
 
 export const preferenceTags: PreferenceTag[] = [
   // Vibe (분위기)
@@ -40,24 +40,6 @@ export const preferenceTags: PreferenceTag[] = [
   { id: 't26', label: '#선셋', description: '노을 속 황금빛 데이트', category: 'time', gradient: 'linear-gradient(135deg, #ea580c, #fdba74)', emoji: '🌅' },
   { id: 't27', label: '#낮산책', description: '햇살 아래 여유 산책', category: 'time', gradient: 'linear-gradient(135deg, #0d9488, #5eead4)', emoji: '☀️' },
   { id: 't28', label: '#밤문화', description: '밤이 더 빛나는 도시', category: 'time', gradient: 'linear-gradient(135deg, #312e81, #818cf8)', emoji: '🌙' },
-]
-
-export const balanceQuestions: BalanceQuestion[] = [
-  {
-    id: 'bq1',
-    optionA: { id: 'bq1a', label: '조용한 골목 카페', emoji: '☕', gradient: 'linear-gradient(135deg, #a16207, #eab308)' },
-    optionB: { id: 'bq1b', label: '활기찬 루프탑 바', emoji: '🍸', gradient: 'linear-gradient(135deg, #7c3aed, #a78bfa)' },
-  },
-  {
-    id: 'bq2',
-    optionA: { id: 'bq2a', label: '노을 지는 한강', emoji: '🌅', gradient: 'linear-gradient(135deg, #ea580c, #fdba74)' },
-    optionB: { id: 'bq2b', label: '반짝이는 도시 야경', emoji: '🌃', gradient: 'linear-gradient(135deg, #1e3a5f, #3b82f6)' },
-  },
-  {
-    id: 'bq3',
-    optionA: { id: 'bq3a', label: '분위기 있는 파인다이닝', emoji: '🍽️', gradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)' },
-    optionB: { id: 'bq3b', label: '정겨운 포장마차', emoji: '🏮', gradient: 'linear-gradient(135deg, #c2410c, #f97316)' },
-  },
 ]
 
 export const vibeOptions: VibeOption[] = [

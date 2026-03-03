@@ -17,6 +17,8 @@ interface CourseState {
   unlockStop: (courseId: string, stopOrder: number) => void
   getActiveCourse: () => Course | null
   addCourse: (course: Course) => void
+  updateCourse: (courseId: string, updates: Partial<Course>) => void
+  removeStop: (courseId: string, stopOrder: number) => void
   toggleSaveCourse: (id: string) => void
   isSaved: (id: string) => boolean
   generateCourse: (params: {
@@ -61,6 +63,27 @@ export const useCourseStore = create<CourseState>()(
       addCourse: (course) =>
         set((s) => ({
           courses: [course, ...s.courses],
+        })),
+      updateCourse: (courseId, updates) =>
+        set((s) => ({
+          courses: s.courses.map((c) =>
+            c.id === courseId ? { ...c, ...updates } : c
+          ),
+        })),
+      removeStop: (courseId, stopOrder) =>
+        set((s) => ({
+          courses: s.courses.map((c) => {
+            if (c.id !== courseId) return c
+            const newStops = c.stops
+              .filter((stop) => stop.order !== stopOrder)
+              .map((stop, i) => ({ ...stop, order: i + 1 }))
+            return {
+              ...c,
+              stops: newStops,
+              totalDuration: newStops.reduce((sum, s2) => sum + s2.place.estimatedTime, 0),
+              totalEstimatedCost: newStops.reduce((sum, s2) => sum + (s2.place.estimatedCost ?? 0), 0),
+            }
+          }),
         })),
       toggleSaveCourse: (id) =>
         set((s) => ({

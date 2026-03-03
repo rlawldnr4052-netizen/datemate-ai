@@ -6,9 +6,10 @@ import { ReactNode, useEffect, useState } from 'react'
 interface PageTransitionProps {
   children: ReactNode
   className?: string
+  style?: React.CSSProperties
 }
 
-export default function PageTransition({ children, className }: PageTransitionProps) {
+export default function PageTransition({ children, className, style }: PageTransitionProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function PageTransition({ children, className }: PageTransitionPr
 
   // SSR/하이드레이션 전: 보이는 상태로 렌더 (opacity:0 방지)
   if (!mounted) {
-    return <div className={className}>{children}</div>
+    return <div className={className} style={style}>{children}</div>
   }
 
   return (
@@ -27,6 +28,7 @@ export default function PageTransition({ children, className }: PageTransitionPr
       exit={{ opacity: 0, y: -10 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>

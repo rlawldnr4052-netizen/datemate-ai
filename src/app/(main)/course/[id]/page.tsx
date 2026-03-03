@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2, Wallet } from 'lucide-react'
+import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2, Wallet, Sparkles, Send, Trash2 } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { useQuestStore } from '@/stores/useQuestStore'
 import TopBar from '@/components/ui/TopBar'
@@ -110,7 +110,7 @@ function StopTransitLink({ fromStop, toStop }: { fromStop: CourseStop; toStop: C
   )
 }
 
-function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => void }) {
+function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; placeImageUrls?: string[]; onClose: () => void }) {
   const [placeData, setPlaceData] = useState<PlaceDetail | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -132,6 +132,8 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
     }
     fetchPlaceDetail()
   }, [place.name])
+
+  const displayImages = placeImageUrls || place.imageUrls
 
   const naverMapUrl = placeData?.place_url || buildNaverSearchUrl(place.name)
 
@@ -169,10 +171,10 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
         </button>
 
         {/* Place image */}
-        {place.imageUrls.length > 0 && (
+        {displayImages.length > 0 && (
           <div
-            className="w-full h-[180px] bg-cover bg-center"
-            style={{ backgroundImage: `url(${place.imageUrls[0]})` }}
+            className="w-full h-[180px] bg-cover bg-center bg-neutral-100"
+            style={{ backgroundImage: `url(${displayImages[0]})` }}
           />
         )}
 
@@ -295,6 +297,201 @@ function PlaceDetailPopup({ place, onClose }: { place: Place; onClose: () => voi
   )
 }
 
+interface AiMessage {
+  id: string
+  role: 'ai' | 'user'
+  content: string
+}
+
+function AiEditSheet({
+  course,
+  onClose,
+}: {
+  course: { id: string; title: string; stops: CourseStop[] }
+  onClose: () => void
+}) {
+  const { removeStop } = useCourseStore()
+  const [messages, setMessages] = useState<AiMessage[]>([
+    {
+      id: '1',
+      role: 'ai',
+      content: `"${course.title}" 코스를 어떻게 수정해드릴까요?\n\n아래에서 직접 삭제하거나, 원하는 수정사항을 입력해주세요.`,
+    },
+  ])
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+  }, [messages])
+
+  const handleRemoveStop = (stopOrder: number, placeName: string) => {
+    if (course.stops.length <= 1) {
+      setMessages((prev) => [...prev, {
+        id: crypto.randomUUID(), role: 'ai',
+        content: '코스에 최소 1개의 장소는 있어야 해요!',
+      }])
+      return
+    }
+    removeStop(course.id, stopOrder)
+    setMessages((prev) => [...prev, {
+      id: crypto.randomUUID(), role: 'ai',
+      content: `"${placeName}"을(를) 코스에서 삭제했어요.`,
+    }])
+  }
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return
+    const userMsg = input.trim()
+    setInput('')
+    setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: 'user', content: userMsg }])
+    setIsLoading(true)
+
+    try {
+      const currentStops = useCourseStore.getState().courses.find((c) => c.id === course.id)?.stops || []
+      const courseContext = currentStops.map((s, i) => `${i + 1}. ${s.place.name} (${s.place.category})`).join('\n')
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `현재 코스:\n${courseContext}\n\n사용자 요청: ${userMsg}\n\n위 코스에 대한 수정 요청이야. 구체적으로 어떻게 수정하면 좋을지 한국어로 간단하게 추천해줘. 장소 이름과 카테고리를 포함해서.`,
+          history: [],
+        }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setMessages((prev) => [...prev, {
+          id: crypto.randomUUID(), role: 'ai',
+          content: data.reply || '수정 사항을 처리하지 못했어요. 다시 시도해주세요.',
+        }])
+      } else {
+        setMessages((prev) => [...prev, {
+          id: crypto.randomUUID(), role: 'ai',
+          content: '네트워크 오류가 발생했어요. 다시 시도해주세요.',
+        }])
+      }
+    } catch {
+      setMessages((prev) => [...prev, {
+        id: crypto.randomUUID(), role: 'ai',
+        content: '오류가 발생했어요. 다시 시도해주세요.',
+      }])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const currentStops = useCourseStore.getState().courses.find((c) => c.id === course.id)?.stops || course.stops
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-end justify-center"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/50" />
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+        style={{ height: '75vh' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-neutral-100">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary-500" />
+            <h3 className="text-[16px] font-bold text-neutral-900">AI 코스 수정</h3>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+            <X className="w-4 h-4 text-neutral-500" />
+          </button>
+        </div>
+
+        {/* 현재 코스 미니맵 */}
+        <div className="px-5 py-3 bg-neutral-50 border-b border-neutral-100">
+          <p className="text-[11px] font-semibold text-neutral-400 mb-2">현재 코스</p>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            {currentStops.map((stop) => (
+              <div key={stop.order} className="flex-shrink-0 flex items-center gap-1.5 pl-2 pr-1 py-1.5 bg-white rounded-xl border border-neutral-100">
+                <span className="w-5 h-5 rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                  {stop.order}
+                </span>
+                <span className="text-[12px] font-medium text-neutral-700 whitespace-nowrap">
+                  {stop.place.name}
+                </span>
+                <button
+                  onClick={() => handleRemoveStop(stop.order, stop.place.name)}
+                  className="w-5 h-5 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 ml-0.5"
+                >
+                  <Trash2 className="w-3 h-3 text-red-400" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 채팅 영역 */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-4" style={{ height: 'calc(75vh - 200px)' }}>
+          {messages.map((msg) => (
+            <div key={msg.id} className={`mb-3 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-[14px] leading-relaxed whitespace-pre-line ${
+                msg.role === 'user'
+                  ? 'bg-primary-500 text-white rounded-br-sm'
+                  : 'bg-neutral-100 text-neutral-800 rounded-bl-sm'
+              }`}>
+                {msg.content}
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex justify-start mb-3">
+              <div className="px-4 py-3 bg-neutral-100 rounded-2xl rounded-bl-sm flex gap-1.5">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-2 h-2 rounded-full bg-neutral-400"
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.12 }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 입력 */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-white border-t border-neutral-100">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="예: 카페를 하나 더 추가해줘"
+              className="flex-1 px-4 py-3 rounded-2xl bg-neutral-50 text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none focus:ring-2 focus:ring-primary-200"
+            />
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="w-11 h-11 rounded-xl bg-primary-500 flex items-center justify-center disabled:opacity-40"
+            >
+              <Send className="w-4.5 h-4.5 text-white" />
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function CourseDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -303,8 +500,57 @@ export default function CourseDetailPage() {
   const course = courses.find((c) => c.id === params.id)
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
   const [showToast, setShowToast] = useState(false)
+  const [showAiEdit, setShowAiEdit] = useState(false)
+  const [placeImages, setPlaceImages] = useState<Record<string, string[]>>({})
+  const imagesFetched = useRef(false)
+
+  // 네이버 이미지 검색으로 장소 사진 가져오기
+  useEffect(() => {
+    if (!course || imagesFetched.current) return
+    imagesFetched.current = true
+
+    const fetchImages = async () => {
+      const imageMap: Record<string, string[]> = {}
+      const promises = course.stops.map(async (stop) => {
+        try {
+          const query = `${stop.place.name} ${stop.place.category}`
+          const res = await fetch(`/api/places/images?query=${encodeURIComponent(query)}&size=3`)
+          if (res.ok) {
+            const data = await res.json()
+            if (data.imageUrls?.length > 0) {
+              imageMap[stop.place.id] = data.imageUrls
+            }
+          }
+        } catch {
+          // skip failed fetches
+        }
+      })
+
+      // 히어로 이미지도 가져오기
+      try {
+        const heroQuery = `${course.title} ${course.region} 데이트`
+        const heroRes = await fetch(`/api/places/images?query=${encodeURIComponent(heroQuery)}&size=1`)
+        if (heroRes.ok) {
+          const heroData = await heroRes.json()
+          if (heroData.imageUrls?.length > 0) {
+            imageMap['__hero__'] = heroData.imageUrls
+          }
+        }
+      } catch {
+        // skip
+      }
+
+      await Promise.all(promises)
+      setPlaceImages(imageMap)
+    }
+
+    fetchImages()
+  }, [course])
 
   if (!course) return null
+
+  const getPlaceImageUrls = (place: Place) => placeImages[place.id] || place.imageUrls
+  const getHeroImage = () => placeImages['__hero__']?.[0] || course.heroImageUrl
 
   const isSaved = savedCourseIds.includes(course.id)
 
@@ -340,8 +586,8 @@ export default function CourseDetailPage() {
       {/* Hero */}
       <div className="relative h-[280px]">
         <div
-          className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${course.heroImageUrl})` }}
+          className="w-full h-full bg-cover bg-center bg-neutral-200"
+          style={{ backgroundImage: `url(${getHeroImage()})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         <div className="absolute top-0 left-0 right-0 z-10">
@@ -412,12 +658,12 @@ export default function CourseDetailPage() {
                   className="w-full text-left bg-white rounded-2xl shadow-card overflow-hidden active:scale-[0.98] transition-transform"
                 >
                   {/* Place images */}
-                  {stop.place.imageUrls.length > 0 && (
+                  {getPlaceImageUrls(stop.place).length > 0 && (
                     <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory">
-                      {stop.place.imageUrls.map((url, imgI) => (
+                      {getPlaceImageUrls(stop.place).map((url, imgI) => (
                         <div
                           key={imgI}
-                          className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start"
+                          className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start bg-neutral-100"
                           style={{ backgroundImage: `url(${url})` }}
                         />
                       ))}
@@ -473,18 +719,36 @@ export default function CourseDetailPage() {
         </div>
       </div>
 
-      {/* Bottom CTA */}
+      {/* Bottom CTA - 2 buttons */}
       <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
-        <Button className="w-full" onClick={handleStartCourse}>
-          이 코스로 시작
-        </Button>
+        <div className="flex gap-3">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setShowAiEdit(true)}
+            className="flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl bg-white border-2 border-primary-200 text-primary-500 font-bold text-[15px] active:bg-primary-50 transition-colors"
+          >
+            <Sparkles className="w-5 h-5" />
+            AI로 수정
+          </motion.button>
+          <Button className="flex-1" size="lg" onClick={handleStartCourse}>
+            이 코스로 시작
+          </Button>
+        </div>
       </div>
+
+      {/* AI Edit Sheet */}
+      <AnimatePresence>
+        {showAiEdit && course && (
+          <AiEditSheet course={course} onClose={() => setShowAiEdit(false)} />
+        )}
+      </AnimatePresence>
 
       {/* Place Detail Popup */}
       <AnimatePresence>
         {selectedPlace && (
           <PlaceDetailPopup
             place={selectedPlace}
+            placeImageUrls={placeImages[selectedPlace.id]}
             onClose={() => setSelectedPlace(null)}
           />
         )}

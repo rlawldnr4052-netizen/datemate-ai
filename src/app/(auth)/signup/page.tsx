@@ -17,6 +17,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -30,14 +31,17 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = () => {
-    if (!validate()) return
-    const result = signup(name.trim(), email.trim(), password)
+  const handleSubmit = async () => {
+    if (!validate() || isSubmitting) return
+    setIsSubmitting(true)
+
+    const result = await signup(name.trim(), email.trim(), password)
     if (result.success) {
       router.push('/type')
     } else {
       setErrors({ email: result.error || '회원가입에 실패했습니다' })
     }
+    setIsSubmitting(false)
   }
 
   return (
@@ -116,9 +120,9 @@ export default function SignupPage() {
           transition={{ delay: 0.4 }}
           className="flex flex-col gap-3"
         >
-          <Button fullWidth size="lg" onClick={handleSubmit}>
-            가입하기
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button fullWidth size="lg" onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? '가입 중...' : '가입하기'}
+            {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
           </Button>
           <button
             onClick={() => router.push('/login')}

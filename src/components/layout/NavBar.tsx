@@ -1,14 +1,14 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, MapPin, MessageCircle, Trophy, User } from 'lucide-react'
+import { Home, Users, MessageCircle, Navigation, User } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const tabs = [
   { id: 'home', icon: Home, path: '/home' },
-  { id: 'course', icon: MapPin, path: '/course' },
+  { id: 'friends', icon: Users, path: '/friends' },
   { id: 'chat', icon: MessageCircle, path: '/chat' },
-  { id: 'quest', icon: Trophy, path: '/quest' },
+  { id: 'course', icon: Navigation, path: '/course' },
   { id: 'profile', icon: User, path: '/profile' },
 ]
 
@@ -24,6 +24,10 @@ export default function NavBar() {
   }
 
   const activeIndex = getActiveIndex()
+
+  // 네비바 숨길 페이지
+  const hideOnPaths = ['/profile/edit', '/course/']
+  if (hideOnPaths.some((p) => pathname.startsWith(p))) return null
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-[max(10px,env(safe-area-inset-bottom))]">
