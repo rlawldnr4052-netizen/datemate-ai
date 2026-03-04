@@ -25,6 +25,8 @@ import {
   Zap,
   Award,
   CheckCircle2,
+  Calendar,
+  Brain,
   ChevronRight,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -375,8 +377,8 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
 export default function ProfilePage() {
   const router = useRouter()
   const { currentUser, logout, updateProfileImage, updateName } = useAuthStore()
-  const { dateType, likedTags, mbti, location, reset } = useOnboardingStore()
-  const { totalCourses, totalPlaces, activeQuest, completedCount } = useQuestStore()
+  const { dateType, likedTags, mbti, birthday, location, reset } = useOnboardingStore()
+  const { totalCourses, totalPlaces, totalShortForms, activeQuest, completedCount } = useQuestStore()
   const { posts } = useFeedStore()
   const { friends, fetchFriends } = useFriendStore()
 
@@ -403,6 +405,8 @@ export default function ProfilePage() {
     .map((t) => t.label)
 
   const mbtiInfo = mbti ? mbtiOptions.find((o) => o.type === mbti) : null
+
+  const age = birthday ? (2026 - Number(birthday.split('-')[0])) : null
 
   const handleEditProfile = () => {
     router.push('/profile/edit')
@@ -561,6 +565,12 @@ export default function ProfilePage() {
                 {mbtiInfo.emoji} {mbtiInfo.type}
               </span>
             )}
+            {birthday && age && (
+              <span className="text-[12px] text-neutral-400 flex items-center gap-0.5">
+                <Calendar className="w-3 h-3" />
+                {birthday.replace(/-/g, '.')} ({age}세)
+              </span>
+            )}
             {location && (
               <span className="text-[12px] text-neutral-400 flex items-center gap-0.5">
                 <MapPin className="w-3 h-3" />
@@ -568,6 +578,16 @@ export default function ProfilePage() {
               </span>
             )}
           </div>
+
+          {/* MBTI detail */}
+          {mbtiInfo && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <Brain className="w-3 h-3 text-violet-400" />
+              <span className="text-[11px] text-neutral-400">
+                {mbtiInfo.label} · {mbtiInfo.description}
+              </span>
+            </div>
+          )}
 
           {/* Tags */}
           {likedTagLabels.length > 0 && (
@@ -729,7 +749,7 @@ export default function ProfilePage() {
           {/* Activity stats */}
           <div className="mb-5">
             <p className="text-[13px] font-bold text-neutral-700 mb-3">활동 기록</p>
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-4 gap-2">
               <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-primary-50">
                 <Navigation className="w-5 h-5 text-primary-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{totalCourses}</p>
@@ -744,6 +764,11 @@ export default function ProfilePage() {
                 <Flame className="w-5 h-5 text-violet-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{completedCount}</p>
                 <p className="text-[10px] text-neutral-400">퀘스트</p>
+              </div>
+              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-amber-50">
+                <Star className="w-5 h-5 text-amber-500" />
+                <p className="text-[16px] font-bold text-neutral-900">{totalShortForms}</p>
+                <p className="text-[10px] text-neutral-400">숏폼</p>
               </div>
             </div>
           </div>
