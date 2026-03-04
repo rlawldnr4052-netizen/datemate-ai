@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(req: Request) {
+  if (!supabase) return NextResponse.json({ error: 'Supabase not configured' }, { status: 503 })
+
   try {
     const { userId, name } = await req.json()
 

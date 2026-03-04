@@ -4,6 +4,13 @@ import { useCourseStore } from '@/stores/useCourseStore'
 import { getPersona } from '@/data/aiPersona'
 import { DateType } from '@/types/onboarding'
 
+const defaultQuickReplies: QuickReply[] = [
+  { id: 'q1', label: '오늘 데이트 코스 추천해줘', action: 'recommend' },
+  { id: 'q2', label: '근처 맛집 알려줘', action: 'food' },
+  { id: 'q3', label: '분위기 좋은 카페 추천', action: 'vibe' },
+  { id: 'q4', label: '주말에 뭐하지?', action: 'weekend' },
+]
+
 interface UserProfileForChat {
   dateType: string | null
   likedTags: string[]
@@ -78,7 +85,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   messages: [makeWelcomeMessage(null)],
   isTyping: false,
   isTMIEnabled: false,
-  quickReplies: getPersona(null).quickReplies,
+  quickReplies: getPersona(null).quickReplies ?? defaultQuickReplies,
   currentDateType: null,
 
   syncPersona: (dateType: DateType | null) => {
@@ -87,7 +94,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     const persona = getPersona(dateType)
     set({
       currentDateType: dateType,
-      quickReplies: persona.quickReplies,
+      quickReplies: persona.quickReplies ?? defaultQuickReplies,
       messages: [
         {
           id: 'welcome',

@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -24,8 +25,6 @@ export default function LoginPage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
     if (!validate() || isSubmitting) return

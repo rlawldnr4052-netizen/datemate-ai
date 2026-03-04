@@ -5,6 +5,7 @@ import { User } from '@/types/auth'
 interface AuthState {
   currentUser: User | null
   isAuthenticated: boolean
+  users: User[]
   isLoading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
@@ -19,6 +20,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       currentUser: null,
       isAuthenticated: false,
+      users: [],
       isLoading: false,
 
       login: async (email, password) => {
@@ -47,6 +49,14 @@ export const useAuthStore = create<AuthState>()(
           set({ currentUser: user, isAuthenticated: true, isLoading: false })
           return { success: true }
         } catch {
+          // Fallback to local users if server is unreachable
+          const user = get().users.find(
+            (u) => u.email === email && u.password === password
+          )
+          if (user) {
+            set({ currentUser: user, isAuthenticated: true, isLoading: false })
+            return { success: true }
+          }
           set({ isLoading: false })
           return { success: false, error: '서버 연결에 실패했습니다' }
         }
@@ -75,11 +85,34 @@ export const useAuthStore = create<AuthState>()(
             profileImageUrl: data.user.profile_image_url || undefined,
             createdAt: data.user.created_at,
           }
-          set({ currentUser: user, isAuthenticated: true, isLoading: false })
+          set((s) => ({
+            users: [...s.users, user],
+            currentUser: user,
+            isAuthenticated: true,
+            isLoading: false,
+          }))
           return { success: true }
         } catch {
-          set({ isLoading: false })
-          return { success: false, error: '서버 연결에 실패했습니다' }
+          // Fallback to local signup if server is unreachable
+          const exists = get().users.some((u) => u.email === email)
+          if (exists) {
+            set({ isLoading: false })
+            return { success: false, error: '이미 등록된 이메일입니다' }
+          }
+          const newUser: User = {
+            id: crypto.randomUUID(),
+            name,
+            email,
+            password,
+            createdAt: new Date().toISOString(),
+          }
+          set((s) => ({
+            users: [...s.users, newUser],
+            currentUser: newUser,
+            isAuthenticated: true,
+            isLoading: false,
+          }))
+          return { success: true }
         }
       },
 
@@ -134,6 +167,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         currentUser: state.currentUser,
         isAuthenticated: state.isAuthenticated,
+        users: state.users,
       }),
     },
   ),

@@ -5,6 +5,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!supabase) return NextResponse.json({ error: 'Supabase not configured' }, { status: 503 })
+
   try {
     const { id } = await params
 

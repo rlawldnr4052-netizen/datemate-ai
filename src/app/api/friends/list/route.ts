@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 export async function GET(req: Request) {
+  if (!supabase) return NextResponse.json({ error: 'Supabase not configured' }, { status: 503 })
+
   const { searchParams } = new URL(req.url)
   const userId = searchParams.get('userId') || ''
   const type = searchParams.get('type') || 'friends'
