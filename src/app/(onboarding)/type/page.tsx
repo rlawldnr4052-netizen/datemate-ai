@@ -73,7 +73,7 @@ export default function OnboardingPage() {
       <TopBar title="취향 설정" showBack onBack={() => router.back()} />
 
       <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32">
-        {/* -- 1. 내 정보 (선택) -- */}
+        {/* ── 1. 내 정보 (선택) ── */}
         <section className="mb-8">
           <h2 className="text-title-2 text-neutral-900 mb-1">나에 대해 알려주세요</h2>
           <p className="text-caption text-neutral-400 mb-4">선택사항이에요. 넘겨도 괜찮아요!</p>
@@ -163,7 +163,7 @@ export default function OnboardingPage() {
           </div>
         </section>
 
-        {/* -- 2. 취향 태그 (필수) -- */}
+        {/* ── 2. 취향 태그 (필수) ── */}
         <section className="mb-8">
           <h2 className="text-title-2 text-neutral-900 mb-1">관심 키워드</h2>
           <p className="text-caption text-neutral-400 mb-4">3개 이상 선택해주세요 (현재 {selectedTags.length}개)</p>
@@ -196,7 +196,7 @@ export default function OnboardingPage() {
           ))}
         </section>
 
-        {/* -- 3. 무드 (필수) -- */}
+        {/* ── 3. 무드 (필수) ── */}
         <section className="mb-8">
           <h2 className="text-title-2 text-neutral-900 mb-1">원하는 무드</h2>
           <p className="text-caption text-neutral-400 mb-4">하나를 선택해주세요</p>
@@ -222,7 +222,7 @@ export default function OnboardingPage() {
           </div>
         </section>
 
-        {/* -- 4. 예산 (필수) -- */}
+        {/* ── 4. 예산 (필수) ── */}
         <section className="mb-4">
           <h2 className="text-title-2 text-neutral-900 mb-1">예산</h2>
           <p className="text-caption text-neutral-400 mb-4">1인 기준</p>
@@ -250,7 +250,7 @@ export default function OnboardingPage() {
         </section>
       </div>
 
-      {/* -- 하단 고정 버튼 -- */}
+      {/* ── 하단 고정 버튼 ── */}
       <div className="fixed bottom-0 left-0 right-0 z-20">
         <div className="mx-auto max-w-app px-5 pb-6 pt-3 bg-gradient-to-t from-white via-white to-white/0">
           <Button fullWidth size="lg" disabled={!isValid} onClick={handleComplete}>

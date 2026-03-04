@@ -9,6 +9,7 @@ interface OnboardingState {
   location: KoreanRegion | null
   likedTags: string[]
   dislikedTags: string[]
+  balanceAnswers: Record<string, string>
   selectedVibe: Vibe | null
   selectedBudget: BudgetLevel | null
   isComplete: boolean
@@ -18,8 +19,8 @@ interface OnboardingState {
   setLocation: (region: KoreanRegion) => void
   addLikedTag: (tagId: string) => void
   addDislikedTag: (tagId: string) => void
-  toggleLikedTag: (tagId: string) => void
   setLikedTags: (tags: string[]) => void
+  setBalanceAnswer: (questionId: string, optionId: string) => void
   setVibe: (vibe: Vibe) => void
   setBudget: (budget: BudgetLevel) => void
   completeOnboarding: () => void
@@ -35,6 +36,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       location: null,
       likedTags: [],
       dislikedTags: [],
+      balanceAnswers: {},
       selectedVibe: null,
       selectedBudget: null,
       isComplete: false,
@@ -45,12 +47,9 @@ export const useOnboardingStore = create<OnboardingState>()(
       setLocation: (region) => set({ location: region }),
       addLikedTag: (tagId) => set((s) => ({ likedTags: [...s.likedTags, tagId] })),
       addDislikedTag: (tagId) => set((s) => ({ dislikedTags: [...s.dislikedTags, tagId] })),
-      toggleLikedTag: (tagId) => set((s) => ({
-        likedTags: s.likedTags.includes(tagId)
-          ? s.likedTags.filter((id) => id !== tagId)
-          : [...s.likedTags, tagId],
-      })),
       setLikedTags: (tags) => set({ likedTags: tags }),
+      setBalanceAnswer: (questionId, optionId) =>
+        set((s) => ({ balanceAnswers: { ...s.balanceAnswers, [questionId]: optionId } })),
       setVibe: (vibe) => set({ selectedVibe: vibe }),
       setBudget: (budget) => set({ selectedBudget: budget }),
       completeOnboarding: () => set({ isComplete: true }),
@@ -61,6 +60,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         location: null,
         likedTags: [],
         dislikedTags: [],
+        balanceAnswers: {},
         selectedVibe: null,
         selectedBudget: null,
         isComplete: false,

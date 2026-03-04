@@ -56,7 +56,7 @@ export default function ChatPage() {
     syncPersona(dateType)
   }, [dateType, syncPersona])
 
-  // 브라우저 Geolocation API로 정확한 위치 가져오기
+  // Geolocation
   useEffect(() => {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
@@ -180,7 +180,6 @@ export default function ChatPage() {
                     isGenerating={msg.isGeneratingCourse}
                   />
                 )}
-                {/* 코스 생성 중이지만 추천 데이터 없을 때 스켈레톤 */}
                 {msg.isGeneratingCourse && !msg.courseRecommendation && (
                   <CourseTimelineSkeleton />
                 )}

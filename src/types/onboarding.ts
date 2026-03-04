@@ -20,6 +20,19 @@ export interface PreferenceTag {
   emoji: string
 }
 
+export interface BalanceOption {
+  id: string
+  label: string
+  emoji: string
+  gradient: string
+}
+
+export interface BalanceQuestion {
+  id: string
+  optionA: BalanceOption
+  optionB: BalanceOption
+}
+
 export type Vibe = 'romantic' | 'hip' | 'chill' | 'adventure' | 'emotional' | 'foodie'
 
 export interface VibeOption {
