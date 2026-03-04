@@ -27,6 +27,7 @@ import {
   CheckCircle2,
   Calendar,
   Brain,
+  ChevronRight,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
@@ -101,15 +102,24 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
     setTaggingPhotoId(null)
   }
 
-  const handlePublish = () => {
+  const fileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(file)
+    })
+
+  const handlePublish = async () => {
     if (!selectedCourse || !currentUser || uploadedPhotos.length === 0) return
 
-    const photos = uploadedPhotos.map((p) => ({
-      id: p.id,
-      imageUrl: p.previewUrl,
-      placeName: p.taggedPlaceName || '',
-      placeCategory: p.taggedPlaceCategory || '',
-    }))
+    const photos = await Promise.all(
+      uploadedPhotos.map(async (p) => ({
+        id: p.id,
+        imageUrl: await fileToDataUrl(p.file),
+        placeName: p.taggedPlaceName || '',
+        placeCategory: p.taggedPlaceCategory || '',
+      }))
+    )
 
     addPost({
       userId: currentUser.id,
@@ -375,6 +385,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'grid' | 'quest'>('grid')
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
   const [showCreatePost, setShowCreatePost] = useState(false)
+  const [showFriendList, setShowFriendList] = useState(false)
   const [isEditingName, setIsEditingName] = useState(false)
   const [editName, setEditName] = useState('')
   const [isSavingName, setIsSavingName] = useState(false)
@@ -529,10 +540,10 @@ export default function ProfilePage() {
               <p className="text-[18px] font-bold text-neutral-900">{userPosts.length}</p>
               <p className="text-[12px] text-neutral-500">게시물</p>
             </div>
-            <div className="text-center">
+            <button onClick={() => setShowFriendList(true)} className="text-center">
               <p className="text-[18px] font-bold text-neutral-900">{friendCount}</p>
               <p className="text-[12px] text-neutral-500">친구</p>
-            </div>
+            </button>
             <div className="text-center">
               <p className="text-[18px] font-bold text-neutral-900">{totalCourses}</p>
               <p className="text-[12px] text-neutral-500">코스</p>
@@ -837,6 +848,82 @@ export default function ProfilePage() {
       <AnimatePresence>
         {showCreatePost && (
           <CreatePostSheet onClose={() => setShowCreatePost(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Friend list modal */}
+      <AnimatePresence>
+        {showFriendList && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-end justify-center"
+            onClick={() => setShowFriendList(false)}
+          >
+            <div className="absolute inset-0 bg-black/50" />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+              style={{ maxHeight: '70vh' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-neutral-100">
+                <h3 className="text-[16px] font-bold text-neutral-900">친구 {friendCount}명</h3>
+                <button onClick={() => setShowFriendList(false)}>
+                  <X className="w-5 h-5 text-neutral-400" />
+                </button>
+              </div>
+              <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
+                {friends.length > 0 ? (
+                  <div className="divide-y divide-neutral-50">
+                    {friends.map((f) => {
+                      const friend = f.friend
+                      if (!friend) return null
+                      return (
+                        <motion.button
+                          key={f.id}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setShowFriendList(false)
+                            router.push(`/profile/${friend.id}`)
+                          }}
+                          className="w-full flex items-center gap-3 px-5 py-3 text-left active:bg-neutral-50 transition-colors"
+                        >
+                          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-300 to-primary-500 p-[2px] flex-shrink-0">
+                            {friend.profile_image_url ? (
+                              <div
+                                className="w-full h-full rounded-full bg-cover bg-center"
+                                style={{ backgroundImage: `url(${friend.profile_image_url})` }}
+                              />
+                            ) : (
+                              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                                <span className="text-[14px] font-bold text-primary-500">
+                                  {friend.name.charAt(0)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[14px] font-semibold text-neutral-900 truncate">{friend.name}</p>
+                            <p className="text-[12px] text-neutral-400 truncate">{friend.email}</p>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-neutral-300 flex-shrink-0" />
+                        </motion.button>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-[14px] text-neutral-400">아직 친구가 없어요</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </PageTransition>

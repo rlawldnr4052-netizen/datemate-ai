@@ -203,9 +203,24 @@ export default function HomePage() {
 
         {/* -- 인사 + 타이틀 -- */}
         <div className="px-5 pt-6 pb-2">
-          <p className="text-[13px] font-medium mb-2" style={{ color: theme.accent }}>
-            안녕, {userName}님
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[13px] font-medium" style={{ color: theme.accent }}>
+              안녕, {userName}님
+            </p>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => router.push('/friends')}
+              className="relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center"
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            >
+              <Bell className="w-4.5 h-4.5" style={{ color: theme.accent }} />
+              {receivedRequests.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border-[1.5px] border-white">
+                  {receivedRequests.length}
+                </span>
+              )}
+            </motion.button>
+          </div>
           <h1 className="text-[26px] font-extrabold text-neutral-900 leading-tight flex items-center gap-2">
             <span className="text-[30px]">{theme.emoji}</span> {theme.title}
           </h1>
