@@ -29,97 +29,82 @@ function formatDistance(km: number): string {
   return `${km.toFixed(1)}km`
 }
 
-// Character back-view avatar - Pokemon GO style (seeing the character from behind)
+// Character back-view avatar
 function CharacterBackView() {
   return (
-    <div className="relative" style={{ width: 80, height: 110 }}>
-      {/* Ground shadow */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-        width: 60, height: 16, borderRadius: '50%',
-        background: 'radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%)',
-      }} />
-
-      {/* Pulse ring on ground */}
+    <div className="relative" style={{ width: 64, height: 90 }}>
+      {/* Ground pulse ring */}
       <motion.div
-        animate={{ scale: [1, 2, 1], opacity: [0.3, 0, 0.3] }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+        animate={{ scale: [1, 1.8, 1], opacity: [0.4, 0, 0.4] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
         style={{
-          position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
-          width: 50, height: 16, borderRadius: '50%',
+          position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+          width: 40, height: 12, borderRadius: '50%',
           border: '2px solid rgba(96,165,250,0.3)',
         }}
       />
+      {/* Ground shadow */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+        width: 48, height: 12, borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)',
+      }} />
 
       {/* Character SVG - back view */}
       <motion.svg
-        width={80}
-        height={100}
+        width={64}
+        height={80}
         viewBox="0 0 80 100"
-        style={{ position: 'absolute', bottom: 8, left: 0 }}
+        style={{ position: 'absolute', bottom: 4, left: 0 }}
         animate={{ y: [0, -2, 0] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
       >
         <defs>
-          <linearGradient id="jacketBack" x1="24" y1="46" x2="56" y2="78" gradientUnits="userSpaceOnUse">
+          <linearGradient id="jb" x1="24" y1="46" x2="56" y2="78" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#FF8A75" />
             <stop offset="100%" stopColor="#D94030" />
           </linearGradient>
-          <linearGradient id="hairBack" x1="22" y1="6" x2="58" y2="44" gradientUnits="userSpaceOnUse">
+          <linearGradient id="hb" x1="22" y1="6" x2="58" y2="44" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#5B4A3C" />
             <stop offset="100%" stopColor="#3D2E22" />
           </linearGradient>
         </defs>
-
         {/* Legs */}
         <rect x="30" y="76" width="8" height="14" rx="4" fill="#2D3748" />
         <rect x="42" y="76" width="8" height="14" rx="4" fill="#2D3748" />
-        {/* Shoes */}
         <ellipse cx="34" cy="90" rx="5" ry="3" fill="#1A202C" />
         <ellipse cx="46" cy="90" rx="5" ry="3" fill="#1A202C" />
-
-        {/* Body / jacket back */}
-        <path d="M28 50 C28 46 32 44 40 44 C48 44 52 46 52 50 L54 74 C54 78 48 80 40 80 C32 80 26 78 26 74 Z" fill="url(#jacketBack)" />
-        {/* Jacket center seam */}
+        {/* Body */}
+        <path d="M28 50 C28 46 32 44 40 44 C48 44 52 46 52 50 L54 74 C54 78 48 80 40 80 C32 80 26 78 26 74 Z" fill="url(#jb)" />
         <line x1="40" y1="46" x2="40" y2="78" stroke="rgba(0,0,0,0.15)" strokeWidth="1" />
-        {/* Collar */}
         <path d="M30 48 C30 44 34 42 40 42 C46 42 50 44 50 48" stroke="rgba(0,0,0,0.2)" strokeWidth="1.5" fill="none" />
-
         {/* Arms */}
-        <path d="M28 52 C22 54 20 60 21 66 C21 68 23 68 24 66 L28 56" fill="url(#jacketBack)" />
-        <path d="M52 52 C58 54 60 60 59 66 C59 68 57 68 56 66 L52 56" fill="url(#jacketBack)" />
-
+        <path d="M28 52 C22 54 20 60 21 66 C21 68 23 68 24 66 L28 56" fill="url(#jb)" />
+        <path d="M52 52 C58 54 60 60 59 66 C59 68 57 68 56 66 L52 56" fill="url(#jb)" />
         {/* Neck */}
         <rect x="36" y="36" width="8" height="10" rx="3" fill="#EAADA4" />
-
-        {/* Head (back of head - mostly hair) */}
-        <circle cx="40" cy="26" r="18" fill="url(#hairBack)" />
-
-        {/* Hair detail - back strands */}
+        {/* Head */}
+        <circle cx="40" cy="26" r="18" fill="url(#hb)" />
         <path d="M24 30 C22 24 24 14 32 10" stroke="rgba(0,0,0,0.1)" strokeWidth="1.5" fill="none" />
         <path d="M56 30 C58 24 56 14 48 10" stroke="rgba(0,0,0,0.1)" strokeWidth="1.5" fill="none" />
-
-        {/* Hair bottom - back of neck hair */}
-        <path d="M28 38 C30 42 36 44 40 44 C44 44 50 42 52 38 C52 36 48 40 40 40 C32 40 28 36 28 38Z" fill="url(#hairBack)" />
-
-        {/* Ear hints */}
+        <path d="M28 38 C30 42 36 44 40 44 C44 44 50 42 52 38 C52 36 48 40 40 40 C32 40 28 36 28 38Z" fill="url(#hb)" />
+        {/* Ears */}
         <ellipse cx="22" cy="28" rx="3" ry="4" fill="#EAADA4" />
         <ellipse cx="58" cy="28" rx="3" ry="4" fill="#EAADA4" />
         <ellipse cx="22" cy="28" rx="2" ry="3" fill="#E09E95" />
         <ellipse cx="58" cy="28" rx="2" ry="3" fill="#E09E95" />
-
-        {/* Small backpack/bag detail */}
+        {/* Backpack */}
         <rect x="35" y="52" width="10" height="12" rx="3" fill="rgba(0,0,0,0.15)" />
         <rect x="37" y="54" width="6" height="3" rx="1.5" fill="rgba(255,255,255,0.1)" />
       </motion.svg>
 
-      {/* Direction indicator pointing forward (up) */}
+      {/* Direction arrow */}
       <div style={{
-        position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)',
+        position: 'absolute', top: -6, left: '50%', transform: 'translateX(-50%)',
         width: 0, height: 0,
-        borderLeft: '8px solid transparent',
-        borderRight: '8px solid transparent',
-        borderBottom: '12px solid rgba(96,165,250,0.6)',
+        borderLeft: '6px solid transparent',
+        borderRight: '6px solid transparent',
+        borderBottom: '10px solid rgba(96,165,250,0.6)',
         filter: 'drop-shadow(0 0 4px rgba(96,165,250,0.4))',
       }} />
     </div>
@@ -204,53 +189,25 @@ export default function CourseMapPage() {
 
   return (
     <div className="h-screen w-full relative overflow-hidden bg-[#0B0B12]">
-      {/* 3D Perspective Map Wrapper */}
-      <div
-        className="absolute inset-0"
-        style={{
-          perspective: '600px',
-          perspectiveOrigin: '50% 85%',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: '-10%',
-            right: '-10%',
-            height: '160%',
-            transform: 'rotateX(28deg)',
-            transformOrigin: '50% 100%',
-          }}
-        >
-          <CourseMap
-            stops={stops}
-            userLocation={userLocation}
-            activeStopIndex={activeStopIndex}
-            onStopClick={handleStopClick}
-            followUser={followMode}
-            heading={followMode ? heading : null}
-          />
-        </div>
+      {/* Map fills entire screen - MapLibre handles 3D natively via pitch */}
+      <div className="absolute inset-0">
+        <CourseMap
+          stops={stops}
+          userLocation={userLocation}
+          activeStopIndex={activeStopIndex}
+          onStopClick={handleStopClick}
+          followUser={followMode}
+          heading={followMode ? heading : null}
+        />
       </div>
 
-      {/* Gradient fade at top for depth effect */}
-      <div
-        className="absolute top-0 left-0 right-0 z-[5] pointer-events-none"
-        style={{
-          height: '25%',
-          background: 'linear-gradient(180deg, rgba(11,11,18,0.5) 0%, transparent 100%)',
-        }}
-      />
-
-      {/* Character - back view, positioned at lower center like Pokemon GO */}
+      {/* Character overlay - positioned at center like Pokemon GO */}
       <div
         className="absolute left-1/2 z-20 pointer-events-none"
         style={{
-          transform: 'translateX(-50%)',
-          bottom: showDetail ? 'calc(38vh + 20px)' : '130px',
-          transition: 'bottom 0.3s ease',
+          top: showDetail ? '38%' : '52%',
+          transform: 'translate(-50%, -50%)',
+          transition: 'top 0.3s ease',
         }}
       >
         <CharacterBackView />
