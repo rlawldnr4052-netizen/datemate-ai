@@ -357,8 +357,12 @@ function AiEditSheet({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `현재 코스:\n${courseContext}\n\n사용자 요청: ${userMsg}\n\n위 코스에 대한 수정 요청이야. 구체적으로 어떻게 수정하면 좋을지 한국어로 간단하게 추천해줘. 장소 이름과 카테고리를 포함해서.`,
-          history: [],
+          messages: [
+            {
+              role: 'user',
+              content: `현재 코스:\n${courseContext}\n\n사용자 요청: ${userMsg}\n\n위 코스에 대한 수정 요청이야. 구체적으로 어떻게 수정하면 좋을지 한국어로 간단하게 추천해줘. 장소 이름과 카테고리를 포함해서.`,
+            },
+          ],
         }),
       })
 
@@ -366,7 +370,7 @@ function AiEditSheet({
         const data = await res.json()
         setMessages((prev) => [...prev, {
           id: crypto.randomUUID(), role: 'ai',
-          content: data.reply || '수정 사항을 처리하지 못했어요. 다시 시도해주세요.',
+          content: data.message || '수정 사항을 처리하지 못했어요. 다시 시도해주세요.',
         }])
       } else {
         setMessages((prev) => [...prev, {
