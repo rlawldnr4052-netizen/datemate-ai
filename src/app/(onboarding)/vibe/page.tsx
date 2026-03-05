@@ -60,10 +60,10 @@ export default function VibePage() {
                 onClick={() => handleSelect(vibe.id)}
                 className={`
                   relative aspect-square rounded-3xl overflow-hidden transition-all duration-200
-                  ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card border border-white/[0.08]'}
+                  ${isSelected ? 'ring-2 ring-white/[0.3] ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card border border-white/[0.08]'}
                 `}
                 style={isSelected ? {
-                  boxShadow: '0 0 12px rgba(255,107,82,0.15), 0 4px 12px rgba(0,0,0,0.3)',
+                  boxShadow: '0 0 12px rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.3)',
                   outline: '2px solid rgba(255,255,255,0.2)',
                 } : undefined}
               >
@@ -79,7 +79,7 @@ export default function VibePage() {
                     animate={{ scale: 1 }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#0B0B12] border border-white/[0.15] flex items-center justify-center check-pop"
                   >
-                    <div className="w-3 h-3 rounded-full bg-primary-500" />
+                    <div className="w-3 h-3 rounded-full bg-white/[0.5]" />
                   </motion.div>
                 )}
               </motion.button>

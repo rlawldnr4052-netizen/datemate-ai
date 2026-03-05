@@ -38,13 +38,13 @@ const categoryThemes: Record<CategoryTab, {
     gradient: 'linear-gradient(180deg, #1a0a12 0%, #0f0810 50%, #0B0B12 100%)',
     bgFrom: '#FFE0EC',
     bgTo: '#FFF5F7',
-    accent: '#E8457C',
-    accentLight: '#FF7EB3',
-    accentBg: 'rgba(232, 69, 124, 0.08)',
+    accent: 'rgba(255,255,255,0.5)',
+    accentLight: 'rgba(255,255,255,0.35)',
+    accentBg: 'rgba(255,255,255,0.06)',
     tabActive: 'linear-gradient(135deg, #FF7EB3, #E8457C)',
-    tabText: '#E8457C',
+    tabText: 'rgba(255,255,255,0.5)',
     ctaGradient: 'linear-gradient(135deg, #FF7EB3, #E8457C)',
-    cardBorder: 'rgba(232, 69, 124, 0.12)',
+    cardBorder: 'rgba(255,255,255,0.08)',
   },
   friends: {
     label: '친구와 놀기',
@@ -53,13 +53,13 @@ const categoryThemes: Record<CategoryTab, {
     gradient: 'linear-gradient(180deg, #141008 0%, #0f0d08 50%, #0B0B12 100%)',
     bgFrom: '#FFF0C8',
     bgTo: '#FFFBF0',
-    accent: '#D4890B',
-    accentLight: '#FFB830',
-    accentBg: 'rgba(212, 137, 11, 0.08)',
+    accent: 'rgba(255,255,255,0.5)',
+    accentLight: 'rgba(255,255,255,0.35)',
+    accentBg: 'rgba(255,255,255,0.06)',
     tabActive: 'linear-gradient(135deg, #FFD060, #F5A623)',
-    tabText: '#D4890B',
+    tabText: 'rgba(255,255,255,0.5)',
     ctaGradient: 'linear-gradient(135deg, #FFD060, #F5A623)',
-    cardBorder: 'rgba(212, 137, 11, 0.12)',
+    cardBorder: 'rgba(255,255,255,0.08)',
   },
   solo: {
     label: '혼놀족',
@@ -68,13 +68,13 @@ const categoryThemes: Record<CategoryTab, {
     gradient: 'linear-gradient(180deg, #100a1a 0%, #0c0810 50%, #0B0B12 100%)',
     bgFrom: '#E8E0FF',
     bgTo: '#F5F0FF',
-    accent: '#7C3AED',
-    accentLight: '#A78BFA',
-    accentBg: 'rgba(124, 58, 237, 0.08)',
+    accent: 'rgba(255,255,255,0.5)',
+    accentLight: 'rgba(255,255,255,0.35)',
+    accentBg: 'rgba(255,255,255,0.06)',
     tabActive: 'linear-gradient(135deg, #A78BFA, #7C3AED)',
-    tabText: '#7C3AED',
+    tabText: 'rgba(255,255,255,0.5)',
     ctaGradient: 'linear-gradient(135deg, #A78BFA, #7C3AED)',
-    cardBorder: 'rgba(124, 58, 237, 0.12)',
+    cardBorder: 'rgba(255,255,255,0.08)',
   },
 }
 
@@ -176,10 +176,10 @@ export default function HomePage() {
                   onClick={() => { setActiveCategory(tabId); setDateType(tabId) }}
                   className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl relative overflow-hidden"
                   style={{
-                    background: isActive ? t.tabActive : 'transparent',
-                    backdropFilter: isActive ? 'blur(12px)' : undefined,
-                    border: isActive ? '1px solid rgba(255,255,255,0.15)' : '1px solid transparent',
-                    boxShadow: isActive ? 'inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.2)' : 'none',
+                    background: isActive ? 'rgba(255,255,255,0.10)' : 'transparent',
+                    backdropFilter: isActive ? 'blur(16px)' : undefined,
+                    border: isActive ? '1px solid rgba(255,255,255,0.12)' : '1px solid transparent',
+                    boxShadow: isActive ? 'inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
                     transition: 'border-color 0.3s ease, background 0.3s ease',
                   }}
                 >
@@ -363,7 +363,7 @@ export default function HomePage() {
               onClick={() => setBudgetFilter(null)}
               className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all"
               style={{
-                background: !budgetFilter ? theme.accent : 'rgba(255,255,255,0.06)',
+                background: !budgetFilter ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)',
                 color: !budgetFilter ? 'white' : 'rgba(255,255,255,0.4)',
                 border: !budgetFilter ? 'none' : '1px solid rgba(255,255,255,0.08)',
               }}
@@ -376,7 +376,7 @@ export default function HomePage() {
                 onClick={() => setBudgetFilter(budgetFilter === b ? null : b)}
                 className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all flex items-center gap-1"
                 style={{
-                  background: budgetFilter === b ? theme.accent : 'rgba(255,255,255,0.06)',
+                  background: budgetFilter === b ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)',
                   color: budgetFilter === b ? 'white' : 'rgba(255,255,255,0.4)',
                   border: budgetFilter === b ? 'none' : '1px solid rgba(255,255,255,0.08)',
                 }}
@@ -475,8 +475,8 @@ export default function HomePage() {
                           <Bookmark
                             className="w-4.5 h-4.5"
                             style={{
-                              color: savedCourseIds.includes(course.id) ? theme.accent : '#D1D5DB',
-                              fill: savedCourseIds.includes(course.id) ? theme.accent : 'none',
+                              color: savedCourseIds.includes(course.id) ? 'rgba(255,255,255,0.7)' : '#D1D5DB',
+                              fill: savedCourseIds.includes(course.id) ? 'rgba(255,255,255,0.7)' : 'none',
                             }}
                           />
                         </button>

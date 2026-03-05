@@ -91,12 +91,12 @@ export default function OnboardingPage() {
                     onClick={() => setSelectedMBTI(active ? null : opt.type)}
                     className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl border-2 transition-all text-xs ${
                       active
-                        ? 'border-primary-500 bg-primary-500/10'
+                        ? 'border-white/[0.15] bg-white/[0.08]'
                         : 'border-white/[0.08] bg-white/[0.04]'
                     }`}
                   >
                     {opt.emoji && <span className="text-base">{opt.emoji}</span>}
-                    <span className={`font-bold ${active ? 'text-primary-600' : 'text-neutral-800'}`}>{opt.type}</span>
+                    <span className={`font-bold ${active ? 'text-neutral-200' : 'text-neutral-800'}`}>{opt.type}</span>
                   </motion.button>
                 )
               })}
@@ -181,7 +181,7 @@ export default function OnboardingPage() {
                       onClick={() => toggleTag(tag.id)}
                       className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
                         active
-                          ? 'bg-primary-500 text-white shadow-sm glow-sm'
+                          ? 'bg-white/[0.12] text-neutral-200 shadow-sm'
                           : 'glass-pill text-neutral-400'
                       }`}
                     >
@@ -209,7 +209,7 @@ export default function OnboardingPage() {
                   whileTap={{ scale: 0.93 }}
                   onClick={() => setSelectedVibe(vibe.id)}
                   className={`relative rounded-2xl overflow-hidden transition-all ${
-                    active ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12]' : ''
+                    active ? 'ring-2 ring-white/[0.3] ring-offset-2 ring-offset-[#0B0B12]' : ''
                   }`}
                 >
                   <div className="py-5 px-2 flex flex-col items-center gap-1.5" style={{ background: vibe.gradient }}>
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedBudget(opt.id)}
                   className={`flex-1 rounded-2xl overflow-hidden transition-all ${
-                    active ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12]' : ''
+                    active ? 'ring-2 ring-white/[0.3] ring-offset-2 ring-offset-[#0B0B12]' : ''
                   }`}
                 >
                   <div className="py-4 px-2 flex flex-col items-center gap-1" style={{ background: opt.gradient }}>

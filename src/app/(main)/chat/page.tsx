@@ -119,7 +119,7 @@ export default function ChatPage() {
                   ? 'text-white'
                   : 'bg-white/[0.06] text-neutral-500'
               }`}
-              style={isTMIEnabled ? { backgroundColor: persona.accentColor } : undefined}
+              style={isTMIEnabled ? { backgroundColor: 'rgba(255,255,255,0.15)' } : undefined}
             >
               <Info className="w-3.5 h-3.5" />
               TMI
@@ -191,18 +191,18 @@ export default function ChatPage() {
                     animate={{ opacity: 1, height: 'auto' }}
                     className="mt-2 p-3 rounded-2xl border relative overflow-hidden"
                     style={{
-                      backgroundColor: `${persona.accentColor}10`,
-                      borderColor: `${persona.accentColor}30`,
+                      backgroundColor: 'rgba(255,255,255,0.06)',
+                      borderColor: 'rgba(255,255,255,0.08)',
                       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
                     }}
                   >
                     <div className="absolute top-0 left-0 right-0 h-px"
-                      style={{ background: `linear-gradient(90deg, transparent, ${persona.accentColor}40, transparent)` }} />
+                      style={{ background: `linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)` }} />
                     <div className="flex items-center gap-2 mb-1">
-                      <Lightbulb className="w-4 h-4" style={{ color: persona.accentColor }} />
+                      <Lightbulb className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.5)' }} />
                       <span
                         className="text-caption font-semibold"
-                        style={{ color: persona.accentColor }}
+                        style={{ color: 'rgba(255,255,255,0.5)' }}
                       >
                         {msg.tmiData.title}
                       </span>
@@ -235,7 +235,7 @@ export default function ChatPage() {
                 <span className="text-white text-[10px] font-bold">AI</span>
               </div>
               <div className="glass-card rounded-2xl rounded-bl-md">
-                <TypingIndicator color={persona.accentColor} />
+                <TypingIndicator color={'rgba(255,255,255,0.4)'} />
               </div>
             </div>
           </div>
@@ -256,9 +256,9 @@ export default function ChatPage() {
               disabled={isTyping}
               className="flex-shrink-0 px-4 py-2 rounded-pill text-caption font-medium transition-colors disabled:opacity-50"
               style={{
-                backgroundColor: `${persona.accentColor}12`,
-                color: persona.accentColor,
-                border: `1px solid ${persona.accentColor}25`,
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                color: 'rgba(255,255,255,0.5)',
+                border: '1px solid rgba(255,255,255,0.08)',
               }}
             >
               {qr.label}
@@ -277,7 +277,7 @@ export default function ChatPage() {
             disabled={isTyping}
             className="flex-1 h-11 px-4 bg-white/[0.06] border border-white/[0.08] rounded-pill text-body-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 transition-all disabled:opacity-50"
             style={
-              { '--tw-ring-color': `${persona.accentColor}60` } as React.CSSProperties
+              { '--tw-ring-color': 'rgba(255,255,255,0.15)' } as React.CSSProperties
             }
           />
           <motion.button
@@ -290,7 +290,7 @@ export default function ChatPage() {
                 ? {
                     background: `linear-gradient(135deg, ${persona.gradientFrom}, ${persona.gradientTo})`,
                     color: '#fff',
-                    boxShadow: `0 4px 12px ${persona.accentColor}40`,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                   }
                 : { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.2)' }
             }
