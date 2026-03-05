@@ -164,8 +164,8 @@ export default function ChatPage() {
                     }`}
                     style={
                       msg.role === 'user'
-                        ? { background: persona.userBubbleBg, boxShadow: `0 4px 16px ${persona.accentColor}35` }
-                        : { border: '1px solid rgba(255,255,255,0.12)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10)' }
+                        ? { background: persona.userBubbleBg, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }
+                        : { border: '1px solid rgba(255,255,255,0.10)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }
                     }
                   >
                     {msg.content}
@@ -193,7 +193,7 @@ export default function ChatPage() {
                     style={{
                       backgroundColor: `${persona.accentColor}10`,
                       borderColor: `${persona.accentColor}30`,
-                      boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 12px ${persona.accentColor}15`,
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
                     }}
                   >
                     <div className="absolute top-0 left-0 right-0 h-px"

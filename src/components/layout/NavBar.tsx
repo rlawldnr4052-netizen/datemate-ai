@@ -43,15 +43,21 @@ export default function NavBar() {
       >
         {/* Active pill */}
         <motion.div
-          className="absolute top-1.5 bottom-1.5 rounded-[24px]"
+          className="absolute top-1.5 bottom-1.5 rounded-[24px] overflow-hidden"
           style={{
             width: 52,
-            background: 'linear-gradient(135deg, #FF6B52, #FF8A75)',
-            boxShadow: '0 0 20px rgba(255,107,82,0.55), 0 2px 12px rgba(255,107,82,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
+            background: 'linear-gradient(135deg, rgba(255,107,82,0.85), rgba(255,138,117,0.75))',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 10px rgba(0,0,0,0.3)',
           }}
           animate={{ left: activeIndex * 54 + 6 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        />
+          transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.9 }}
+        >
+          <div className="absolute top-0 left-0 right-0 h-px"
+            style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.3) 50%, transparent 90%)' }} />
+        </motion.div>
 
         {tabs.map((tab, i) => {
           const isActive = i === activeIndex
@@ -65,7 +71,7 @@ export default function NavBar() {
             >
               <motion.div
                 animate={{ scale: isActive ? 1.1 : 1 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 20, mass: 0.8 }}
               >
                 <Icon
                   className="transition-all duration-200"

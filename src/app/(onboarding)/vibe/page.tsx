@@ -63,8 +63,8 @@ export default function VibePage() {
                   ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card border border-white/[0.08]'}
                 `}
                 style={isSelected ? {
-                  boxShadow: '0 0 30px rgba(255,107,82,0.4)',
-                  outline: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 0 12px rgba(255,107,82,0.15), 0 4px 12px rgba(0,0,0,0.3)',
+                  outline: '2px solid rgba(255,255,255,0.2)',
                 } : undefined}
               >
                 <div className="absolute inset-0" style={{ background: vibe.gradient, opacity: 0.9 }} />

@@ -514,7 +514,7 @@ export default function ProfilePage() {
               className="w-[80px] h-[80px] rounded-full p-[2.5px]"
               style={{
                 background: 'linear-gradient(135deg, #FF7EB3, #E8457C, #FF6B52)',
-                boxShadow: '0 0 20px rgba(255,107,130,0.5), 0 0 40px rgba(232,69,124,0.25)',
+                boxShadow: '0 0 12px rgba(255,107,130,0.2), 0 0 24px rgba(232,69,124,0.10)',
               }}
             >
               {currentUser?.profileImageUrl ? (

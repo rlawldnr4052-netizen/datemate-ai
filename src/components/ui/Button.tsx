@@ -25,12 +25,12 @@ export default function Button({
   className,
   icon,
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-colors rounded-button relative overflow-hidden'
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold rounded-button relative overflow-hidden'
 
   const variants = {
-    primary: 'text-white shadow-inner-glow',
-    secondary: 'glass-pill text-primary-400 hover:bg-white/[0.10]',
-    ghost: 'text-neutral-600 hover:text-neutral-800 hover:bg-white/[0.06]',
+    primary: 'text-white',
+    secondary: 'text-neutral-300 backdrop-blur-md border border-white/[0.10] hover:border-white/[0.16]',
+    ghost: 'text-neutral-500 hover:text-neutral-300 hover:bg-white/[0.06]',
   }
 
   const sizes = {
@@ -39,16 +39,31 @@ export default function Button({
     lg: 'h-14 px-8 text-button',
   }
 
-  const primaryStyle = variant === 'primary' ? {
-    background: 'linear-gradient(135deg, #FF6B52, #FF8A75)',
-    boxShadow: '0 0 20px rgba(255,107,82,0.3), 0 4px 12px rgba(255,107,82,0.2)',
-  } : undefined
+  const getStyle = (): React.CSSProperties | undefined => {
+    if (variant === 'primary') {
+      return {
+        background: 'linear-gradient(135deg, rgba(255,107,82,0.9), rgba(255,138,117,0.85))',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.3)',
+        transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
+      }
+    }
+    if (variant === 'secondary') {
+      return {
+        background: 'rgba(255,255,255,0.06)',
+        transition: 'background 0.3s ease, border-color 0.3s ease',
+      }
+    }
+    return undefined
+  }
 
   return (
     <motion.button
-      whileTap={{ scale: disabled ? 1 : 0.97 }}
-      whileHover={{ scale: disabled ? 1 : 1.01 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      whileTap={disabled ? undefined : { scale: 0.95 }}
+      whileHover={disabled ? undefined : { scale: 1.015 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 18, mass: 0.8 }}
       onClick={onClick}
       disabled={disabled}
       className={cn(
@@ -59,8 +74,13 @@ export default function Button({
         disabled && 'opacity-40 cursor-not-allowed',
         className,
       )}
-      style={primaryStyle}
+      style={getStyle()}
     >
+      {/* top highlight line */}
+      {variant === 'primary' && (
+        <span className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+          style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.35) 50%, transparent 90%)' }} />
+      )}
       {icon && <span className="flex-shrink-0">{icon}</span>}
       {children}
     </motion.button>

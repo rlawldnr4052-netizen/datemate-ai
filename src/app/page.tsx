@@ -82,7 +82,7 @@ export default function SplashPage() {
               className="relative"
             >
               <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #FF8A75, #E8523A)', boxShadow: '0 0 40px rgba(255,107,82,0.5), 0 0 80px rgba(255,107,82,0.2), 0 20px 40px rgba(0,0,0,0.4)' }}
+                style={{ background: 'linear-gradient(135deg, rgba(255,138,117,0.9), rgba(232,82,58,0.85))', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 24px rgba(0,0,0,0.4), 0 0 24px rgba(255,107,82,0.2)' }}
               >
                 <Heart className="w-12 h-12 text-white" fill="white" />
               </div>
@@ -119,20 +119,25 @@ export default function SplashPage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: 0.3, type: 'spring', stiffness: 200, damping: 25 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.94 }}
+                  whileHover={{ scale: 1.02 }}
                   onClick={() => router.push('/signup')}
+                  transition={{ delay: 0.3, type: 'spring', stiffness: 350, damping: 18, mass: 0.8 }}
                   style={{
                     marginTop: '16px',
                     padding: '16px 40px',
-                    background: 'linear-gradient(90deg, #FF6B52, #FF8A75)',
+                    background: 'linear-gradient(135deg, rgba(255,107,82,0.9), rgba(255,138,117,0.8))',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                     color: 'white',
                     fontSize: '0.9375rem',
                     fontWeight: 600,
                     borderRadius: '9999px',
-                    border: 'none',
+                    border: '1px solid rgba(255,255,255,0.18)',
                     cursor: 'pointer',
-                    boxShadow: '0 0 40px rgba(255,107,82,0.5), 0 0 80px rgba(255,107,82,0.2), 0 12px 40px rgba(255,107,82,0.3)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.3), 0 0 20px rgba(255,107,82,0.15)',
+                    position: 'relative' as const,
+                    overflow: 'hidden',
                   }}
                 >
                   시작하기

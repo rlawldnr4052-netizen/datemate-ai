@@ -170,12 +170,17 @@ export default function HomePage() {
               return (
                 <motion.button
                   key={tabId}
-                  whileTap={{ scale: 0.96 }}
+                  whileTap={{ scale: 0.94 }}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20, mass: 0.8 }}
                   onClick={() => { setActiveCategory(tabId); setDateType(tabId) }}
-                  className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-all relative"
+                  className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl relative overflow-hidden"
                   style={{
                     background: isActive ? t.tabActive : 'transparent',
-                    boxShadow: isActive ? `0 2px 16px ${t.accent}50, 0 0 8px ${t.accent}30` : 'none',
+                    backdropFilter: isActive ? 'blur(12px)' : undefined,
+                    border: isActive ? '1px solid rgba(255,255,255,0.15)' : '1px solid transparent',
+                    boxShadow: isActive ? 'inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.2)' : 'none',
+                    transition: 'border-color 0.3s ease, background 0.3s ease',
                   }}
                 >
                   <span
@@ -300,10 +305,12 @@ export default function HomePage() {
         {/* ── CTA 카드 2개 ── */}
         <div className="px-5 pt-4 flex gap-3">
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.015 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 18, mass: 0.8 }}
             onClick={() => router.push('/chat')}
             className="flex-1 rounded-2xl p-5 text-left relative overflow-hidden"
-            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: `1.5px solid ${theme.cardBorder}` }}
+            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: `1px solid ${theme.cardBorder}`, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-px"
               style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
@@ -318,10 +325,12 @@ export default function HomePage() {
           </motion.button>
 
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.015 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 18, mass: 0.8 }}
             onClick={() => router.push('/course/generate')}
             className="flex-1 rounded-2xl p-5 text-left relative overflow-hidden"
-            style={{ background: theme.ctaGradient, boxShadow: `0 4px 20px ${theme.accent}40, 0 0 40px ${theme.accent}15` }}
+            style={{ background: theme.ctaGradient, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(0,0,0,0.3)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-px"
               style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
@@ -396,9 +405,9 @@ export default function HomePage() {
                         key={course.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        whileHover={{ y: -2, boxShadow: `0 8px 25px ${theme.accent}25, 0 0 10px ${theme.accent}10` }}
+                        whileTap={{ scale: 0.97 }}
+                        whileHover={{ y: -2 }}
+                        transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 20, mass: 0.8 }}
                         onClick={() => handleCourseClick(course.id)}
                         className="flex gap-4 p-3.5 glass-card rounded-2xl cursor-pointer active:shadow-md transition-all"
                         style={{ border: `1px solid ${theme.cardBorder}` }}
