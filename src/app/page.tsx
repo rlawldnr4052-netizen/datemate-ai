@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
-import { Heart, Sparkles } from 'lucide-react'
+import Logo from '@/components/ui/Logo'
 
 export default function SplashPage() {
   const router = useRouter()
@@ -75,27 +75,7 @@ export default function SplashPage() {
         <>
           <motion.div className="relative z-10 flex flex-col items-center gap-8 px-8">
             {/* Logo */}
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, rgba(255,138,117,0.9), rgba(232,82,58,0.85))', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 24px rgba(0,0,0,0.4), 0 0 24px rgba(255,107,82,0.2)' }}
-              >
-                <Heart className="w-12 h-12 text-white" fill="white" />
-              </div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.6, type: 'spring' }}
-                className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
-                style={{ background: '#FFA726' }}
-              >
-                <Sparkles className="w-4 h-4 text-white" />
-              </motion.div>
-            </motion.div>
+            <Logo size={108} animate />
 
             {/* Title */}
             <motion.div

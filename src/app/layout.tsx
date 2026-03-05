@@ -5,7 +5,11 @@ export const metadata: Metadata = {
   title: "데이트메이트 | AI 데이트 코스 플래너",
   description: "AI가 만드는 완벽한 데이트 코스. 결정 피로는 끝, 오늘의 최적 코스를 AI가 결정해드립니다.",
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/icon.svg',
   },
 };
 
