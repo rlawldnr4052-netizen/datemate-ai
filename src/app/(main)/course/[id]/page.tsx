@@ -311,7 +311,7 @@ function AiEditSheet({
   course: { id: string; title: string; stops: CourseStop[] }
   onClose: () => void
 }) {
-  const { removeStop } = useCourseStore()
+  const { removeStop, updateCourse } = useCourseStore()
   const [messages, setMessages] = useState<AiMessage[]>([
     {
       id: '1',
@@ -360,28 +360,122 @@ function AiEditSheet({
           messages: [
             {
               role: 'user',
-              content: `현재 코스:\n${courseContext}\n\n사용자 요청: ${userMsg}\n\n위 코스에 대한 수정 요청이야. 구체적으로 어떻게 수정하면 좋을지 한국어로 간단하게 추천해줘. 장소 이름과 카테고리를 포함해서.`,
+              content: `너는 데이트 코스 수정 도우미야. 현재 코스:\n${courseContext}\n\n사용자 요청: ${userMsg}\n\n위 코스를 사용자 요청에 맞게 수정해줘. 반드시 아래 JSON 형식으로만 응답해. JSON 외에 다른 텍스트를 절대 포함하지 마:\n\n{"explanation":"변경 사항을 한국어로 간단히 설명","stops":[{"name":"실제 장소명","category":"카페/맛집/관광 등"}]}\n\n규칙:\n- stops 배열은 수정된 전체 코스 순서야\n- 기존 장소를 유지할 때는 이름을 정확히 그대로 써\n- 새 장소는 해당 지역에 실제 존재하는 유명한 장소로 추천해\n- category는 한국어로 써`,
             },
           ],
         }),
       })
 
-      if (res.ok) {
-        const data = await res.json()
+      if (!res.ok) throw new Error('Network error')
+
+      const data = await res.json()
+      const aiMessage = data.message || ''
+
+      // Try to parse structured JSON from AI response
+      const jsonMatch = aiMessage.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) {
         setMessages((prev) => [...prev, {
           id: crypto.randomUUID(), role: 'ai',
-          content: data.message || '수정 사항을 처리하지 못했어요. 다시 시도해주세요.',
+          content: aiMessage || '수정 사항을 처리하지 못했어요. 다시 시도해주세요.',
         }])
-      } else {
-        setMessages((prev) => [...prev, {
-          id: crypto.randomUUID(), role: 'ai',
-          content: '네트워크 오류가 발생했어요. 다시 시도해주세요.',
-        }])
+        return
       }
+
+      let parsed: { explanation?: string; stops?: { name: string; category: string }[] }
+      try {
+        parsed = JSON.parse(jsonMatch[0])
+      } catch {
+        setMessages((prev) => [...prev, {
+          id: crypto.randomUUID(), role: 'ai',
+          content: aiMessage,
+        }])
+        return
+      }
+
+      const { explanation, stops: newStopInfos } = parsed
+      if (!Array.isArray(newStopInfos) || newStopInfos.length === 0) {
+        setMessages((prev) => [...prev, {
+          id: crypto.randomUUID(), role: 'ai',
+          content: explanation || aiMessage,
+        }])
+        return
+      }
+
+      // Build new stops - reuse existing ones, search for new places
+      const newStops: CourseStop[] = []
+      for (let i = 0; i < newStopInfos.length; i++) {
+        const info = newStopInfos[i]
+        const existing = currentStops.find((s) => s.place.name === info.name)
+
+        if (existing) {
+          newStops.push({
+            ...existing,
+            order: i + 1,
+            walkingMinutesFromPrev: i > 0 ? (existing.walkingMinutesFromPrev || 10) : null,
+          })
+        } else {
+          // New place - search Naver for real data
+          let placeData: PlaceDetail | null = null
+          try {
+            const searchRes = await fetch(`/api/places/search?query=${encodeURIComponent(info.name)}`)
+            if (searchRes.ok) {
+              const searchData = await searchRes.json()
+              placeData = searchData?.places?.[0] || null
+            }
+          } catch { /* skip */ }
+
+          newStops.push({
+            order: i + 1,
+            place: {
+              id: crypto.randomUUID(),
+              name: placeData?.place_name || info.name,
+              category: info.category || '기타',
+              imageUrls: [],
+              rating: 4.0,
+              description: placeData?.category_name || info.category || '',
+              address: placeData?.road_address_name || placeData?.address_name || '',
+              latitude: placeData ? Number(placeData.y) : 0,
+              longitude: placeData ? Number(placeData.x) : 0,
+              recommendedMenus: [],
+              estimatedTime: 60,
+              blindHint: info.category || '',
+              blindTitle: info.name,
+              estimatedCost: 0,
+            },
+            walkingMinutesFromPrev: i > 0 ? 10 : null,
+            questMission: null,
+            alternatives: [],
+            isUnlocked: true,
+          })
+        }
+      }
+
+      // Update the course in the store
+      const totalDuration = newStops.reduce((sum, s) => sum + s.place.estimatedTime, 0)
+      const totalEstimatedCost = newStops.reduce((sum, s) => sum + (s.place.estimatedCost || 0), 0)
+      updateCourse(course.id, { stops: newStops, totalDuration, totalEstimatedCost })
+
+      // Show result to user
+      const addedNames = newStopInfos
+        .filter((info) => !currentStops.find((s) => s.place.name === info.name))
+        .map((info) => info.name)
+      const removedNames = currentStops
+        .filter((s) => !newStopInfos.find((info) => info.name === s.place.name))
+        .map((s) => s.place.name)
+
+      let resultMsg = explanation || '코스가 수정되었어요!'
+      if (addedNames.length > 0) resultMsg += `\n\n+ 추가: ${addedNames.join(', ')}`
+      if (removedNames.length > 0) resultMsg += `\n- 삭제: ${removedNames.join(', ')}`
+      resultMsg += '\n\n코스에 적용 완료!'
+
+      setMessages((prev) => [...prev, {
+        id: crypto.randomUUID(), role: 'ai',
+        content: resultMsg,
+      }])
     } catch {
       setMessages((prev) => [...prev, {
         id: crypto.randomUUID(), role: 'ai',
-        content: '오류가 발생했어요. 다시 시도해주세요.',
+        content: '수정 중 오류가 발생했어요. 다시 시도해주세요.',
       }])
     } finally {
       setIsLoading(false)
