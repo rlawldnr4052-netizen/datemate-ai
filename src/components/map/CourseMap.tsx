@@ -59,10 +59,56 @@ function createMarkerEl(stop: MapStop, isActive: boolean, isNext: boolean): HTML
   return el
 }
 
+function createCharacterEl(): HTMLElement {
+  const el = document.createElement('div')
+  el.style.pointerEvents = 'none'
+  el.innerHTML = `
+    <div style="position:relative;width:64px;height:90px;">
+      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40px;height:12px;border-radius:50%;border:2px solid rgba(96,165,250,0.3);animation:groundPulse 2s ease-out infinite;"></div>
+      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:48px;height:12px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,0.5) 0%,transparent 70%);"></div>
+      <svg width="64" height="80" viewBox="0 0 80 100" style="position:absolute;bottom:4px;left:0;animation:charBob 1.8s ease-in-out infinite;">
+        <defs>
+          <linearGradient id="charJacket" x1="24" y1="46" x2="56" y2="78" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FF8A75"/>
+            <stop offset="100%" stop-color="#D94030"/>
+          </linearGradient>
+          <linearGradient id="charHair" x1="22" y1="6" x2="58" y2="44" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#5B4A3C"/>
+            <stop offset="100%" stop-color="#3D2E22"/>
+          </linearGradient>
+        </defs>
+        <rect x="30" y="76" width="8" height="14" rx="4" fill="#2D3748"/>
+        <rect x="42" y="76" width="8" height="14" rx="4" fill="#2D3748"/>
+        <ellipse cx="34" cy="90" rx="5" ry="3" fill="#1A202C"/>
+        <ellipse cx="46" cy="90" rx="5" ry="3" fill="#1A202C"/>
+        <path d="M28 50 C28 46 32 44 40 44 C48 44 52 46 52 50 L54 74 C54 78 48 80 40 80 C32 80 26 78 26 74 Z" fill="url(#charJacket)"/>
+        <line x1="40" y1="46" x2="40" y2="78" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+        <path d="M30 48 C30 44 34 42 40 42 C46 42 50 44 50 48" stroke="rgba(0,0,0,0.2)" stroke-width="1.5" fill="none"/>
+        <path d="M28 52 C22 54 20 60 21 66 C21 68 23 68 24 66 L28 56" fill="url(#charJacket)"/>
+        <path d="M52 52 C58 54 60 60 59 66 C59 68 57 68 56 66 L52 56" fill="url(#charJacket)"/>
+        <rect x="36" y="36" width="8" height="10" rx="3" fill="#EAADA4"/>
+        <circle cx="40" cy="26" r="18" fill="url(#charHair)"/>
+        <path d="M24 30 C22 24 24 14 32 10" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" fill="none"/>
+        <path d="M56 30 C58 24 56 14 48 10" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" fill="none"/>
+        <path d="M28 38 C30 42 36 44 40 44 C44 44 50 42 52 38 C52 36 48 40 40 40 C32 40 28 36 28 38Z" fill="url(#charHair)"/>
+        <ellipse cx="22" cy="28" rx="3" ry="4" fill="#EAADA4"/>
+        <ellipse cx="58" cy="28" rx="3" ry="4" fill="#EAADA4"/>
+        <ellipse cx="22" cy="28" rx="2" ry="3" fill="#E09E95"/>
+        <ellipse cx="58" cy="28" rx="2" ry="3" fill="#E09E95"/>
+        <rect x="35" y="52" width="10" height="12" rx="3" fill="rgba(0,0,0,0.15)"/>
+        <rect x="37" y="54" width="6" height="3" rx="1.5" fill="rgba(255,255,255,0.1)"/>
+      </svg>
+      <div style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid rgba(96,165,250,0.6);filter:drop-shadow(0 0 4px rgba(96,165,250,0.4));"></div>
+    </div>
+  `
+  return el
+}
+
 export default function CourseMap({ stops, userLocation, activeStopIndex, onStopClick, followUser, heading }: CourseMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<maplibregl.Marker[]>([])
+  const charMarkerRef = useRef<maplibregl.Marker | null>(null)
   const routeIdsRef = useRef<string[]>([])
   const [isMapReady, setIsMapReady] = useState(false)
   const [segments, setSegments] = useState<(RouteSegment | null)[]>([])
@@ -124,16 +170,24 @@ export default function CourseMap({ stops, userLocation, activeStopIndex, onStop
         0% { transform: translate(-50%, -60%) scale(0.8); opacity: 0.8; }
         100% { transform: translate(-50%, -60%) scale(2); opacity: 0; }
       }
+      @keyframes charBob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+      }
+      @keyframes groundPulse {
+        0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.4; }
+        50% { transform: translateX(-50%) scale(1.8); opacity: 0; }
+      }
       .maplibregl-canvas { outline: none; }
     `
     document.head.appendChild(style)
     styleRef.current = style
 
-    // Auto-pause follow on user interaction
+    // Auto-pause follow on user interaction (10 seconds)
     const pauseFollow = () => {
       userInteractingRef.current = true
       if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current)
-      interactionTimerRef.current = setTimeout(() => { userInteractingRef.current = false }, 5000)
+      interactionTimerRef.current = setTimeout(() => { userInteractingRef.current = false }, 10000)
     }
     map.on('dragstart', pauseFollow)
     map.on('zoomstart', pauseFollow)
@@ -166,12 +220,28 @@ export default function CourseMap({ stops, userLocation, activeStopIndex, onStop
     })
   }, [followUser, userLocation, heading])
 
+  // Character marker at user location (lives on the map, not screen overlay)
+  useEffect(() => {
+    if (!mapInstanceRef.current || !userLocation || !isMapReady) return
+
+    if (!charMarkerRef.current) {
+      const el = createCharacterEl()
+      charMarkerRef.current = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([userLocation.lng, userLocation.lat])
+        .addTo(mapInstanceRef.current)
+      // Ensure character renders above building markers
+      charMarkerRef.current.getElement().style.zIndex = '10'
+    } else {
+      charMarkerRef.current.setLngLat([userLocation.lng, userLocation.lat])
+    }
+  }, [userLocation, isMapReady])
+
   // Update markers and routes
   const updateMap = useCallback(() => {
     const map = mapInstanceRef.current
     if (!map || !isMapReady) return
 
-    // Remove old markers
+    // Remove old markers (not character)
     markersRef.current.forEach(m => m.remove())
     markersRef.current = []
 
