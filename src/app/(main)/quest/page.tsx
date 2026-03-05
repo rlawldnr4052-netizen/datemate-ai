@@ -45,7 +45,7 @@ export default function QuestPage() {
             onClick={toggleQuest}
             className={`
               px-3 py-1.5 rounded-pill text-caption font-medium transition-colors
-              ${isQuestEnabled ? 'bg-primary-500 text-white' : 'bg-neutral-200 text-neutral-500'}
+              ${isQuestEnabled ? 'bg-primary-500 text-white' : 'bg-white/[0.06] text-neutral-500'}
             `}
           >
             {isQuestEnabled ? 'ON' : 'OFF'}
@@ -84,7 +84,7 @@ export default function QuestPage() {
                   transition={{ delay: i * 0.1 }}
                 >
                   <Card
-                    className={`flex items-center gap-4 ${mission.isCompleted ? 'bg-primary-50/50' : ''}`}
+                    className={`flex items-center gap-4 ${mission.isCompleted ? 'bg-primary-500/5' : ''}`}
                     onClick={() => !mission.isCompleted && handleCompleteMission(mission.id)}
                   >
                     <div className="flex-shrink-0">
@@ -106,7 +106,7 @@ export default function QuestPage() {
                       </p>
                     </div>
                     {!mission.isCompleted && (
-                      <button className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center">
+                      <button className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-500/10 flex items-center justify-center">
                         <Camera className="w-5 h-5 text-primary-500" />
                       </button>
                     )}
@@ -147,7 +147,7 @@ export default function QuestPage() {
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <div className="w-20 h-20 rounded-3xl bg-neutral-100 flex items-center justify-center mb-6">
+              <div className="w-20 h-20 rounded-3xl bg-white/[0.06] flex items-center justify-center mb-6">
                 <Zap className="w-10 h-10 text-neutral-300" />
               </div>
             </motion.div>

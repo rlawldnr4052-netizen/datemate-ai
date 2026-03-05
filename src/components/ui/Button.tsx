@@ -28,9 +28,9 @@ export default function Button({
   const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-colors rounded-button relative overflow-hidden'
 
   const variants = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-inner-glow',
-    secondary: 'bg-primary-50 text-primary-500 hover:bg-primary-100 border border-primary-200',
-    ghost: 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100',
+    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-inner-glow glow-md',
+    secondary: 'glass-pill text-primary-400 hover:bg-white/[0.10]',
+    ghost: 'text-neutral-600 hover:text-neutral-800 hover:bg-white/[0.06]',
   }
 
   const sizes = {

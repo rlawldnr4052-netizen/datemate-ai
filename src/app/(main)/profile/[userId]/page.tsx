@@ -143,7 +143,7 @@ export default function UserProfilePage() {
 
   if (loading) {
     return (
-      <PageTransition className="min-h-screen bg-white flex items-center justify-center">
+      <PageTransition className="min-h-screen bg-[#0B0B12] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
       </PageTransition>
     )
@@ -151,7 +151,7 @@ export default function UserProfilePage() {
 
   if (!profile) {
     return (
-      <PageTransition className="min-h-screen bg-white flex flex-col items-center justify-center gap-3">
+      <PageTransition className="min-h-screen bg-[#0B0B12] flex flex-col items-center justify-center gap-3">
         <p className="text-[15px] text-neutral-500">사용자를 찾을 수 없어요</p>
         <button onClick={() => router.back()} className="text-[14px] text-primary-500 font-semibold">
           돌아가기
@@ -161,9 +161,9 @@ export default function UserProfilePage() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-white pb-20">
+    <PageTransition className="min-h-screen bg-[#0B0B12] pb-20">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-neutral-100">
+      <div className="sticky top-0 z-30 bg-[#0B0B12]/90 backdrop-blur-lg border-b border-white/[0.06]">
         <div className="flex items-center gap-3 px-4 py-3">
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -187,7 +187,7 @@ export default function UserProfilePage() {
                 style={{ backgroundImage: `url(${profile.profile_image_url})` }}
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-[#0B0B12] flex items-center justify-center">
                 <span className="text-[28px] font-bold text-primary-500">
                   {profile.name.charAt(0)}
                 </span>
@@ -213,12 +213,12 @@ export default function UserProfilePage() {
           <div className="flex items-center gap-1.5">
             <p className="text-[14px] font-semibold text-neutral-900">{profile.name}</p>
             {isPartner && partnerType === 'lover' && (
-              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-pink-50 text-pink-500 text-[11px] font-semibold">
+              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-500 text-[11px] font-semibold">
                 <Heart className="w-3 h-3 fill-pink-500" /> 연인
               </span>
             )}
             {isPartner && partnerType === 'friend' && (
-              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 text-[11px] font-semibold">
+              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[11px] font-semibold">
                 <Users className="w-3 h-3" /> 친구
               </span>
             )}
@@ -243,7 +243,7 @@ export default function UserProfilePage() {
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={() => requestId && handleAction(() => cancelRequest(requestId, myId))}
-              className="flex-1 py-2.5 rounded-xl bg-neutral-100 text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
+              className="flex-1 py-2.5 rounded-xl bg-white/[0.06] text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
             >
               <Clock className="w-4 h-4" />
               요청 취소
@@ -263,7 +263,7 @@ export default function UserProfilePage() {
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => requestId && handleAction(() => rejectRequest(requestId, myId))}
-                className="flex-1 py-2.5 rounded-xl bg-neutral-100 text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 rounded-xl bg-white/[0.06] text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
               >
                 <X className="w-4 h-4" />
                 거절
@@ -278,8 +278,8 @@ export default function UserProfilePage() {
                 onClick={() => handleSetRelation('friend')}
                 className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-1.5 ${
                   isPartner && partnerType === 'friend'
-                    ? 'bg-blue-50 text-blue-500 border border-blue-200'
-                    : 'bg-neutral-100 text-neutral-600'
+                    ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                    : 'bg-white/[0.06] text-neutral-400'
                 }`}
               >
                 <Users className={`w-4 h-4`} />
@@ -290,8 +290,8 @@ export default function UserProfilePage() {
                 onClick={() => handleSetRelation('lover')}
                 className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-1.5 ${
                   isPartner && partnerType === 'lover'
-                    ? 'bg-pink-50 text-pink-500 border border-pink-200'
-                    : 'bg-neutral-100 text-neutral-600'
+                    ? 'bg-pink-500/10 text-pink-500 border border-pink-500/20'
+                    : 'bg-white/[0.06] text-neutral-400'
                 }`}
               >
                 <Heart className={`w-4 h-4 ${isPartner && partnerType === 'lover' ? 'fill-pink-500' : ''}`} />
@@ -300,7 +300,7 @@ export default function UserProfilePage() {
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleAction(() => removeFriend(myId, userId))}
-                className="py-2.5 px-4 rounded-xl bg-neutral-100 text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
+                className="py-2.5 px-4 rounded-xl bg-white/[0.06] text-neutral-400 text-[13px] font-semibold flex items-center justify-center gap-1.5"
               >
                 <UserMinus className="w-4 h-4" />
               </motion.button>
@@ -310,12 +310,12 @@ export default function UserProfilePage() {
       </div>
 
       {/* Divider */}
-      <div className="h-[1px] bg-neutral-100" />
+      <div className="h-[1px] bg-white/[0.06]" />
 
       {/* Posts grid */}
       {userPosts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-5">
-          <div className="w-20 h-20 rounded-full bg-neutral-50 flex items-center justify-center mb-4">
+          <div className="w-20 h-20 rounded-full bg-white/[0.04] flex items-center justify-center mb-4">
             <Camera className="w-8 h-8 text-neutral-200" />
           </div>
           <p className="text-[16px] font-bold text-neutral-900 mb-1">아직 게시물이 없어요</p>
@@ -331,7 +331,7 @@ export default function UserProfilePage() {
               style={{ aspectRatio: '4/5' }}
             >
               <div
-                className="w-full h-full bg-cover bg-center bg-neutral-100"
+                className="w-full h-full bg-cover bg-center bg-white/[0.06]"
                 style={{ backgroundImage: `url(${post.photos[0]?.imageUrl})` }}
               />
               {post.photos.length > 1 && (

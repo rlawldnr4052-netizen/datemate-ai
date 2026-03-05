@@ -10,11 +10,11 @@ export default function OnboardingLayout({
   const ready = useAuthGuard('onboarding')
 
   if (!ready) {
-    return <div className="min-h-screen bg-white" />
+    return <div className="min-h-screen bg-[#0B0B12]" />
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0B0B12]">
       {children}
     </div>
   )

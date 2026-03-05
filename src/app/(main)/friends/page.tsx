@@ -144,7 +144,7 @@ export default function FriendsPage() {
   const requestCount = receivedRequests.length
 
   return (
-    <PageTransition className="min-h-screen pb-28 bg-white">
+    <PageTransition className="min-h-screen pb-28 bg-[#0B0B12]">
       {/* 토스트 */}
       <AnimatePresence>
         {toast && (
@@ -165,7 +165,7 @@ export default function FriendsPage() {
       </AnimatePresence>
 
       {/* 헤더 + 검색바 */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-neutral-50">
+      <div className="sticky top-0 z-30 bg-[#0B0B12]/90 backdrop-blur-lg border-b border-white/[0.06]">
         <div className="pt-14 px-5 pb-3">
           {/* 검색바 */}
           <div className="relative">
@@ -175,7 +175,7 @@ export default function FriendsPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="친구 검색"
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-neutral-100 text-[14px] text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-primary-200 transition-all"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-[14px] text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-white/[0.10] transition-all"
             />
             {isSearching && (
               <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300 animate-spin" />
@@ -230,7 +230,8 @@ export default function FriendsPage() {
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowRequests(!showRequests)}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-primary-50 border border-primary-100"
+                className="w-full flex items-center justify-between px-4 py-3 rounded-2xl glass-card"
+                style={{ border: '1px solid rgba(255, 107, 82, 0.15)' }}
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center">
@@ -269,7 +270,7 @@ export default function FriendsPage() {
                         return (
                           <div
                             key={req.id}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white border border-neutral-100 ${loading ? 'opacity-50' : ''}`}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl glass-card ${loading ? 'opacity-50' : ''}`}
                           >
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-300 to-primary-500 flex items-center justify-center flex-shrink-0">
                               <span className="text-white text-[13px] font-bold">{fromUser.name.charAt(0)}</span>
@@ -318,7 +319,7 @@ export default function FriendsPage() {
             </div>
           ) : (
             <div className="text-center py-20 px-5">
-              <div className="w-20 h-20 rounded-full bg-neutral-50 flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 rounded-full bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
                 <Camera className="w-8 h-8 text-neutral-200" />
               </div>
               <p className="text-[16px] font-bold text-neutral-800 mb-1">

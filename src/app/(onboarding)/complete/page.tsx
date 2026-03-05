@@ -22,7 +22,7 @@ export default function CompletePage() {
   }, [completeOnboarding, router])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-primary-50 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden" style={{ background: 'linear-gradient(to bottom, #0B0B12, #12081a)' }}>
       {/* Confetti particles */}
       {[...Array(20)].map((_, i) => (
         <motion.div

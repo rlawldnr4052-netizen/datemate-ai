@@ -11,12 +11,12 @@ import TopBar from '@/components/ui/TopBar'
 import PageTransition from '@/components/motion/PageTransition'
 
 const vibes = [
-  { id: 'romantic', label: '로맨틱', emoji: '💕', gradient: 'linear-gradient(135deg, #fb7185, #f9a8d4)' },
-  { id: 'hip', label: '힙/트렌디', emoji: '🔥', gradient: 'linear-gradient(135deg, #f97316, #fbbf24)' },
-  { id: 'chill', label: '편안/힐링', emoji: '🌿', gradient: 'linear-gradient(135deg, #34d399, #6ee7b7)' },
-  { id: 'adventure', label: '모험/액티브', emoji: '⚡', gradient: 'linear-gradient(135deg, #3b82f6, #60a5fa)' },
-  { id: 'emotional', label: '감성/예술', emoji: '🎨', gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)' },
-  { id: 'foodie', label: '미식/맛집', emoji: '🍽️', gradient: 'linear-gradient(135deg, #ef4444, #f87171)' },
+  { id: 'romantic', label: '로맨틱', emoji: '', gradient: 'linear-gradient(135deg, #fb7185, #f9a8d4)' },
+  { id: 'hip', label: '힙/트렌디', emoji: '', gradient: 'linear-gradient(135deg, #f97316, #fbbf24)' },
+  { id: 'chill', label: '편안/힐링', emoji: '', gradient: 'linear-gradient(135deg, #34d399, #6ee7b7)' },
+  { id: 'adventure', label: '모험/액티브', emoji: '', gradient: 'linear-gradient(135deg, #3b82f6, #60a5fa)' },
+  { id: 'emotional', label: '감성/예술', emoji: '', gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)' },
+  { id: 'foodie', label: '미식/맛집', emoji: '', gradient: 'linear-gradient(135deg, #ef4444, #f87171)' },
 ]
 
 const popularDistricts = ['강남구', '마포구', '성동구', '종로구', '용산구', '송파구', '서초구', '중구']
@@ -77,7 +77,7 @@ export default function CourseGeneratePage() {
   }
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-white">
+    <PageTransition className="min-h-screen flex flex-col bg-[#0B0B12]">
       <TopBar title="AI 코스 만들기" />
 
       <div className="flex-1 px-5 pt-6 pb-8 flex flex-col">
@@ -107,8 +107,8 @@ export default function CourseGeneratePage() {
                       onClick={() => setSelectedRegion(d)}
                       className={`px-4 py-2.5 rounded-2xl text-body-2 font-medium transition-all ${
                         selectedRegion === d
-                          ? 'bg-primary-500 text-white shadow-md'
-                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                          ? 'bg-primary-500 text-white shadow-md glow-sm'
+                          : 'glass-pill text-neutral-400'
                       }`}
                     >
                       <MapPin className="w-3.5 h-3.5 inline mr-1" />
@@ -129,8 +129,8 @@ export default function CourseGeneratePage() {
                       onClick={() => setSelectedRegion(d)}
                       className={`px-3 py-2 rounded-xl text-caption font-medium transition-all ${
                         selectedRegion === d
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-100'
+                          ? 'bg-primary-500 text-white glow-sm'
+                          : 'glass-pill text-neutral-500'
                       }`}
                     >
                       {d}
@@ -146,8 +146,8 @@ export default function CourseGeneratePage() {
                   disabled={!selectedRegion}
                   className={`w-full py-4 rounded-2xl text-body-1 font-bold flex items-center justify-center gap-2 transition-all ${
                     selectedRegion
-                      ? 'bg-primary-500 text-white shadow-lg'
-                      : 'bg-neutral-200 text-neutral-400'
+                      ? 'bg-primary-500 text-white shadow-lg glow-md'
+                      : 'bg-white/[0.06] text-neutral-400'
                   }`}
                 >
                   다음 <ArrowRight className="w-5 h-5" />
@@ -186,7 +186,7 @@ export default function CourseGeneratePage() {
                     onClick={() => setSelectedVibeId(v.id)}
                     className={`relative rounded-2xl overflow-hidden transition-all ${
                       selectedVibeId === v.id
-                        ? 'ring-3 ring-primary-400 ring-offset-2 shadow-lg'
+                        ? 'ring-3 ring-primary-400 ring-offset-2 ring-offset-[#0B0B12] shadow-lg'
                         : 'shadow-card'
                     }`}
                   >
@@ -194,7 +194,7 @@ export default function CourseGeneratePage() {
                       className="p-5 flex flex-col items-center gap-2"
                       style={{ background: v.gradient }}
                     >
-                      <span className="text-3xl">{v.emoji}</span>
+                      {v.emoji && <span className="text-3xl">{v.emoji}</span>}
                       <span className="text-white font-bold text-body-2">{v.label}</span>
                     </div>
                   </motion.button>
@@ -204,7 +204,7 @@ export default function CourseGeneratePage() {
               <div className="mt-auto flex gap-3">
                 <button
                   onClick={() => setStep('region')}
-                  className="flex-1 py-4 rounded-2xl text-body-1 font-bold bg-neutral-100 text-neutral-600"
+                  className="flex-1 py-4 rounded-2xl text-body-1 font-bold bg-white/[0.06] text-neutral-400"
                 >
                   이전
                 </button>
@@ -214,8 +214,8 @@ export default function CourseGeneratePage() {
                   disabled={!selectedVibeId}
                   className={`flex-[2] py-4 rounded-2xl text-body-1 font-bold flex items-center justify-center gap-2 transition-all ${
                     selectedVibeId
-                      ? 'bg-primary-500 text-white shadow-lg'
-                      : 'bg-neutral-200 text-neutral-400'
+                      ? 'bg-primary-500 text-white shadow-lg glow-md'
+                      : 'bg-white/[0.06] text-neutral-400'
                   }`}
                 >
                   <Sparkles className="w-5 h-5" />
@@ -275,7 +275,7 @@ export default function CourseGeneratePage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6"
+                className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6"
               >
                 <CheckCircle2 className="w-10 h-10 text-green-500" />
               </motion.div>

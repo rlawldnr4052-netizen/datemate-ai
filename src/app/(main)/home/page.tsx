@@ -37,7 +37,7 @@ const categoryThemes: Record<CategoryTab, {
     emoji: '💕',
     title: '로맨틱 데이트',
     subtitle: '설레는 하루를 시작해볼까요?',
-    gradient: 'linear-gradient(180deg, #FFE0EC 0%, #FFF5F7 40%, #FFFFFF 100%)',
+    gradient: 'linear-gradient(180deg, #1a0a12 0%, #0f0810 50%, #0B0B12 100%)',
     bgFrom: '#FFE0EC',
     bgTo: '#FFF5F7',
     accent: '#E8457C',
@@ -53,7 +53,7 @@ const categoryThemes: Record<CategoryTab, {
     emoji: '🎉',
     title: '친구와 놀기',
     subtitle: '고민 없이 바로 놀자!',
-    gradient: 'linear-gradient(180deg, #FFF0C8 0%, #FFFBF0 40%, #FFFFFF 100%)',
+    gradient: 'linear-gradient(180deg, #141008 0%, #0f0d08 50%, #0B0B12 100%)',
     bgFrom: '#FFF0C8',
     bgTo: '#FFFBF0',
     accent: '#D4890B',
@@ -69,7 +69,7 @@ const categoryThemes: Record<CategoryTab, {
     emoji: '🎧',
     title: '나만의 시간',
     subtitle: '온전한 나를 위한 하루',
-    gradient: 'linear-gradient(180deg, #E8E0FF 0%, #F5F0FF 40%, #FFFFFF 100%)',
+    gradient: 'linear-gradient(180deg, #100a1a 0%, #0c0810 50%, #0B0B12 100%)',
     bgFrom: '#E8E0FF',
     bgTo: '#F5F0FF',
     accent: '#7C3AED',
@@ -157,7 +157,7 @@ export default function HomePage() {
       >
         {/* ── 상단 탭 ── */}
         <div className="pt-14 px-4">
-          <div className="flex gap-2 p-1.5 bg-white/60 backdrop-blur-sm rounded-2xl">
+          <div className="flex gap-2 p-1.5 bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] rounded-2xl">
             {tabOrder.map((tabId) => {
               const t = categoryThemes[tabId]
               const isActive = activeCategory === tabId
@@ -171,10 +171,9 @@ export default function HomePage() {
                     background: isActive ? t.tabActive : 'transparent',
                   }}
                 >
-                  <span className="text-lg">{t.emoji}</span>
                   <span
                     className="text-[12px] font-bold"
-                    style={{ color: isActive ? '#FFFFFF' : '#9CA3AF' }}
+                    style={{ color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.3)' }}
                   >
                     {t.label}
                   </span>
@@ -193,7 +192,7 @@ export default function HomePage() {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => router.push('/friends')}
-              className="relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center"
+              className="relative w-9 h-9 rounded-full bg-white/[0.08] border border-white/[0.06] backdrop-blur-sm flex items-center justify-center"
               style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
             >
               <Bell className="w-4.5 h-4.5" style={{ color: theme.accent }} />
@@ -294,7 +293,7 @@ export default function HomePage() {
             whileTap={{ scale: 0.97 }}
             onClick={() => router.push('/chat')}
             className="flex-1 rounded-2xl p-5 text-left"
-            style={{ background: 'white', border: `1.5px solid ${theme.cardBorder}` }}
+            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: `1.5px solid ${theme.cardBorder}` }}
           >
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center mb-3"
@@ -324,7 +323,7 @@ export default function HomePage() {
         <div className="px-5 mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[17px] font-bold text-neutral-900 flex items-center gap-1.5">
-              <span className="text-[16px]">✨</span> 추천 코스
+              추천 코스
             </h2>
             <button
               onClick={() => router.push('/course')}
@@ -341,9 +340,9 @@ export default function HomePage() {
               onClick={() => setBudgetFilter(null)}
               className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all"
               style={{
-                background: !budgetFilter ? theme.accent : 'white',
-                color: !budgetFilter ? 'white' : '#9CA3AF',
-                border: !budgetFilter ? 'none' : '1px solid #E5E7EB',
+                background: !budgetFilter ? theme.accent : 'rgba(255,255,255,0.06)',
+                color: !budgetFilter ? 'white' : 'rgba(255,255,255,0.4)',
+                border: !budgetFilter ? 'none' : '1px solid rgba(255,255,255,0.08)',
               }}
             >
               전체
@@ -354,9 +353,9 @@ export default function HomePage() {
                 onClick={() => setBudgetFilter(budgetFilter === b ? null : b)}
                 className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all flex items-center gap-1"
                 style={{
-                  background: budgetFilter === b ? theme.accent : 'white',
-                  color: budgetFilter === b ? 'white' : '#9CA3AF',
-                  border: budgetFilter === b ? 'none' : '1px solid #E5E7EB',
+                  background: budgetFilter === b ? theme.accent : 'rgba(255,255,255,0.06)',
+                  color: budgetFilter === b ? 'white' : 'rgba(255,255,255,0.4)',
+                  border: budgetFilter === b ? 'none' : '1px solid rgba(255,255,255,0.08)',
                 }}
               >
                 <Wallet className="w-3 h-3" />
@@ -386,7 +385,7 @@ export default function HomePage() {
                         transition={{ delay: i * 0.05 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleCourseClick(course.id)}
-                        className="flex gap-4 p-3.5 bg-white rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.05)] cursor-pointer active:shadow-md transition-all"
+                        className="flex gap-4 p-3.5 glass-card rounded-2xl cursor-pointer active:shadow-md transition-all"
                         style={{ border: `1px solid ${theme.cardBorder}` }}
                       >
                         {/* 썸네일 */}
@@ -462,7 +461,7 @@ export default function HomePage() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-16 bg-white rounded-2xl" style={{ border: `1px solid ${theme.cardBorder}` }}>
+                <div className="text-center py-16 glass-card rounded-2xl" style={{ border: `1px solid ${theme.cardBorder}` }}>
                   <div
                     className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                     style={{ background: theme.accentBg }}

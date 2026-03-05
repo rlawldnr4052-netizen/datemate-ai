@@ -80,7 +80,7 @@ export function FeedItem({ postId }: { postId: string }) {
     : (post.comments || []).slice(-2)
 
   return (
-    <article className="border-b border-neutral-100">
+    <article className="border-b border-white/[0.06]">
       {/* ── Header ── */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-300 to-primary-500 flex items-center justify-center">
@@ -130,7 +130,7 @@ export function FeedItem({ postId }: { postId: string }) {
           ))}
 
           {/* Last slide: course info */}
-          <div className="flex-shrink-0 min-w-full h-full flex items-center justify-center p-8 bg-neutral-50">
+          <div className="flex-shrink-0 min-w-full h-full flex items-center justify-center p-8 bg-[#0B0B12]">
             <div className="w-full max-w-xs">
               <div className="text-center mb-6">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-500 flex items-center justify-center mx-auto mb-3">
@@ -149,7 +149,7 @@ export function FeedItem({ postId }: { postId: string }) {
                   <button
                     key={photo.id}
                     onClick={() => openNaverMap(photo.placeName)}
-                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white border border-neutral-100 active:bg-neutral-50 transition-colors text-left"
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass-card active:bg-white/[0.06] transition-colors text-left"
                   >
                     <span className="w-5 h-5 rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                       {i + 1}
@@ -198,7 +198,7 @@ export function FeedItem({ postId }: { postId: string }) {
                 className={`h-[5px] rounded-full transition-all duration-300 ${
                   i === currentIndex
                     ? 'w-[18px] bg-primary-500'
-                    : 'w-[5px] bg-black/20'
+                    : 'w-[5px] bg-white/20'
                 }`}
               />
             ))}
@@ -261,7 +261,7 @@ export function FeedItem({ postId }: { postId: string }) {
       </p>
 
       {/* Comment input */}
-      <div className="flex items-center gap-3 px-4 py-2.5 border-t border-neutral-50">
+      <div className="flex items-center gap-3 px-4 py-2.5 border-t border-white/[0.04]">
         <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0">
           <span className="text-neutral-500 text-[9px] font-bold">
             {currentUser?.name?.charAt(0) || '?'}
@@ -317,14 +317,14 @@ export default function FeedScrollView({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] bg-white flex flex-col"
+      className="fixed inset-0 z-[200] bg-[#0B0B12] flex flex-col"
     >
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-neutral-100">
+      <div className="sticky top-0 z-30 bg-[#0B0B12]/90 backdrop-blur-lg border-b border-white/[0.06]">
         <div className="flex items-center justify-between px-4 pt-[max(8px,env(safe-area-inset-top))] pb-2">
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center active:bg-neutral-100"
+            className="w-8 h-8 rounded-full flex items-center justify-center active:bg-white/[0.06]"
           >
             <ArrowLeft className="w-5 h-5 text-neutral-800" />
           </button>

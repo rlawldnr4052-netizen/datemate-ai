@@ -146,12 +146,12 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+        className="relative w-full max-w-app bg-[#12121a] border-t border-white/[0.08] rounded-t-3xl overflow-hidden"
         style={{ height: '80vh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-neutral-100">
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-white/[0.06]">
           <button onClick={onClose} className="text-[14px] text-neutral-400">
             취소
           </button>
@@ -195,7 +195,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                       key={course.id}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSelectCourse(course.id)}
-                      className="w-full flex items-center gap-3 p-3 rounded-2xl border border-neutral-100 hover:border-primary-200 transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-3 rounded-2xl border border-white/[0.06] hover:border-primary-200 transition-colors text-left"
                     >
                       <div
                         className="w-14 h-14 rounded-xl bg-cover bg-center bg-neutral-100 flex-shrink-0"
@@ -288,7 +288,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="rounded-2xl bg-neutral-50 border border-neutral-100 p-4"
+                      className="rounded-2xl bg-white/[0.04] border border-white/[0.06] p-4"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-[13px] font-semibold text-neutral-700">장소 태그하기</p>
@@ -302,7 +302,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                             key={stop.place.id}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => tagPhotoWithPlace(taggingPhotoId, stop.place.name, stop.place.category)}
-                            className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-white hover:bg-primary-50 transition-colors text-left"
+                            className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.06] hover:bg-primary-50 transition-colors text-left"
                           >
                             <MapPin className="w-4 h-4 text-primary-400 flex-shrink-0" />
                             <div className="min-w-0">
@@ -314,7 +314,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                         <motion.button
                           whileTap={{ scale: 0.97 }}
                           onClick={() => tagPhotoWithPlace(taggingPhotoId, '', '')}
-                          className="w-full p-2.5 rounded-xl bg-white hover:bg-neutral-100 transition-colors text-[13px] text-neutral-400 text-center"
+                          className="w-full p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.08] transition-colors text-[13px] text-neutral-400 text-center"
                         >
                           태그 없이 진행
                         </motion.button>
@@ -353,10 +353,10 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
                   placeholder="이 코스에 대해 한마디..."
-                  className="w-full h-32 p-4 rounded-2xl bg-neutral-50 text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none resize-none focus:ring-2 focus:ring-primary-200"
+                  className="w-full h-32 p-4 rounded-2xl bg-white/[0.04] text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none resize-none focus:ring-2 focus:ring-white/[0.10]"
                 />
 
-                <div className="mt-4 p-3 rounded-2xl bg-neutral-50 flex items-center gap-3">
+                <div className="mt-4 p-3 rounded-2xl bg-white/[0.04] flex items-center gap-3">
                   <Navigation className="w-5 h-5 text-primary-400 flex-shrink-0" />
                   <div>
                     <p className="text-[13px] font-semibold text-neutral-700">{selectedCourse.title}</p>
@@ -450,9 +450,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-white pb-20">
+    <PageTransition className="min-h-screen bg-[#0B0B12] pb-20">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-neutral-100">
+      <div className="sticky top-0 z-30 bg-[#0B0B12]/90 backdrop-blur-lg border-b border-white/[0.06]">
         <div className="flex items-center justify-between px-5 py-3">
           {isEditingName ? (
             <div className="flex items-center gap-2 flex-1 mr-2">
@@ -462,7 +462,7 @@ export default function ProfilePage() {
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName() }}
-                className="flex-1 text-[18px] font-bold text-neutral-900 bg-neutral-50 rounded-lg px-3 py-1 outline-none focus:ring-2 focus:ring-primary-200"
+                className="flex-1 text-[18px] font-bold text-neutral-900 bg-white/[0.06] border border-white/[0.08] rounded-lg px-3 py-1 outline-none focus:ring-2 focus:ring-white/[0.10]"
                 maxLength={20}
               />
               <motion.button
@@ -476,7 +476,7 @@ export default function ProfilePage() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsEditingName(false)}
-                className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center"
               >
                 <X className="w-4 h-4 text-neutral-500" />
               </motion.button>
@@ -491,7 +491,7 @@ export default function ProfilePage() {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleEditProfile}
-              className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center"
+              className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center"
             >
               <Settings className="w-4 h-4 text-neutral-500" />
             </motion.button>
@@ -517,7 +517,7 @@ export default function ProfilePage() {
                   style={{ backgroundImage: `url(${currentUser.profileImageUrl})` }}
                 />
               ) : (
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-[#0B0B12] flex items-center justify-center">
                   <span className="text-[28px] font-bold text-primary-500">
                     {userName.charAt(0)}
                   </span>
@@ -525,7 +525,7 @@ export default function ProfilePage() {
               )}
             </div>
             {/* Camera badge */}
-            <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-primary-500 border-2 border-white flex items-center justify-center">
+            <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-primary-500 border-2 border-[#0B0B12] flex items-center justify-center">
               <Camera className="w-3 h-3 text-white" />
             </div>
           </label>
@@ -575,7 +575,7 @@ export default function ProfilePage() {
               {likedTagLabels.slice(0, 5).map((label) => (
                 <span
                   key={label}
-                  className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[11px] rounded-full"
+                  className="px-2 py-0.5 bg-white/[0.06] text-neutral-500 text-[11px] rounded-full"
                 >
                   {label}
                 </span>
@@ -594,6 +594,7 @@ export default function ProfilePage() {
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowCreatePost(true)}
           className="w-full mt-4 py-2 rounded-lg bg-primary-500 text-[13px] font-semibold text-white flex items-center justify-center gap-1.5"
+          style={{ boxShadow: '0 0 15px rgba(255, 107, 82, 0.25)' }}
         >
           <Plus className="w-4 h-4" />
           피드 추가
@@ -601,7 +602,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex border-b border-neutral-100 sticky top-[49px] z-20 bg-white">
+      <div className="flex border-b border-white/[0.06] sticky top-[49px] z-20 bg-[#0B0B12]">
         <button
           onClick={() => setActiveTab('grid')}
           className={`flex-1 py-3 flex items-center justify-center ${
@@ -637,7 +638,7 @@ export default function ProfilePage() {
         <>
           {userPosts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 px-5">
-              <div className="w-20 h-20 rounded-full bg-neutral-50 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-white/[0.04] flex items-center justify-center mb-4">
                 <Camera className="w-8 h-8 text-neutral-200" />
               </div>
               <p className="text-[16px] font-bold text-neutral-900 mb-1">아직 게시물이 없어요</p>
@@ -683,7 +684,7 @@ export default function ProfilePage() {
         <div className="px-5 py-5">
           {/* Active quest */}
           {activeQuest ? (
-            <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-white border border-primary-100 p-4 mb-5">
+            <div className="rounded-2xl glass-card p-4 mb-5">
               <div className="flex items-center gap-2 mb-3">
                 <Target className="w-4 h-4 text-primary-500" />
                 <p className="text-[13px] font-bold text-primary-600">진행 중인 퀘스트</p>
@@ -707,7 +708,7 @@ export default function ProfilePage() {
                 ))}
               </div>
               {/* Progress bar */}
-              <div className="mt-3 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+              <div className="mt-3 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-primary-500 rounded-full"
                   initial={{ width: 0 }}
@@ -719,7 +720,7 @@ export default function ProfilePage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-2xl bg-neutral-50 p-5 mb-5 text-center">
+            <div className="rounded-2xl bg-white/[0.04] p-5 mb-5 text-center">
               <Target className="w-8 h-8 text-neutral-200 mx-auto mb-2" />
               <p className="text-[13px] text-neutral-400">진행 중인 퀘스트가 없어요</p>
               <p className="text-[11px] text-neutral-300 mt-0.5">코스를 시작하면 퀘스트가 생겨요</p>
@@ -730,17 +731,17 @@ export default function ProfilePage() {
           <div className="mb-5">
             <p className="text-[13px] font-bold text-neutral-700 mb-3">활동 기록</p>
             <div className="grid grid-cols-3 gap-2.5">
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-primary-50">
+              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
                 <Navigation className="w-5 h-5 text-primary-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{totalCourses}</p>
                 <p className="text-[10px] text-neutral-400">완료 코스</p>
               </div>
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-green-50">
+              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
                 <MapPin className="w-5 h-5 text-green-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{totalPlaces}</p>
                 <p className="text-[10px] text-neutral-400">방문 장소</p>
               </div>
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-violet-50">
+              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
                 <Flame className="w-5 h-5 text-violet-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{completedCount}</p>
                 <p className="text-[10px] text-neutral-400">퀘스트</p>
@@ -789,17 +790,17 @@ export default function ProfilePage() {
           </div>
 
           {/* Settings at bottom */}
-          <div className="border-t border-neutral-100 pt-4 space-y-1">
+          <div className="border-t border-white/[0.06] pt-4 space-y-1">
             <button
               onClick={handleReset}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-neutral-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[0.04] transition-colors"
             >
               <RotateCcw className="w-4 h-4 text-neutral-400" />
               <span className="text-[13px] text-neutral-500">온보딩 다시하기</span>
             </button>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-neutral-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[0.04] transition-colors"
             >
               <LogOut className="w-4 h-4 text-red-400" />
               <span className="text-[13px] text-red-500">로그아웃</span>
@@ -842,11 +843,11 @@ export default function ProfilePage() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+              className="relative w-full max-w-app bg-[#12121a] border-t border-white/[0.08] rounded-t-3xl overflow-hidden"
               style={{ maxHeight: '70vh' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-neutral-100">
+              <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-white/[0.06]">
                 <h3 className="text-[16px] font-bold text-neutral-900">친구 {friendCount}명</h3>
                 <button onClick={() => setShowFriendList(false)}>
                   <X className="w-5 h-5 text-neutral-400" />
@@ -854,7 +855,7 @@ export default function ProfilePage() {
               </div>
               <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
                 {friends.length > 0 ? (
-                  <div className="divide-y divide-neutral-50">
+                  <div className="divide-y divide-white/[0.06]">
                     {friends.map((f) => {
                       const friend = f.friend
                       if (!friend) return null
@@ -866,7 +867,7 @@ export default function ProfilePage() {
                             setShowFriendList(false)
                             router.push(`/profile/${friend.id}`)
                           }}
-                          className="w-full flex items-center gap-3 px-5 py-3 text-left active:bg-neutral-50 transition-colors"
+                          className="w-full flex items-center gap-3 px-5 py-3 text-left active:bg-white/[0.04] transition-colors"
                         >
                           <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-300 to-primary-500 p-[2px] flex-shrink-0">
                             {friend.profile_image_url ? (
@@ -875,7 +876,7 @@ export default function ProfilePage() {
                                 style={{ backgroundImage: `url(${friend.profile_image_url})` }}
                               />
                             ) : (
-                              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                              <div className="w-full h-full rounded-full bg-[#0B0B12] flex items-center justify-center">
                                 <span className="text-[14px] font-bold text-primary-500">
                                   {friend.name.charAt(0)}
                                 </span>

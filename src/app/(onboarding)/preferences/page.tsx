@@ -149,13 +149,17 @@ export default function PreferencesPage() {
                         </motion.div>
 
                         {/* Main content */}
-                        <motion.span
-                          className="text-6xl mb-4"
-                          animate={{ y: [0, -6, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        >
-                          {currentTag.emoji}
-                        </motion.span>
+                        {currentTag.emoji ? (
+                          <motion.span
+                            className="text-6xl mb-4"
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                          >
+                            {currentTag.emoji}
+                          </motion.span>
+                        ) : (
+                          <div className="w-16 h-16 rounded-2xl bg-white/20 mb-4" />
+                        )}
                         <h3 className="text-white font-bold text-2xl mb-2 text-center">
                           {currentTag.label}
                         </h3>
@@ -179,7 +183,7 @@ export default function PreferencesPage() {
                       }}
                       transition={{ duration: 0.3 }}
                     >
-                      <span className="text-6xl">{currentTag.emoji}</span>
+                      {currentTag.emoji && <span className="text-6xl">{currentTag.emoji}</span>}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -191,7 +195,7 @@ export default function PreferencesPage() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => handleSwipe('left')}
-                className="w-16 h-16 rounded-full bg-white shadow-card flex items-center justify-center border border-neutral-200"
+                className="w-16 h-16 rounded-full glass-card flex items-center justify-center"
               >
                 <X className="w-7 h-7 text-neutral-400" />
               </motion.button>
@@ -243,12 +247,12 @@ export default function PreferencesPage() {
                         style={{ background: option.gradient }}
                       >
                         <div className="w-full h-full min-h-[160px] flex flex-col items-center justify-center gap-3 p-6">
-                          <span className="text-5xl">{option.emoji}</span>
+                          {option.emoji ? <span className="text-5xl">{option.emoji}</span> : <div className="w-16 h-16 rounded-2xl bg-white/20 mb-4" />}
                           <span className="text-white font-bold text-xl">{option.label}</span>
                         </div>
                         {i === 0 && (
                           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-10">
-                            <span className="text-body-2 font-bold text-neutral-300 bg-white px-3 py-1 rounded-full shadow-sm text-xs">VS</span>
+                            <span className="text-body-2 font-bold text-neutral-400 bg-[#0B0B12] border border-white/[0.08] px-3 py-1 rounded-full shadow-sm text-xs">VS</span>
                           </div>
                         )}
                       </motion.button>

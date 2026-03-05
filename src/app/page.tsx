@@ -38,7 +38,7 @@ export default function SplashPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: 'linear-gradient(to bottom, #ffffff, #FFF5F3, #FFF5F7)' }}
+      style={{ background: 'linear-gradient(to bottom, #0B0B12, #120a10, #0f0810)' }}
     >
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
@@ -50,8 +50,8 @@ export default function SplashPage() {
               width: `${60 + i * 40}px`,
               height: `${60 + i * 40}px`,
               background: i % 2 === 0
-                ? 'radial-gradient(circle, #FFE8E3 0%, transparent 70%)'
-                : 'radial-gradient(circle, #FFD0C7 0%, transparent 70%)',
+                ? 'radial-gradient(circle, rgba(255,107,82,0.08) 0%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(255,107,130,0.06) 0%, transparent 70%)',
               left: `${10 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
             }}
@@ -104,10 +104,10 @@ export default function SplashPage() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="text-center"
             >
-              <h1 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.3, color: '#1A1715', marginBottom: '8px' }}>
+              <h1 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.3, color: 'rgba(255,255,255,0.92)', marginBottom: '8px' }}>
                 데이트메이트
               </h1>
-              <p style={{ fontSize: '1rem', lineHeight: 1.5, color: '#7D756E' }}>
+              <p style={{ fontSize: '1rem', lineHeight: 1.5, color: 'rgba(255,255,255,0.5)' }}>
                 AI가 만드는 완벽한 데이트 코스
               </p>
             </motion.div>
@@ -132,7 +132,7 @@ export default function SplashPage() {
                     borderRadius: '9999px',
                     border: 'none',
                     cursor: 'pointer',
-                    boxShadow: '0 12px 40px rgba(255, 107, 82, 0.3)',
+                    boxShadow: '0 0 30px rgba(255,107,82,0.35), 0 12px 40px rgba(255,107,82,0.2)',
                   }}
                 >
                   시작하기
@@ -164,7 +164,7 @@ export default function SplashPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            style={{ position: 'absolute', bottom: 40, fontSize: '0.75rem', color: '#A9A29B' }}
+            style={{ position: 'absolute', bottom: 40, fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}
           >
             결정 피로는 끝, AI가 코스를 결정합니다
           </motion.p>

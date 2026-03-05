@@ -29,7 +29,7 @@ export default function CourseListPage() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-primary-50/40 pb-28">
+    <PageTransition className="min-h-screen bg-[#0B0B12] pb-28">
       <TopBar title="코스" showBack={false} />
 
       <div className="px-5 py-4">
@@ -43,7 +43,7 @@ export default function CourseListPage() {
           className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
             !budgetFilter
               ? 'bg-neutral-800 text-white'
-              : 'bg-white text-neutral-400 border border-neutral-100'
+              : 'glass-pill text-neutral-400'
           }`}
         >
           전체
@@ -55,7 +55,7 @@ export default function CourseListPage() {
             className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all flex items-center gap-1 ${
               budgetFilter === b
                 ? 'bg-neutral-800 text-white'
-                : 'bg-white text-neutral-400 border border-neutral-100'
+                : 'glass-pill text-neutral-400'
             }`}
           >
             <Wallet className="w-3 h-3" />
@@ -73,7 +73,7 @@ export default function CourseListPage() {
             transition={{ delay: i * 0.05 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleCourseClick(course.id)}
-            className="flex gap-4 p-3.5 bg-white rounded-2xl border border-neutral-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] cursor-pointer active:bg-primary-50/50 transition-colors"
+            className="flex gap-4 p-3.5 glass-card cursor-pointer active:bg-white/[0.06] transition-colors"
           >
             {/* 썸네일 */}
             <div className="w-[72px] h-[72px] rounded-xl flex-shrink-0 relative overflow-hidden bg-primary-50">

@@ -22,7 +22,7 @@ export default function CourseTimelineCard({ course, generatedCourseId, isGenera
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      className="mt-2 rounded-2xl bg-white border border-primary-200/50 overflow-hidden shadow-sm"
+      className="mt-2 glass-card overflow-hidden"
     >
       {/* 헤더 */}
       <div className="px-4 pt-4 pb-2">
@@ -35,7 +35,7 @@ export default function CourseTimelineCard({ course, generatedCourseId, isGenera
         <div className="relative">
           {/* 세로 연결선 */}
           <div
-            className="absolute left-[15px] bg-primary-200"
+            className="absolute left-[15px] bg-primary-500/30"
             style={{
               top: 32,
               bottom: course.places.length > 1 ? 24 : 0,
@@ -59,12 +59,12 @@ export default function CourseTimelineCard({ course, generatedCourseId, isGenera
 
                 {/* 장소 정보 */}
                 <div className="flex-1 pb-1">
-                  <div className="bg-neutral-50 rounded-xl p-3">
+                  <div className="bg-white/[0.04] rounded-xl p-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[14px] font-semibold text-neutral-800 truncate">
                         {place.name}
                       </span>
-                      <span className="text-[11px] text-primary-500 font-medium px-2 py-0.5 bg-primary-50 rounded-full flex-shrink-0">
+                      <span className="text-[11px] text-primary-500 font-medium px-2 py-0.5 bg-primary-500/10 rounded-full flex-shrink-0">
                         {place.category}
                       </span>
                     </div>
@@ -108,7 +108,7 @@ export default function CourseTimelineCard({ course, generatedCourseId, isGenera
       </div>
 
       {/* 하단 액션 */}
-      <div className="flex border-t border-primary-100">
+      <div className="flex border-t border-white/[0.08]">
         {isGenerating ? (
           <div className="flex-1 flex items-center justify-center gap-2 py-3.5">
             <Loader2 className="w-4 h-4 text-primary-500 animate-spin" />
@@ -118,14 +118,14 @@ export default function CourseTimelineCard({ course, generatedCourseId, isGenera
           <>
             <button
               onClick={() => router.push(`/course/${generatedCourseId}`)}
-              className="flex-1 flex items-center justify-center gap-1 py-3.5 text-primary-500 text-[13px] font-semibold hover:bg-primary-50 active:bg-primary-100 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 py-3.5 text-primary-500 text-[13px] font-semibold hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors"
             >
               코스 보러가기 <ChevronRight className="w-3.5 h-3.5" />
             </button>
-            <div className="w-px bg-primary-100" />
+            <div className="w-px bg-white/[0.08]" />
             <button
               onClick={() => router.push(`/course/${generatedCourseId}/map`)}
-              className="flex-1 flex items-center justify-center gap-1 py-3.5 text-emerald-600 text-[13px] font-semibold hover:bg-emerald-50 active:bg-emerald-100 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 py-3.5 text-emerald-400 text-[13px] font-semibold hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors"
             >
               <Map className="w-3.5 h-3.5" /> 지도에서 보기
             </button>
@@ -145,24 +145,24 @@ export function CourseTimelineSkeleton() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-2 rounded-2xl bg-white border border-primary-200/50 overflow-hidden"
+      className="mt-2 glass-card overflow-hidden"
     >
       <div className="p-4 space-y-2">
-        <div className="h-4 w-32 bg-neutral-100 rounded-lg animate-pulse" />
-        <div className="h-3 w-48 bg-neutral-50 rounded-lg animate-pulse" />
+        <div className="h-4 w-32 bg-white/[0.08] rounded-lg animate-pulse" />
+        <div className="h-3 w-48 bg-white/[0.04] rounded-lg animate-pulse" />
       </div>
       <div className="px-4 pb-4 space-y-3">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-primary-100 animate-pulse flex-shrink-0" />
-            <div className="flex-1 bg-neutral-50 rounded-xl p-3 space-y-2">
-              <div className="h-4 w-24 bg-neutral-100 rounded-lg animate-pulse" />
-              <div className="h-3 w-full bg-neutral-50 rounded-lg animate-pulse" />
+            <div className="flex-1 bg-white/[0.04] rounded-xl p-3 space-y-2">
+              <div className="h-4 w-24 bg-white/[0.08] rounded-lg animate-pulse" />
+              <div className="h-3 w-full bg-white/[0.04] rounded-lg animate-pulse" />
             </div>
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-center gap-2 py-3.5 border-t border-primary-100">
+      <div className="flex items-center justify-center gap-2 py-3.5 border-t border-white/[0.08]">
         <Loader2 className="w-4 h-4 text-primary-500 animate-spin" />
         <span className="text-[13px] text-primary-500 font-medium">코스를 만들고 있어요...</span>
       </div>

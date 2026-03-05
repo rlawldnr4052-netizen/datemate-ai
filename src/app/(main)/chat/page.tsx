@@ -106,7 +106,7 @@ export default function ChatPage() {
   }
 
   return (
-    <PageTransition className="h-screen flex flex-col" style={{ backgroundColor: persona.bgTint }}>
+    <PageTransition className="h-screen flex flex-col bg-[#0B0B12]">
       <TopBar
         title={persona.name}
         showBack={false}
@@ -117,7 +117,7 @@ export default function ChatPage() {
               className={`flex items-center gap-1 px-3 py-1.5 rounded-pill text-caption font-medium transition-colors ${
                 isTMIEnabled
                   ? 'text-white'
-                  : 'bg-neutral-100 text-neutral-500'
+                  : 'bg-white/[0.06] text-neutral-500'
               }`}
               style={isTMIEnabled ? { backgroundColor: persona.accentColor } : undefined}
             >
@@ -160,7 +160,7 @@ export default function ChatPage() {
                     className={`px-4 py-3 rounded-2xl text-body-2 whitespace-pre-wrap leading-relaxed ${
                       msg.role === 'user'
                         ? 'text-white rounded-br-md'
-                        : 'bg-white text-neutral-800 shadow-sm rounded-bl-md'
+                        : 'glass-card text-neutral-800 rounded-bl-md'
                     }`}
                     style={
                       msg.role === 'user'
@@ -231,7 +231,7 @@ export default function ChatPage() {
               >
                 <span className="text-white text-[10px] font-bold">AI</span>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm rounded-bl-md">
+              <div className="glass-card rounded-2xl rounded-bl-md">
                 <TypingIndicator color={persona.accentColor} />
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-white border-t border-neutral-100">
+      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-[#0B0B12]/90 backdrop-blur-xl border-t border-white/[0.06]">
         {/* Quick Replies */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 py-2">
           {quickReplies.map((qr) => (
@@ -255,6 +255,7 @@ export default function ChatPage() {
               style={{
                 backgroundColor: `${persona.accentColor}12`,
                 color: persona.accentColor,
+                border: `1px solid ${persona.accentColor}25`,
               }}
             >
               {qr.label}
@@ -271,7 +272,7 @@ export default function ChatPage() {
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요"
             disabled={isTyping}
-            className="flex-1 h-11 px-4 bg-neutral-100 rounded-pill text-body-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 transition-all disabled:opacity-50"
+            className="flex-1 h-11 px-4 bg-white/[0.06] border border-white/[0.08] rounded-pill text-body-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 transition-all disabled:opacity-50"
             style={
               { '--tw-ring-color': `${persona.accentColor}60` } as React.CSSProperties
             }
@@ -288,7 +289,7 @@ export default function ChatPage() {
                     color: '#fff',
                     boxShadow: `0 4px 12px ${persona.accentColor}40`,
                   }
-                : { backgroundColor: '#e5e5e5', color: '#a3a3a3' }
+                : { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.2)' }
             }
           >
             <Send className="w-5 h-5" />

@@ -58,14 +58,14 @@ export default function BudgetPage() {
                 onClick={() => handleSelect(option.id)}
                 className={`
                   relative rounded-3xl overflow-hidden transition-all duration-200
-                  ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 shadow-card-hover' : 'shadow-card'}
+                  ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card'}
                 `}
               >
                 <div
                   className="flex items-center gap-4 p-5"
                   style={{ background: option.gradient, opacity: 0.9 }}
                 >
-                  <span className="text-3xl">{option.emoji}</span>
+                  {option.emoji && <span className="text-3xl">{option.emoji}</span>}
                   <div className="flex-1 text-left">
                     <span className="text-white font-bold text-title-2 block">{option.label}</span>
                     <span className="text-white/80 text-caption block mt-0.5">{option.description}</span>
@@ -78,7 +78,7 @@ export default function BudgetPage() {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center"
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#0B0B12] border border-white/[0.15] flex items-center justify-center"
                   >
                     <div className="w-3 h-3 rounded-full bg-primary-500" />
                   </motion.div>

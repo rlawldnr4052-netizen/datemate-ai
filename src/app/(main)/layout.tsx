@@ -11,11 +11,11 @@ export default function MainLayout({
   const ready = useAuthGuard('main')
 
   if (!ready) {
-    return <div className="min-h-screen bg-neutral-50" />
+    return <div className="min-h-screen bg-[#0B0B12]" />
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[#0B0B12]">
       {children}
       <NavBar />
     </div>

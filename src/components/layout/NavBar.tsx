@@ -34,11 +34,11 @@ export default function NavBar() {
       <nav
         className="relative flex items-center gap-0.5 px-1.5 py-1.5 rounded-[28px]"
         style={{
-          background: 'rgba(255, 255, 255, 0.85)',
+          background: 'rgba(11, 11, 18, 0.85)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          border: '1px solid rgba(0, 0, 0, 0.06)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         }}
       >
         {/* Active pill */}
@@ -72,7 +72,7 @@ export default function NavBar() {
                   style={{
                     width: 21,
                     height: 21,
-                    color: isActive ? '#ffffff' : 'rgba(60, 60, 67, 0.3)',
+                    color: isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.25)',
                   }}
                   strokeWidth={isActive ? 2.2 : 1.7}
                 />

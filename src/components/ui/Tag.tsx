@@ -25,8 +25,8 @@ export default function Tag({ label, active = false, onClick, size = 'md', class
         'rounded-pill font-medium transition-all duration-200',
         sizes[size],
         active
-          ? 'bg-primary-500 text-white shadow-sm'
-          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200',
+          ? 'bg-primary-500 text-white glow-sm'
+          : 'glass-pill text-neutral-600 hover:bg-white/[0.10]',
         className,
       )}
     >

@@ -18,13 +18,13 @@ export const aiPersonas: Record<DateType, AIPersona> = {
   couple: {
     name: '러브메이트',
     label: '연인 모드',
-    emoji: '💕',
+    emoji: '',
     welcome:
-      '안녕! 나는 러브메이트야 💕\n오늘 둘만의 특별한 데이트를 계획해볼까? 로맨틱한 코스를 만들어 줄게!',
+      '안녕! 나는 러브메이트야\n오늘 둘만의 특별한 데이트를 계획해볼까? 로맨틱한 코스를 만들어 줄게!',
     gradientFrom: '#FF6B82',
     gradientTo: '#FF8FA0',
     accentColor: '#FF6B82',
-    bgTint: 'rgba(255, 107, 130, 0.04)',
+    bgTint: 'rgba(255, 107, 130, 0.02)',
     userBubbleBg: 'linear-gradient(135deg, #FF6B82, #FF8FA0)',
     quickReplies: [
       { id: 'c1', label: '오늘 데이트 코스 추천해줘', action: 'recommend' },
@@ -36,13 +36,13 @@ export const aiPersonas: Record<DateType, AIPersona> = {
   solo: {
     name: '솔로메이트',
     label: '혼놀 모드',
-    emoji: '✨',
+    emoji: '',
     welcome:
-      '안녕! 나는 솔로메이트야 ✨\n오늘 나만의 시간을 알차게 보내볼까? 혼자서도 즐거운 코스를 만들어 줄게!',
+      '안녕! 나는 솔로메이트야\n오늘 나만의 시간을 알차게 보내볼까? 혼자서도 즐거운 코스를 만들어 줄게!',
     gradientFrom: '#8B5CF6',
     gradientTo: '#A78BFA',
     accentColor: '#8B5CF6',
-    bgTint: 'rgba(139, 92, 246, 0.04)',
+    bgTint: 'rgba(139, 92, 246, 0.02)',
     userBubbleBg: 'linear-gradient(135deg, #8B5CF6, #A78BFA)',
     quickReplies: [
       { id: 's1', label: '오늘 혼자 갈만한 곳 추천해줘', action: 'recommend' },
@@ -54,13 +54,13 @@ export const aiPersonas: Record<DateType, AIPersona> = {
   friends: {
     name: '프렌즈메이트',
     label: '친구 모드',
-    emoji: '🎉',
+    emoji: '',
     welcome:
-      '안녕! 나는 프렌즈메이트야 🎉\n오늘 친구들이랑 뭐 할지 고민이야? 같이 놀기 딱 좋은 코스를 만들어 줄게!',
+      '안녕! 나는 프렌즈메이트야\n오늘 친구들이랑 뭐 할지 고민이야? 같이 놀기 딱 좋은 코스를 만들어 줄게!',
     gradientFrom: '#F59E0B',
     gradientTo: '#FBBF24',
     accentColor: '#F59E0B',
-    bgTint: 'rgba(245, 158, 11, 0.04)',
+    bgTint: 'rgba(245, 158, 11, 0.02)',
     userBubbleBg: 'linear-gradient(135deg, #F59E0B, #FBBF24)',
     quickReplies: [
       { id: 'f1', label: '오늘 친구들이랑 놀 곳 추천해줘', action: 'recommend' },

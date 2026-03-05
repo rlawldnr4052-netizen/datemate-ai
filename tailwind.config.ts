@@ -62,10 +62,14 @@ const config: Config = {
         'pill': '9999px',
       },
       boxShadow: {
-        'card': '0 2px 12px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 8px 30px rgba(0, 0, 0, 0.1)',
-        'float': '0 12px 40px rgba(0, 0, 0, 0.12)',
-        'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+        'card': '0 2px 12px rgba(0, 0, 0, 0.3)',
+        'card-hover': '0 8px 30px rgba(0, 0, 0, 0.4)',
+        'float': '0 12px 40px rgba(0, 0, 0, 0.5)',
+        'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        'glass': '0 0 1px rgba(255, 255, 255, 0.1), 0 2px 8px rgba(0, 0, 0, 0.3)',
+        'glow-rose': '0 0 20px rgba(232, 69, 124, 0.25), 0 4px 12px rgba(232, 69, 124, 0.15)',
+        'glow-violet': '0 0 20px rgba(124, 58, 237, 0.25), 0 4px 12px rgba(124, 58, 237, 0.15)',
+        'glow-amber': '0 0 20px rgba(212, 137, 11, 0.25), 0 4px 12px rgba(212, 137, 11, 0.15)',
       },
       animation: {
         'bounce-slow': 'bounce 1.5s infinite',

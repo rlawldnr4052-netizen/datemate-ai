@@ -56,7 +56,7 @@ export default function FriendCard({
       {/* 아바타 */}
       <button onClick={goToProfile} className="flex-shrink-0">
         <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} p-[2px]`}>
-          <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+          <div className="w-full h-full rounded-full bg-[#0B0B12] flex items-center justify-center">
             <span className="text-[15px] font-bold text-neutral-600">
               {user.name.charAt(0)}
             </span>
@@ -92,7 +92,7 @@ export default function FriendCard({
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onCancel}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-100 text-neutral-400 text-[13px] font-semibold"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/[0.06] text-neutral-400 text-[13px] font-semibold"
           >
             <Clock className="w-3.5 h-3.5" />
             대기중
@@ -111,7 +111,7 @@ export default function FriendCard({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onReject}
-              className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-400 flex items-center justify-center"
+              className="w-9 h-9 rounded-xl bg-white/[0.06] text-neutral-400 flex items-center justify-center"
             >
               <X className="w-4 h-4" />
             </motion.button>
@@ -124,7 +124,7 @@ export default function FriendCard({
               whileTap={{ scale: 0.9 }}
               onClick={onTogglePartner}
               className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                isPartner ? 'bg-pink-50' : 'bg-neutral-50'
+                isPartner ? 'bg-pink-500/10' : 'bg-white/[0.04]'
               }`}
             >
               <Heart
@@ -134,7 +134,7 @@ export default function FriendCard({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onRemove}
-              className="w-9 h-9 rounded-xl bg-neutral-50 text-neutral-300 flex items-center justify-center"
+              className="w-9 h-9 rounded-xl bg-white/[0.04] text-neutral-300 flex items-center justify-center"
             >
               <UserMinus className="w-4 h-4" />
             </motion.button>

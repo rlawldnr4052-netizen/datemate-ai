@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#FF6B52',
+  themeColor: '#0B0B12',
 };
 
 export default function RootLayout({
@@ -32,8 +32,8 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
-      <body className="antialiased bg-neutral-50">
-        <div className="mx-auto max-w-app min-h-screen bg-white relative shadow-lg">
+      <body className="antialiased bg-[#0B0B12]">
+        <div className="mx-auto max-w-app min-h-screen bg-[#0B0B12] relative">
           {children}
         </div>
       </body>

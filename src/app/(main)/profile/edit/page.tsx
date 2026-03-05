@@ -63,7 +63,7 @@ export default function ProfileEditPage() {
   }, {})
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-white">
+    <PageTransition className="min-h-screen flex flex-col bg-[#0B0B12]">
       <TopBar title="프로필 편집" showBack />
 
       <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32">
@@ -82,8 +82,8 @@ export default function ProfileEditPage() {
                   onClick={() => setDateType(opt.type)}
                   className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-2xl border-2 transition-all ${
                     active
-                      ? 'border-primary-500 bg-primary-50 shadow-sm'
-                      : 'border-neutral-200 bg-white'
+                      ? 'border-primary-500 bg-primary-500/10 shadow-sm'
+                      : 'border-white/[0.08] bg-white/[0.04]'
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br ${opt.gradient}`}>
@@ -111,11 +111,11 @@ export default function ProfileEditPage() {
                   onClick={() => setSelectedMBTI(active ? null : opt.type)}
                   className={`flex flex-col items-center gap-0.5 py-2.5 rounded-xl border-2 transition-all text-xs ${
                     active
-                      ? 'border-primary-500 bg-primary-50'
-                      : 'border-neutral-100 bg-white'
+                      ? 'border-primary-500 bg-primary-500/10'
+                      : 'border-white/[0.08] bg-white/[0.04]'
                   }`}
                 >
-                  <span className="text-base">{opt.emoji}</span>
+                  {opt.emoji && <span className="text-base">{opt.emoji}</span>}
                   <span className={`font-bold ${active ? 'text-primary-600' : 'text-neutral-800'}`}>{opt.type}</span>
                 </motion.button>
               )
@@ -131,7 +131,7 @@ export default function ProfileEditPage() {
               <select
                 value={city}
                 onChange={(e) => { setCity(e.target.value); setDistrict('') }}
-                className="w-full appearance-none px-3 py-3 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 outline-none focus:border-primary-400 transition-all"
+                className="w-full appearance-none px-3 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-neutral-900 outline-none focus:border-white/[0.15] transition-all"
               >
                 <option value="">시/도</option>
                 {cities.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -143,7 +143,7 @@ export default function ProfileEditPage() {
                 <select
                   value={district}
                   onChange={(e) => setDistrict(e.target.value)}
-                  className="w-full appearance-none px-3 py-3 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 outline-none focus:border-primary-400 transition-all"
+                  className="w-full appearance-none px-3 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-neutral-900 outline-none focus:border-white/[0.15] transition-all"
                 >
                   <option value="">시/군/구</option>
                   {districts.map((d) => <option key={d} value={d}>{d}</option>)}
@@ -171,11 +171,11 @@ export default function ProfileEditPage() {
                       onClick={() => toggleTag(tag.id)}
                       className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
                         active
-                          ? 'bg-primary-500 text-white shadow-sm'
-                          : 'bg-neutral-100 text-neutral-600'
+                          ? 'bg-primary-500 text-white shadow-sm glow-sm'
+                          : 'glass-pill text-neutral-400'
                       }`}
                     >
-                      <span className="text-base">{tag.emoji}</span>
+                      {tag.emoji && <span className="text-base">{tag.emoji}</span>}
                       {tag.label}
                       {active && <Check className="w-3.5 h-3.5" />}
                     </motion.button>
@@ -199,11 +199,11 @@ export default function ProfileEditPage() {
                   whileTap={{ scale: 0.93 }}
                   onClick={() => setSelectedVibe(vibe.id)}
                   className={`relative rounded-2xl overflow-hidden transition-all ${
-                    active ? 'ring-2 ring-primary-500 ring-offset-2' : ''
+                    active ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12]' : ''
                   }`}
                 >
                   <div className="py-5 px-2 flex flex-col items-center gap-1.5" style={{ background: vibe.gradient }}>
-                    <span className="text-2xl">{vibe.emoji}</span>
+                    {vibe.emoji && <span className="text-2xl">{vibe.emoji}</span>}
                     <span className="text-white font-bold text-sm">{vibe.label}</span>
                   </div>
                 </motion.button>
@@ -225,11 +225,11 @@ export default function ProfileEditPage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedBudget(opt.id)}
                   className={`flex-1 rounded-2xl overflow-hidden transition-all ${
-                    active ? 'ring-2 ring-primary-500 ring-offset-2' : ''
+                    active ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12]' : ''
                   }`}
                 >
                   <div className="py-4 px-2 flex flex-col items-center gap-1" style={{ background: opt.gradient }}>
-                    <span className="text-xl">{opt.emoji}</span>
+                    {opt.emoji && <span className="text-xl">{opt.emoji}</span>}
                     <span className="text-white font-bold text-sm">{opt.label}</span>
                     <span className="text-white/80 text-xs">{opt.range}</span>
                   </div>
@@ -242,7 +242,7 @@ export default function ProfileEditPage() {
 
       {/* 하단 저장 버튼 */}
       <div className="fixed bottom-0 left-0 right-0 z-20">
-        <div className="mx-auto max-w-app px-5 pb-6 pt-3 bg-gradient-to-t from-white via-white to-white/0">
+        <div className="mx-auto max-w-app px-5 pb-6 pt-3 bg-gradient-to-t from-[#0B0B12] via-[#0B0B12] to-transparent">
           <Button fullWidth size="lg" disabled={!isValid} onClick={handleSave}>
             {isValid ? '저장하기' : `조금만 더! (${[!dateType && '타입', selectedTags.length < 3 && '키워드 3개+', !selectedVibe && '무드', !selectedBudget && '예산'].filter(Boolean).join(', ')})`}
           </Button>

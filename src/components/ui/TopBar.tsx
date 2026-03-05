@@ -28,14 +28,14 @@ export default function TopBar({ title, showBack = true, rightAction, transparen
   return (
     <div className={cn(
       'sticky top-0 z-50 flex items-center justify-between h-14 px-5',
-      transparent ? 'bg-transparent' : 'bg-white/80 backdrop-blur-xl border-b border-neutral-100',
+      transparent ? 'bg-transparent' : 'bg-[#0B0B12]/80 backdrop-blur-xl border-b border-white/[0.06]',
       className,
     )}>
       <div className="w-10">
         {showBack && (
           <button
             onClick={handleBack}
-            className="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-neutral-100 transition-colors"
+            className="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-white/[0.06] transition-colors"
           >
             <ChevronLeft className="w-6 h-6 text-neutral-700" />
           </button>

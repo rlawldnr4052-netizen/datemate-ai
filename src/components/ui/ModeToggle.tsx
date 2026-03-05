@@ -12,9 +12,9 @@ interface ModeToggleProps {
 
 export default function ModeToggle({ mode, onChange, className }: ModeToggleProps) {
   return (
-    <div className={cn('relative flex bg-neutral-100 rounded-pill p-1', className)}>
+    <div className={cn('relative flex bg-white/[0.06] border border-white/[0.08] rounded-pill p-1', className)}>
       <motion.div
-        className="absolute top-1 bottom-1 rounded-pill bg-white shadow-card"
+        className="absolute top-1 bottom-1 rounded-pill bg-white/[0.12] shadow-glass"
         initial={false}
         animate={{
           left: mode === 'standard' ? '4px' : '50%',
