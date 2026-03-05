@@ -215,7 +215,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       const aiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: 'ai',
-        content: '앗, 지금 잠시 연결이 불안정해요 😅\n잠시 후에 다시 말해줄래? 바로 답해줄게!',
+        content: '앗, 지금 잠시 연결이 불안정해요\n잠시 후에 다시 말해줄래? 바로 답해줄게!',
         timestamp: new Date().toISOString(),
       }
 

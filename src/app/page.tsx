@@ -38,7 +38,7 @@ export default function SplashPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: 'linear-gradient(to bottom, #0B0B12, #120a10, #0f0810)' }}
+      style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,107,82,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,107,130,0.08) 0%, transparent 60%), linear-gradient(180deg, #0D0B14 0%, #0B0B12 100%)' }}
     >
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
@@ -81,8 +81,8 @@ export default function SplashPage() {
               transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
               className="relative"
             >
-              <div className="w-24 h-24 rounded-3xl flex items-center justify-center shadow-float"
-                style={{ background: 'linear-gradient(135deg, #FF8A75, #E8523A)' }}
+              <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, #FF8A75, #E8523A)', boxShadow: '0 0 40px rgba(255,107,82,0.5), 0 0 80px rgba(255,107,82,0.2), 0 20px 40px rgba(0,0,0,0.4)' }}
               >
                 <Heart className="w-12 h-12 text-white" fill="white" />
               </div>
@@ -132,7 +132,7 @@ export default function SplashPage() {
                     borderRadius: '9999px',
                     border: 'none',
                     cursor: 'pointer',
-                    boxShadow: '0 0 30px rgba(255,107,82,0.35), 0 12px 40px rgba(255,107,82,0.2)',
+                    boxShadow: '0 0 40px rgba(255,107,82,0.5), 0 0 80px rgba(255,107,82,0.2), 0 12px 40px rgba(255,107,82,0.3)',
                   }}
                 >
                   시작하기

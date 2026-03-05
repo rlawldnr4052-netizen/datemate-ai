@@ -69,7 +69,7 @@ export default function OnboardingPage() {
   const selectClass = 'w-full appearance-none px-3 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-neutral-900 outline-none focus:border-white/[0.15] transition-all'
 
   return (
-    <PageTransition className="min-h-screen flex flex-col bg-white">
+    <PageTransition className="min-h-screen flex flex-col">
       <TopBar title="취향 설정" showBack onBack={() => router.back()} />
 
       <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32">

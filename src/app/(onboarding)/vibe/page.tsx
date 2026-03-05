@@ -60,8 +60,12 @@ export default function VibePage() {
                 onClick={() => handleSelect(vibe.id)}
                 className={`
                   relative aspect-square rounded-3xl overflow-hidden transition-all duration-200
-                  ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card'}
+                  ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-[#0B0B12] shadow-card-hover' : 'shadow-card border border-white/[0.08]'}
                 `}
+                style={isSelected ? {
+                  boxShadow: '0 0 30px rgba(255,107,82,0.4)',
+                  outline: '2px solid rgba(255,255,255,0.3)',
+                } : undefined}
               >
                 <div className="absolute inset-0" style={{ background: vibe.gradient, opacity: 0.9 }} />
                 <div className="relative h-full flex flex-col items-center justify-center gap-2 p-4">
@@ -73,7 +77,7 @@ export default function VibePage() {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#0B0B12] border border-white/[0.15] flex items-center justify-center"
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#0B0B12] border border-white/[0.15] flex items-center justify-center check-pop"
                   >
                     <div className="w-3 h-3 rounded-full bg-primary-500" />
                   </motion.div>

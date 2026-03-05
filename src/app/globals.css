@@ -135,4 +135,128 @@ body {
     box-shadow: 0 0 30px var(--glow-color, rgba(255, 107, 82, 0.3)),
                 0 8px 20px var(--glow-color, rgba(255, 107, 82, 0.2));
   }
+
+  /* ── gradient-border ── */
+  .gradient-border-rose {
+    position: relative;
+    isolation: isolate;
+  }
+  .gradient-border-rose::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,107,130,0.5), rgba(232,69,124,0.2), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .gradient-border-violet {
+    position: relative;
+    isolation: isolate;
+  }
+  .gradient-border-violet::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(167,139,250,0.5), rgba(124,58,237,0.2), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .gradient-border-amber {
+    position: relative;
+    isolation: isolate;
+  }
+  .gradient-border-amber::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,208,96,0.5), rgba(212,137,11,0.2), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ── text-gradient ── */
+  .text-gradient-rose {
+    background: linear-gradient(135deg, #FF7EB3, #E8457C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-violet {
+    background: linear-gradient(135deg, #A78BFA, #7C3AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-amber {
+    background: linear-gradient(135deg, #FFD060, #F5A623);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-coral {
+    background: linear-gradient(135deg, #FF8A75, #FF6B52);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── hover-glow ── */
+  .hover-glow-rose { transition: box-shadow 0.25s ease, transform 0.2s ease; }
+  .hover-glow-rose:hover { box-shadow: 0 0 24px rgba(232,69,124,0.35), 0 8px 20px rgba(232,69,124,0.2); }
+  .hover-glow-violet { transition: box-shadow 0.25s ease, transform 0.2s ease; }
+  .hover-glow-violet:hover { box-shadow: 0 0 24px rgba(124,58,237,0.35), 0 8px 20px rgba(124,58,237,0.2); }
+  .hover-glow-coral { transition: box-shadow 0.25s ease, transform 0.2s ease; }
+  .hover-glow-coral:hover { box-shadow: 0 0 24px rgba(255,107,82,0.45), 0 8px 24px rgba(255,107,82,0.25); }
+
+  /* ── glass-card-premium ── */
+  .glass-card-premium {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(255,255,255,0.10);
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-card-premium::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    pointer-events: none;
+  }
+
+  /* ── avatar-ring ── */
+  .avatar-ring-rose {
+    padding: 2.5px;
+    background: linear-gradient(135deg, #FF7EB3, #E8457C, #FF6B52);
+    border-radius: 9999px;
+  }
+  .avatar-ring-glow {
+    box-shadow: 0 0 16px rgba(255,107,130,0.5), 0 0 32px rgba(232,69,124,0.25);
+  }
+
+  /* ── check-pop animation ── */
+  @keyframes check-pop {
+    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .check-pop {
+    animation: check-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
 }

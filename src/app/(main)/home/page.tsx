@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell } from 'lucide-react'
+import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudDrizzle, CloudFog, Snowflake, CloudSun, Headphones, SunDim, type LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useCourseStore } from '@/stores/useCourseStore'
@@ -18,7 +18,6 @@ type CategoryTab = 'couple' | 'friends' | 'solo'
 
 const categoryThemes: Record<CategoryTab, {
   label: string
-  emoji: string
   title: string
   subtitle: string
   gradient: string
@@ -34,7 +33,6 @@ const categoryThemes: Record<CategoryTab, {
 }> = {
   couple: {
     label: '연인과 데이트',
-    emoji: '💕',
     title: '로맨틱 데이트',
     subtitle: '설레는 하루를 시작해볼까요?',
     gradient: 'linear-gradient(180deg, #1a0a12 0%, #0f0810 50%, #0B0B12 100%)',
@@ -50,7 +48,6 @@ const categoryThemes: Record<CategoryTab, {
   },
   friends: {
     label: '친구와 놀기',
-    emoji: '🎉',
     title: '친구와 놀기',
     subtitle: '고민 없이 바로 놀자!',
     gradient: 'linear-gradient(180deg, #141008 0%, #0f0d08 50%, #0B0B12 100%)',
@@ -66,7 +63,6 @@ const categoryThemes: Record<CategoryTab, {
   },
   solo: {
     label: '혼놀족',
-    emoji: '🎧',
     title: '나만의 시간',
     subtitle: '온전한 나를 위한 하루',
     gradient: 'linear-gradient(180deg, #100a1a 0%, #0c0810 50%, #0B0B12 100%)',
@@ -80,6 +76,16 @@ const categoryThemes: Record<CategoryTab, {
     ctaGradient: 'linear-gradient(135deg, #A78BFA, #7C3AED)',
     cardBorder: 'rgba(124, 58, 237, 0.12)',
   },
+}
+
+const weatherIconMap: Record<string, LucideIcon> = {
+  Sun, SunDim, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudLightning, CloudSnow, Snowflake,
+}
+
+const emptyCategoryIcon: Record<CategoryTab, LucideIcon> = {
+  couple: Heart,
+  friends: Users,
+  solo: Headphones,
 }
 
 const tabOrder: CategoryTab[] = ['solo', 'couple', 'friends']
@@ -169,6 +175,7 @@ export default function HomePage() {
                   className="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-all relative"
                   style={{
                     background: isActive ? t.tabActive : 'transparent',
+                    boxShadow: isActive ? `0 2px 16px ${t.accent}50, 0 0 8px ${t.accent}30` : 'none',
                   }}
                 >
                   <span
@@ -203,24 +210,27 @@ export default function HomePage() {
               )}
             </motion.button>
           </div>
-          <h1 className="text-[26px] font-extrabold text-neutral-900 leading-tight flex items-center gap-2">
-            <span className="text-[30px]">{theme.emoji}</span> {theme.title}
+          <h1 className="text-[26px] font-extrabold text-neutral-900 leading-tight">
+            {theme.title}
           </h1>
           <p className="text-[14px] mt-1" style={{ color: theme.accentLight }}>
             {theme.subtitle}
           </p>
 
-          {weather && (
-            <div
-              className="inline-flex items-center gap-2 mt-3 px-3.5 py-1.5 rounded-full"
-              style={{ background: theme.accentBg }}
-            >
-              <span className="text-[15px]">{weather.emoji}</span>
-              <span className="text-[13px] font-semibold" style={{ color: theme.accent }}>
-                {weather.temperature}° {weather.label}
-              </span>
-            </div>
-          )}
+          {weather && (() => {
+            const WeatherIcon = weatherIconMap[weather.iconKey] || Sun
+            return (
+              <div
+                className="inline-flex items-center gap-2 mt-3 px-3.5 py-1.5 rounded-full"
+                style={{ background: theme.accentBg }}
+              >
+                <WeatherIcon className="w-4 h-4" style={{ color: theme.accent }} />
+                <span className="text-[13px] font-semibold" style={{ color: theme.accent }}>
+                  {weather.temperature}° {weather.label}
+                </span>
+              </div>
+            )
+          })()}
         </div>
 
         {/* ── 함께하는 사람 ── */}
@@ -292,9 +302,11 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => router.push('/chat')}
-            className="flex-1 rounded-2xl p-5 text-left"
+            className="flex-1 rounded-2xl p-5 text-left relative overflow-hidden"
             style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', border: `1.5px solid ${theme.cardBorder}` }}
           >
+            <div className="absolute top-0 left-0 right-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center mb-3"
               style={{ background: theme.accentBg }}
@@ -308,9 +320,11 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => router.push('/course/generate')}
-            className="flex-1 rounded-2xl p-5 text-left"
-            style={{ background: theme.ctaGradient }}
+            className="flex-1 rounded-2xl p-5 text-left relative overflow-hidden"
+            style={{ background: theme.ctaGradient, boxShadow: `0 4px 20px ${theme.accent}40, 0 0 40px ${theme.accent}15` }}
           >
+            <div className="absolute top-0 left-0 right-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
             <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-white/20">
               <Plus className="w-5 h-5 text-white" />
             </div>
@@ -384,6 +398,7 @@ export default function HomePage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         whileTap={{ scale: 0.98 }}
+                        whileHover={{ y: -2, boxShadow: `0 8px 25px ${theme.accent}25, 0 0 10px ${theme.accent}10` }}
                         onClick={() => handleCourseClick(course.id)}
                         className="flex gap-4 p-3.5 glass-card rounded-2xl cursor-pointer active:shadow-md transition-all"
                         style={{ border: `1px solid ${theme.cardBorder}` }}
@@ -462,12 +477,17 @@ export default function HomePage() {
                 </div>
               ) : (
                 <div className="text-center py-16 glass-card rounded-2xl" style={{ border: `1px solid ${theme.cardBorder}` }}>
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ background: theme.accentBg }}
-                  >
-                    <span className="text-2xl">{theme.emoji}</span>
-                  </div>
+                  {(() => {
+                    const EmptyIcon = emptyCategoryIcon[activeCategory]
+                    return (
+                      <div
+                        className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                        style={{ background: theme.accentBg }}
+                      >
+                        <EmptyIcon className="w-7 h-7" style={{ color: theme.accent }} />
+                      </div>
+                    )
+                  })()}
                   <p className="text-[15px] font-bold text-neutral-700 mb-1">
                     아직 코스가 없어요
                   </p>

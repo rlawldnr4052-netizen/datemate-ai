@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2, Wallet, Sparkles, Send, Trash2 } from 'lucide-react'
+import { Clock, MapPin, Star, X, ExternalLink, Navigation, Footprints, Bus, Car, ChevronRight, Heart, Share2, Wallet, Sparkles, Send, Trash2, Phone, Tag as TagIcon } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { useQuestStore } from '@/stores/useQuestStore'
 import TopBar from '@/components/ui/TopBar'
@@ -50,9 +50,9 @@ function StopTransitLink({ fromStop, toStop }: { fromStop: CourseStop; toStop: C
     <div className="my-4 mx-1">
       {/* 구분선 */}
       <div className="flex items-center gap-2 mb-3 px-1">
-        <div className="flex-1 h-px bg-neutral-200" />
+        <div className="flex-1 h-px bg-white/[0.08]" />
         <span className="text-[12px] text-neutral-400 font-medium">이동</span>
-        <div className="flex-1 h-px bg-neutral-200" />
+        <div className="flex-1 h-px bg-white/[0.08]" />
       </div>
 
       {/* 길찾기 버튼 or 펼쳐진 옵션 */}
@@ -64,7 +64,7 @@ function StopTransitLink({ fromStop, toStop }: { fromStop: CourseStop; toStop: C
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             onClick={() => setIsOpen(true)}
-            className="mx-auto flex items-center gap-1.5 px-5 py-2 bg-neutral-100 text-neutral-600 rounded-full text-[13px] font-medium active:scale-[0.97] transition-transform"
+            className="mx-auto flex items-center gap-1.5 px-5 py-2 bg-white/[0.06] text-neutral-600 rounded-full text-[13px] font-medium active:scale-[0.97] transition-transform"
           >
             <Navigation className="w-3.5 h-3.5" />
             길찾기
@@ -75,7 +75,7 @@ function StopTransitLink({ fromStop, toStop }: { fromStop: CourseStop; toStop: C
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="rounded-2xl border border-neutral-100 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden"
+            className="rounded-2xl border border-white/[0.08] bg-[#12121a] shadow-[0_2px_8px_rgba(0,0,0,0.3)] overflow-hidden"
           >
             {modes.map((m, i) => (
               <a
@@ -83,8 +83,8 @@ function StopTransitLink({ fromStop, toStop }: { fromStop: CourseStop; toStop: C
                 href={buildNaverDirectionsUrl(from, to, m.key)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 active:bg-neutral-100 transition-colors ${
-                  i < modes.length - 1 ? 'border-b border-neutral-100' : ''
+                className={`flex items-center gap-3 px-4 py-3.5 hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors ${
+                  i < modes.length - 1 ? 'border-b border-white/[0.08]' : ''
                 }`}
               >
                 <div className={`w-9 h-9 rounded-xl ${m.bg} flex items-center justify-center flex-shrink-0`}>
@@ -154,18 +154,18 @@ function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; pl
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+        className="relative w-full max-w-app bg-[#12121a] border border-white/[0.08] rounded-t-3xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-2">
-          <div className="w-10 h-1 rounded-full bg-neutral-300" />
+          <div className="w-10 h-1 rounded-full bg-white/[0.15]" />
         </div>
 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center z-10"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center z-10"
         >
           <X className="w-4 h-4 text-neutral-500" />
         </button>
@@ -173,7 +173,7 @@ function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; pl
         {/* Place image */}
         {displayImages.length > 0 && (
           <div
-            className="w-full h-[180px] bg-cover bg-center bg-neutral-100"
+            className="w-full h-[180px] bg-cover bg-center bg-white/[0.06]"
             style={{ backgroundImage: `url(${displayImages[0]})` }}
           />
         )}
@@ -205,7 +205,7 @@ function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; pl
           {/* Phone */}
           {placeData?.phone && (
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-body-2 text-neutral-400">📞</span>
+              <Phone className="w-4 h-4 text-neutral-400 flex-shrink-0" />
               <a href={`tel:${placeData.phone}`} className="text-body-2 text-primary-500 underline">
                 {placeData.phone}
               </a>
@@ -215,7 +215,7 @@ function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; pl
           {/* Category */}
           {placeData?.category_name && (
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-body-2 text-neutral-400">🏷️</span>
+              <TagIcon className="w-4 h-4 text-neutral-400 flex-shrink-0" />
               <span className="text-caption text-neutral-500">{placeData.category_name}</span>
             </div>
           )}
@@ -253,7 +253,7 @@ function PlaceDetailPopup({ place, placeImageUrls, onClose }: { place: Place; pl
             href={naverMapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="block mb-4 p-3 bg-neutral-50 rounded-2xl"
+            className="block mb-4 p-3 bg-white/[0.04] rounded-2xl"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -399,27 +399,27 @@ function AiEditSheet({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-app bg-white rounded-t-3xl overflow-hidden"
+        className="relative w-full max-w-app bg-[#12121a] border border-white/[0.08] rounded-t-3xl overflow-hidden"
         style={{ height: '75vh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-neutral-100">
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary-500" />
             <h3 className="text-[16px] font-bold text-neutral-900">AI 코스 수정</h3>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center">
             <X className="w-4 h-4 text-neutral-500" />
           </button>
         </div>
 
         {/* 현재 코스 미니맵 */}
-        <div className="px-5 py-3 bg-neutral-50 border-b border-neutral-100">
+        <div className="px-5 py-3 bg-white/[0.04] border-b border-white/[0.08]">
           <p className="text-[11px] font-semibold text-neutral-400 mb-2">현재 코스</p>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {currentStops.map((stop) => (
-              <div key={stop.order} className="flex-shrink-0 flex items-center gap-1.5 pl-2 pr-1 py-1.5 bg-white rounded-xl border border-neutral-100">
+              <div key={stop.order} className="flex-shrink-0 flex items-center gap-1.5 pl-2 pr-1 py-1.5 bg-white/[0.06] rounded-xl border border-white/[0.08]">
                 <span className="w-5 h-5 rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                   {stop.order}
                 </span>
@@ -444,7 +444,7 @@ function AiEditSheet({
               <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-[14px] leading-relaxed whitespace-pre-line ${
                 msg.role === 'user'
                   ? 'bg-primary-500 text-white rounded-br-sm'
-                  : 'bg-neutral-100 text-neutral-800 rounded-bl-sm'
+                  : 'bg-white/[0.06] text-neutral-800 rounded-bl-sm'
               }`}>
                 {msg.content}
               </div>
@@ -452,7 +452,7 @@ function AiEditSheet({
           ))}
           {isLoading && (
             <div className="flex justify-start mb-3">
-              <div className="px-4 py-3 bg-neutral-100 rounded-2xl rounded-bl-sm flex gap-1.5">
+              <div className="px-4 py-3 bg-white/[0.06] rounded-2xl rounded-bl-sm flex gap-1.5">
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
@@ -467,7 +467,7 @@ function AiEditSheet({
         </div>
 
         {/* 입력 */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-white border-t border-neutral-100">
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-[#12121a] border-t border-white/[0.08]">
           <div className="flex gap-2">
             <input
               type="text"
@@ -475,7 +475,7 @@ function AiEditSheet({
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="예: 카페를 하나 더 추가해줘"
-              className="flex-1 px-4 py-3 rounded-2xl bg-neutral-50 text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none focus:ring-2 focus:ring-primary-200"
+              className="flex-1 px-4 py-3 rounded-2xl bg-white/[0.04] text-[14px] text-neutral-900 placeholder:text-neutral-300 outline-none focus:ring-2 focus:ring-white/[0.10]"
             />
             <motion.button
               whileTap={{ scale: 0.9 }}
@@ -582,11 +582,11 @@ export default function CourseDetailPage() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-white pb-32">
+    <PageTransition className="min-h-screen bg-[#0B0B12] pb-32">
       {/* Hero */}
       <div className="relative h-[280px]">
         <div
-          className="w-full h-full bg-cover bg-center bg-neutral-200"
+          className="w-full h-full bg-cover bg-center bg-white/[0.08]"
           style={{ backgroundImage: `url(${getHeroImage()})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
@@ -636,7 +636,7 @@ export default function CourseDetailPage() {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-neutral-200" />
+          <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-white/[0.08]" />
 
           {course.stops.map((stop, i) => (
             <motion.div
@@ -655,7 +655,7 @@ export default function CourseDetailPage() {
               <div className="flex-1 pb-6">
                 <button
                   onClick={() => setSelectedPlace(stop.place)}
-                  className="w-full text-left bg-white rounded-2xl shadow-card overflow-hidden active:scale-[0.98] transition-transform"
+                  className="w-full text-left rounded-2xl glass-card overflow-hidden active:scale-[0.98] transition-transform"
                 >
                   {/* Place images */}
                   {getPlaceImageUrls(stop.place).length > 0 && (
@@ -663,7 +663,7 @@ export default function CourseDetailPage() {
                       {getPlaceImageUrls(stop.place).map((url, imgI) => (
                         <div
                           key={imgI}
-                          className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start bg-neutral-100"
+                          className="flex-shrink-0 w-full h-[160px] bg-cover bg-center snap-start bg-white/[0.06]"
                           style={{ backgroundImage: `url(${url})` }}
                         />
                       ))}
@@ -720,12 +720,12 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Bottom CTA - 2 buttons */}
-      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-white via-white to-white/0">
+      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app p-5 bg-gradient-to-t from-[#0B0B12] via-[#0B0B12]/90 to-transparent">
         <div className="flex gap-3">
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => setShowAiEdit(true)}
-            className="flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl bg-white border-2 border-primary-200 text-primary-500 font-bold text-[15px] active:bg-primary-50 transition-colors"
+            className="flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-primary-500 font-bold text-[15px] active:bg-white/[0.10] transition-colors"
           >
             <Sparkles className="w-5 h-5" />
             AI로 수정

@@ -164,8 +164,8 @@ export default function ChatPage() {
                     }`}
                     style={
                       msg.role === 'user'
-                        ? { background: persona.userBubbleBg }
-                        : undefined
+                        ? { background: persona.userBubbleBg, boxShadow: `0 4px 16px ${persona.accentColor}35` }
+                        : { border: '1px solid rgba(255,255,255,0.12)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10)' }
                     }
                   >
                     {msg.content}
@@ -189,12 +189,15 @@ export default function ChatPage() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-2 p-3 rounded-2xl border"
+                    className="mt-2 p-3 rounded-2xl border relative overflow-hidden"
                     style={{
                       backgroundColor: `${persona.accentColor}10`,
                       borderColor: `${persona.accentColor}30`,
+                      boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 12px ${persona.accentColor}15`,
                     }}
                   >
+                    <div className="absolute top-0 left-0 right-0 h-px"
+                      style={{ background: `linear-gradient(90deg, transparent, ${persona.accentColor}40, transparent)` }} />
                     <div className="flex items-center gap-2 mb-1">
                       <Lightbulb className="w-4 h-4" style={{ color: persona.accentColor }} />
                       <span
@@ -242,7 +245,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-[#0B0B12]/90 backdrop-blur-xl border-t border-white/[0.06]">
+      <div className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-full max-w-app bg-[#0B0B12]/90 backdrop-blur-xl border-t border-white/[0.10]">
         {/* Quick Replies */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 py-2">
           {quickReplies.map((qr) => (

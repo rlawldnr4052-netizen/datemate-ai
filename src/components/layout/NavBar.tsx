@@ -34,11 +34,11 @@ export default function NavBar() {
       <nav
         className="relative flex items-center gap-0.5 px-1.5 py-1.5 rounded-[28px]"
         style={{
-          background: 'rgba(11, 11, 18, 0.85)',
+          background: 'rgba(11,11,18,0.90)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          border: '1px solid rgba(255,255,255,0.10)',
+          boxShadow: '0 -4px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}
       >
         {/* Active pill */}
@@ -47,7 +47,7 @@ export default function NavBar() {
           style={{
             width: 52,
             background: 'linear-gradient(135deg, #FF6B52, #FF8A75)',
-            boxShadow: '0 2px 12px rgba(255, 107, 82, 0.3)',
+            boxShadow: '0 0 20px rgba(255,107,82,0.55), 0 2px 12px rgba(255,107,82,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
           }}
           animate={{ left: activeIndex * 54 + 6 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}

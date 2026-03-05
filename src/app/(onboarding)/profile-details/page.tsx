@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, MapPin } from 'lucide-react'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { MBTIType } from '@/types/onboarding'
 import { mbtiOptions } from '@/data/mbti'
@@ -84,7 +84,7 @@ export default function ProfileDetailsPage() {
                         flex flex-col items-center gap-1 py-3 px-1 rounded-2xl border-2 transition-all
                         ${isSelected
                           ? 'border-primary-500 bg-primary-50 shadow-sm'
-                          : 'border-neutral-100 bg-white'
+                          : 'border-white/[0.06] bg-white/[0.04]'
                         }
                       `}
                     >
@@ -135,7 +135,7 @@ export default function ProfileDetailsPage() {
                     <select
                       value={birthYear}
                       onChange={(e) => setBirthYear(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] text-body-2 text-neutral-900 outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-500/20 transition-all"
                     >
                       <option value="">선택</option>
                       {years.map((y) => (
@@ -153,7 +153,7 @@ export default function ProfileDetailsPage() {
                     <select
                       value={birthMonth}
                       onChange={(e) => setBirthMonth(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] text-body-2 text-neutral-900 outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-500/20 transition-all"
                     >
                       <option value="">선택</option>
                       {months.map((m) => (
@@ -171,7 +171,7 @@ export default function ProfileDetailsPage() {
                     <select
                       value={birthDay}
                       onChange={(e) => setBirthDay(e.target.value)}
-                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                      className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] text-body-2 text-neutral-900 outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-500/20 transition-all"
                     >
                       <option value="">선택</option>
                       {days.map((d) => (
@@ -239,7 +239,7 @@ export default function ProfileDetailsPage() {
                   <select
                     value={city}
                     onChange={(e) => { setCity(e.target.value); setDistrict('') }}
-                    className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                    className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] text-body-2 text-neutral-900 outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-500/20 transition-all"
                   >
                     <option value="">시/도 선택</option>
                     {cities.map((c) => (
@@ -264,7 +264,7 @@ export default function ProfileDetailsPage() {
                       <select
                         value={district}
                         onChange={(e) => setDistrict(e.target.value)}
-                        className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-neutral-200 bg-white text-body-2 text-neutral-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                        className="w-full appearance-none px-4 py-3.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] text-body-2 text-neutral-900 outline-none focus:border-primary-400/60 focus:ring-2 focus:ring-primary-500/20 transition-all"
                       >
                         <option value="">시/군/구 선택</option>
                         {districts.map((d) => (
@@ -283,8 +283,9 @@ export default function ProfileDetailsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="px-5 py-4 rounded-2xl bg-primary-50 mb-4"
                 >
-                  <p className="text-body-2 text-primary-600 text-center font-medium">
-                    📍 {city} {district}
+                  <p className="text-body-2 text-primary-600 text-center font-medium flex items-center justify-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    {city} {district}
                   </p>
                 </motion.div>
               )}

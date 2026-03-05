@@ -3,33 +3,33 @@ export interface WeatherData {
   temperature: number
   weatherCode: number
   label: string
-  emoji: string
+  iconKey: string
   suggestion: string
 }
 
-const weatherLabels: Record<number, { label: string; emoji: string; indoor: boolean }> = {
-  0: { label: '맑음', emoji: '☀️', indoor: false },
-  1: { label: '대체로 맑음', emoji: '🌤', indoor: false },
-  2: { label: '구름 조금', emoji: '⛅', indoor: false },
-  3: { label: '흐림', emoji: '☁️', indoor: false },
-  45: { label: '안개', emoji: '🌫', indoor: false },
-  48: { label: '짙은 안개', emoji: '🌫', indoor: true },
-  51: { label: '이슬비', emoji: '🌦', indoor: true },
-  53: { label: '비', emoji: '🌧', indoor: true },
-  55: { label: '강한 비', emoji: '🌧', indoor: true },
-  61: { label: '비', emoji: '🌧', indoor: true },
-  63: { label: '비', emoji: '🌧', indoor: true },
-  65: { label: '폭우', emoji: '⛈', indoor: true },
-  71: { label: '눈', emoji: '🌨', indoor: true },
-  73: { label: '눈', emoji: '🌨', indoor: true },
-  75: { label: '폭설', emoji: '❄️', indoor: true },
-  80: { label: '소나기', emoji: '🌦', indoor: true },
-  81: { label: '소나기', emoji: '🌧', indoor: true },
-  95: { label: '뇌우', emoji: '⛈', indoor: true },
+const weatherLabels: Record<number, { label: string; iconKey: string; indoor: boolean }> = {
+  0: { label: '맑음', iconKey: 'Sun', indoor: false },
+  1: { label: '대체로 맑음', iconKey: 'SunDim', indoor: false },
+  2: { label: '구름 조금', iconKey: 'CloudSun', indoor: false },
+  3: { label: '흐림', iconKey: 'Cloud', indoor: false },
+  45: { label: '안개', iconKey: 'CloudFog', indoor: false },
+  48: { label: '짙은 안개', iconKey: 'CloudFog', indoor: true },
+  51: { label: '이슬비', iconKey: 'CloudDrizzle', indoor: true },
+  53: { label: '비', iconKey: 'CloudRain', indoor: true },
+  55: { label: '강한 비', iconKey: 'CloudRain', indoor: true },
+  61: { label: '비', iconKey: 'CloudRain', indoor: true },
+  63: { label: '비', iconKey: 'CloudRain', indoor: true },
+  65: { label: '폭우', iconKey: 'CloudLightning', indoor: true },
+  71: { label: '눈', iconKey: 'CloudSnow', indoor: true },
+  73: { label: '눈', iconKey: 'CloudSnow', indoor: true },
+  75: { label: '폭설', iconKey: 'Snowflake', indoor: true },
+  80: { label: '소나기', iconKey: 'CloudDrizzle', indoor: true },
+  81: { label: '소나기', iconKey: 'CloudRain', indoor: true },
+  95: { label: '뇌우', iconKey: 'CloudLightning', indoor: true },
 }
 
 function getWeatherInfo(code: number) {
-  return weatherLabels[code] || weatherLabels[Math.floor(code / 10) * 10] || { label: '맑음', emoji: '☀️', indoor: false }
+  return weatherLabels[code] || weatherLabels[Math.floor(code / 10) * 10] || { label: '맑음', iconKey: 'Sun', indoor: false }
 }
 
 function getSuggestion(code: number, temp: number): string {
@@ -58,7 +58,7 @@ export async function fetchWeather(lat: number, lng: number): Promise<WeatherDat
       temperature: temp,
       weatherCode: code,
       label: info.label,
-      emoji: info.emoji,
+      iconKey: info.iconKey,
       suggestion: getSuggestion(code, temp),
     }
   } catch {

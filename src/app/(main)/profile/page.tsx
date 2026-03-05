@@ -198,7 +198,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                       className="w-full flex items-center gap-3 p-3 rounded-2xl border border-white/[0.06] hover:border-primary-200 transition-colors text-left"
                     >
                       <div
-                        className="w-14 h-14 rounded-xl bg-cover bg-center bg-neutral-100 flex-shrink-0"
+                        className="w-14 h-14 rounded-xl bg-cover bg-center bg-white/[0.06] flex-shrink-0"
                         style={{ backgroundImage: `url(${course.heroImageUrl})` }}
                       />
                       <div className="flex-1 min-w-0">
@@ -239,7 +239,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                   {uploadedPhotos.map((photo) => (
                     <div key={photo.id} className="relative aspect-square rounded-xl overflow-hidden">
                       <div
-                        className="w-full h-full bg-cover bg-center bg-neutral-100"
+                        className="w-full h-full bg-cover bg-center bg-white/[0.06]"
                         style={{ backgroundImage: `url(${photo.previewUrl})` }}
                       />
                       {/* Remove button */}
@@ -268,7 +268,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                   ))}
 
                   {/* Add photo button */}
-                  <label className="aspect-square rounded-xl border-2 border-dashed border-neutral-200 flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-primary-300 hover:bg-primary-50/30 transition-all">
+                  <label className="aspect-square rounded-xl border-2 border-dashed border-white/[0.08] flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-primary-300 hover:bg-primary-50/30 transition-all">
                     <input
                       type="file"
                       accept="image/*"
@@ -343,7 +343,7 @@ function CreatePostSheet({ onClose }: { onClose: () => void }) {
                   {uploadedPhotos.map((photo) => (
                     <div
                       key={photo.id}
-                      className="flex-shrink-0 w-20 h-20 rounded-xl bg-cover bg-center bg-neutral-100"
+                      className="flex-shrink-0 w-20 h-20 rounded-xl bg-cover bg-center bg-white/[0.06]"
                       style={{ backgroundImage: `url(${photo.previewUrl})` }}
                     />
                   ))}
@@ -510,7 +510,13 @@ export default function ProfilePage() {
               className="hidden"
               onChange={handleProfileImageChange}
             />
-            <div className="w-[80px] h-[80px] rounded-full bg-gradient-to-br from-primary-300 via-primary-400 to-secondary-400 p-[3px]">
+            <div
+              className="w-[80px] h-[80px] rounded-full p-[2.5px]"
+              style={{
+                background: 'linear-gradient(135deg, #FF7EB3, #E8457C, #FF6B52)',
+                boxShadow: '0 0 20px rgba(255,107,130,0.5), 0 0 40px rgba(232,69,124,0.25)',
+              }}
+            >
               {currentUser?.profileImageUrl ? (
                 <div
                   className="w-full h-full rounded-full bg-cover bg-center"
@@ -532,15 +538,25 @@ export default function ProfilePage() {
 
           {/* Stats */}
           <div className="flex-1 flex justify-around">
-            <div className="text-center">
+            <div
+              className="text-center px-3 py-2 rounded-xl"
+              style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            >
               <p className="text-[18px] font-bold text-neutral-900">{userPosts.length}</p>
               <p className="text-[12px] text-neutral-500">게시물</p>
             </div>
-            <button onClick={() => setShowFriendList(true)} className="text-center">
+            <button
+              onClick={() => setShowFriendList(true)}
+              className="text-center px-3 py-2 rounded-xl"
+              style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            >
               <p className="text-[18px] font-bold text-neutral-900">{friendCount}</p>
               <p className="text-[12px] text-neutral-500">친구</p>
             </button>
-            <div className="text-center">
+            <div
+              className="text-center px-3 py-2 rounded-xl"
+              style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            >
               <p className="text-[18px] font-bold text-neutral-900">{totalCourses}</p>
               <p className="text-[12px] text-neutral-500">코스</p>
             </div>
@@ -664,7 +680,7 @@ export default function ProfilePage() {
                   style={{ aspectRatio: '4/5' }}
                 >
                   <div
-                    className="w-full h-full bg-cover bg-center bg-neutral-100"
+                    className="w-full h-full bg-cover bg-center bg-white/[0.06]"
                     style={{ backgroundImage: `url(${post.photos[0]?.imageUrl})` }}
                   />
                   {/* Multi-photo indicator */}
@@ -693,7 +709,7 @@ export default function ProfilePage() {
                 {activeQuest.missions.map((m, i) => (
                   <div key={m.id} className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      m.isCompleted ? 'bg-green-500' : 'bg-neutral-200'
+                      m.isCompleted ? 'bg-green-500' : 'bg-white/[0.08]'
                     }`}>
                       {m.isCompleted ? (
                         <CheckCircle2 className="w-3.5 h-3.5 text-white" />
@@ -731,17 +747,26 @@ export default function ProfilePage() {
           <div className="mb-5">
             <p className="text-[13px] font-bold text-neutral-700 mb-3">활동 기록</p>
             <div className="grid grid-cols-3 gap-2.5">
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
+              <div
+                className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]"
+                style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+              >
                 <Navigation className="w-5 h-5 text-primary-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{totalCourses}</p>
                 <p className="text-[10px] text-neutral-400">완료 코스</p>
               </div>
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
+              <div
+                className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]"
+                style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+              >
                 <MapPin className="w-5 h-5 text-green-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{totalPlaces}</p>
                 <p className="text-[10px] text-neutral-400">방문 장소</p>
               </div>
-              <div className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]">
+              <div
+                className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-white/[0.04]"
+                style={{ border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+              >
                 <Flame className="w-5 h-5 text-violet-500" />
                 <p className="text-[16px] font-bold text-neutral-900">{completedCount}</p>
                 <p className="text-[10px] text-neutral-400">퀘스트</p>
@@ -754,12 +779,12 @@ export default function ProfilePage() {
             <p className="text-[13px] font-bold text-neutral-700 mb-3">업적</p>
             <div className="space-y-2.5">
               {[
-                { icon: Star, label: '첫 코스 완료', desc: '첫 번째 데이트 코스를 완주했어요', unlocked: totalCourses >= 1, color: '#F59E0B', bg: '#FFFBEB' },
-                { icon: Flame, label: '코스 마스터', desc: '코스를 5개 이상 완료했어요', unlocked: totalCourses >= 5, color: '#EF4444', bg: '#FEF2F2' },
-                { icon: MapPin, label: '탐험가', desc: '20곳 이상의 장소를 방문했어요', unlocked: totalPlaces >= 20, color: '#10B981', bg: '#ECFDF5' },
-                { icon: Zap, label: '퀘스트 헌터', desc: '퀘스트를 10개 이상 클리어했어요', unlocked: completedCount >= 10, color: '#8B5CF6', bg: '#F5F3FF' },
-                { icon: Heart, label: '소셜 스타', desc: '게시물을 3개 이상 올렸어요', unlocked: userPosts.length >= 3, color: '#EC4899', bg: '#FDF2F8' },
-                { icon: Award, label: '맛집 헌터', desc: '50곳 이상의 장소를 방문했어요', unlocked: totalPlaces >= 50, color: '#0EA5E9', bg: '#F0F9FF' },
+                { icon: Star, label: '첫 코스 완료', desc: '첫 번째 데이트 코스를 완주했어요', unlocked: totalCourses >= 1, color: '#F59E0B', bg: 'rgba(245,158,11,0.10)' },
+                { icon: Flame, label: '코스 마스터', desc: '코스를 5개 이상 완료했어요', unlocked: totalCourses >= 5, color: '#EF4444', bg: 'rgba(239,68,68,0.10)' },
+                { icon: MapPin, label: '탐험가', desc: '20곳 이상의 장소를 방문했어요', unlocked: totalPlaces >= 20, color: '#10B981', bg: 'rgba(16,185,129,0.10)' },
+                { icon: Zap, label: '퀘스트 헌터', desc: '퀘스트를 10개 이상 클리어했어요', unlocked: completedCount >= 10, color: '#8B5CF6', bg: 'rgba(139,92,246,0.10)' },
+                { icon: Heart, label: '소셜 스타', desc: '게시물을 3개 이상 올렸어요', unlocked: userPosts.length >= 3, color: '#EC4899', bg: 'rgba(236,72,153,0.10)' },
+                { icon: Award, label: '맛집 헌터', desc: '50곳 이상의 장소를 방문했어요', unlocked: totalPlaces >= 50, color: '#0EA5E9', bg: 'rgba(14,165,233,0.10)' },
               ].map((ach) => {
                 const Icon = ach.icon
                 return (
@@ -768,11 +793,11 @@ export default function ProfilePage() {
                     className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${
                       ach.unlocked ? '' : 'opacity-40 grayscale'
                     }`}
-                    style={{ backgroundColor: ach.unlocked ? ach.bg : '#F9FAFB' }}
+                    style={{ backgroundColor: ach.unlocked ? ach.bg : 'rgba(255,255,255,0.03)' }}
                   >
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: ach.unlocked ? `${ach.color}20` : '#E5E7EB' }}
+                      style={{ backgroundColor: ach.unlocked ? `${ach.color}20` : 'rgba(255,255,255,0.06)' }}
                     >
                       <Icon className="w-5 h-5" style={{ color: ach.unlocked ? ach.color : '#9CA3AF' }} />
                     </div>
