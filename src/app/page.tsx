@@ -38,7 +38,7 @@ export default function SplashPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,107,82,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,107,130,0.08) 0%, transparent 60%), linear-gradient(180deg, #0D0B14 0%, #0B0B12 100%)' }}
+      style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(124,58,237,0.08) 0%, transparent 60%), linear-gradient(180deg, #0D0B14 0%, #0B0B12 100%)' }}
     >
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
@@ -50,8 +50,8 @@ export default function SplashPage() {
               width: `${60 + i * 40}px`,
               height: `${60 + i * 40}px`,
               background: i % 2 === 0
-                ? 'radial-gradient(circle, rgba(255,107,82,0.08) 0%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(255,107,130,0.06) 0%, transparent 70%)',
+                ? 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%)',
               left: `${10 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
             }}
@@ -88,7 +88,7 @@ export default function SplashPage() {
                 데이트메이트
               </h1>
               <p style={{ fontSize: '1rem', lineHeight: 1.5, color: 'rgba(255,255,255,0.5)' }}>
-                AI가 만드는 완벽한 데이트 코스
+                AI가 만드는 나만의 맞춤 코스
               </p>
             </motion.div>
 
@@ -106,7 +106,7 @@ export default function SplashPage() {
                   style={{
                     marginTop: '16px',
                     padding: '16px 40px',
-                    background: 'linear-gradient(135deg, rgba(255,107,82,0.9), rgba(255,138,117,0.8))',
+                    background: 'linear-gradient(135deg, rgba(99,102,241,0.9), rgba(124,58,237,0.8))',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
                     color: 'white',
@@ -115,7 +115,7 @@ export default function SplashPage() {
                     borderRadius: '9999px',
                     border: '1px solid rgba(255,255,255,0.18)',
                     cursor: 'pointer',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.3), 0 0 20px rgba(255,107,82,0.15)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.3), 0 0 20px rgba(99,102,241,0.2)',
                     position: 'relative' as const,
                     overflow: 'hidden',
                   }}
@@ -135,7 +135,7 @@ export default function SplashPage() {
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
-                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF8A75' }}
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#818CF8' }}
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
                   />
