@@ -224,7 +224,7 @@ export default function GachaPage() {
     const profile = useOnboardingStore.getState()
 
     try {
-      setMode('blind')
+      setMode('standard')
       const course = await generateCourse({
         userProfile: {
           dateType: profile.dateType,
@@ -248,7 +248,7 @@ export default function GachaPage() {
         },
       })
 
-      if (course) router.push(`/course/${course.id}/blind`)
+      if (course) router.push(`/course/${course.id}`)
     } catch (e) {
       console.error('Gacha course generation failed:', e)
     } finally {
