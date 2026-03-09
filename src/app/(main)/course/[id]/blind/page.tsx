@@ -4,14 +4,12 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Lock, Unlock, Eye, Sparkles, Navigation, MapPin, Clock } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
-import { useQuestStore } from '@/stores/useQuestStore'
 import PageTransition from '@/components/motion/PageTransition'
 
 export default function BlindCourseDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { courses, unlockStop, setMode } = useCourseStore()
-  const { startQuest } = useQuestStore()
   const course = courses.find((c) => c.id === params.id)
 
   if (!course) return null
@@ -26,11 +24,7 @@ export default function BlindCourseDetailPage() {
   }
 
   const handleStartAdventure = () => {
-    const missions = course.stops
-      .filter((s) => s.questMission)
-      .map((s) => s.questMission!)
-    startQuest(course.id, missions)
-    router.push('/quest')
+    router.push(`/course/${course.id}/map`)
   }
 
   const glass = {
