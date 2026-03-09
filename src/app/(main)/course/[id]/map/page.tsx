@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft, Navigation, ChevronRight,
-  MapPin, Clock,
-  CheckCircle2, Compass,
+  Clock, Footprints, Bus, Car,
+  CheckCircle2, Compass, ExternalLink,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useCourseStore } from '@/stores/useCourseStore'
-import { buildNaverDestinationOnlyUrl } from '@/lib/naverMapUrl'
+import { buildNaverDestinationOnlyUrl, type NaverTransportMode } from '@/lib/naverMapUrl'
 
 const CourseMap = dynamic(() => import('@/components/map/CourseMap'), { ssr: false })
 
@@ -39,6 +39,7 @@ export default function CourseMapPage() {
   const [visitedStops, setVisitedStops] = useState<Set<number>>(new Set())
   const [heading, setHeading] = useState<number | null>(null)
   const [followMode, setFollowMode] = useState(true)
+  const [transportMode, setTransportMode] = useState<NaverTransportMode>('walk')
 
   // GPS watch
   useEffect(() => {
@@ -100,7 +101,9 @@ export default function CourseMapPage() {
   const distToTarget = userLocation
     ? haversineDistance(userLocation.lat, userLocation.lng, targetStop.place.latitude, targetStop.place.longitude)
     : null
-  const walkMinToTarget = distToTarget ? Math.round(distToTarget / 0.08) : null
+  const modeSpeed = { walk: 0.083, transit: 0.333, car: 0.667 }
+  const modeLabel = { walk: '도보', transit: '대중교통', car: '차' }
+  const minToTarget = distToTarget ? Math.round(distToTarget / modeSpeed[transportMode]) : null
 
   const glassStyle = {
     background: 'rgba(11,11,18,0.88)',
@@ -143,7 +146,7 @@ export default function CourseMapPage() {
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] font-bold text-neutral-200 truncate">{targetStop.place.name}</p>
                 <p className="text-[11px] text-neutral-500">
-                  {distToTarget !== null ? `${formatDistance(distToTarget)} · 도보 약 ${walkMinToTarget}분` : '거리 계산 중...'}
+                  {distToTarget !== null ? `${formatDistance(distToTarget)} · ${modeLabel[transportMode]} 약 ${minToTarget}분` : '거리 계산 중...'}
                 </p>
               </div>
               <span className="text-[11px] font-bold text-blue-400 flex-shrink-0">
@@ -151,9 +154,49 @@ export default function CourseMapPage() {
               </span>
             </div>
           </div>
+
+          {/* Green Naver directions button */}
+          <a
+            href={buildNaverDestinationOnlyUrl(
+              { lng: targetStop.place.longitude, lat: targetStop.place.latitude, name: targetStop.place.name },
+              transportMode
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+              boxShadow: '0 4px 12px rgba(34,197,94,0.3)',
+            }}
+          >
+            <ExternalLink className="w-4.5 h-4.5 text-white" />
+          </a>
         </div>
 
-        {/* Row 2: Progress dots */}
+        {/* Row 2: Transport mode selector */}
+        <div className="flex items-center justify-center gap-1.5 px-4 py-1">
+          {([
+            { mode: 'walk' as NaverTransportMode, icon: Footprints, label: '도보' },
+            { mode: 'transit' as NaverTransportMode, icon: Bus, label: '대중교통' },
+            { mode: 'car' as NaverTransportMode, icon: Car, label: '차' },
+          ]).map(({ mode, icon: Icon, label }) => (
+            <button
+              key={mode}
+              onClick={() => setTransportMode(mode)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all"
+              style={{
+                background: transportMode === mode ? 'rgba(96,165,250,0.2)' : 'rgba(255,255,255,0.04)',
+                color: transportMode === mode ? '#93C5FD' : 'rgba(255,255,255,0.4)',
+                border: `1px solid ${transportMode === mode ? 'rgba(96,165,250,0.3)' : 'rgba(255,255,255,0.06)'}`,
+              }}
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Row 3: Progress dots */}
         <div className="flex items-center justify-center gap-1.5 py-1.5">
           {course.stops.map((_, i) => (
             <button
@@ -248,8 +291,8 @@ export default function CourseMapPage() {
         </div>
       </div>
 
-      {/* Right side buttons */}
-      <div className="absolute right-4 bottom-8 z-10 flex flex-col gap-2">
+      {/* Right side button */}
+      <div className="absolute right-4 bottom-8 z-10">
         <button
           onClick={() => setFollowMode(!followMode)}
           className="w-12 h-12 rounded-full flex items-center justify-center"
@@ -262,24 +305,6 @@ export default function CourseMapPage() {
         >
           <Compass className={`w-5 h-5 ${followMode ? 'text-blue-400' : 'text-neutral-400'}`} />
         </button>
-
-        <a
-          href={buildNaverDestinationOnlyUrl(
-            { lng: targetStop.place.longitude, lat: targetStop.place.latitude, name: targetStop.place.name },
-            'walk'
-          )}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-12 h-12 rounded-full flex items-center justify-center"
-          style={{
-            background: 'rgba(11,11,18,0.9)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-          }}
-        >
-          <MapPin className="w-5 h-5 text-green-400" />
-        </a>
       </div>
     </div>
   )
