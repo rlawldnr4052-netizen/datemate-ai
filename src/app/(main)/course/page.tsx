@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Clock, MapPin, Bookmark, Wallet } from 'lucide-react'
+import { Clock, MapPin, Bookmark, Wallet, Lock } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { formatCost, BUDGET_RANGES } from '@/lib/formatCost'
 import { BudgetLevel } from '@/types/onboarding'
@@ -77,11 +77,17 @@ export default function CourseListPage() {
           >
             {/* 썸네일 */}
             <div className="w-[72px] h-[72px] rounded-xl flex-shrink-0 relative overflow-hidden bg-primary-50">
-              {course.heroImageUrl && (
-                <div
-                  className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${course.heroImageUrl})` }}
-                />
+              {mode === 'blind' ? (
+                <div className="w-full h-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(124,58,237,0.15))' }}>
+                  <Lock className="w-6 h-6 text-neutral-500" />
+                </div>
+              ) : (
+                course.heroImageUrl && (
+                  <div
+                    className="w-full h-full bg-cover bg-center"
+                    style={{ backgroundImage: `url(${course.heroImageUrl})` }}
+                  />
+                )
               )}
             </div>
 
