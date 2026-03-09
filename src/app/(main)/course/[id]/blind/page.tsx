@@ -2,21 +2,17 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Lock, Unlock, Eye, Sparkles, Navigation, MapPin, Clock } from 'lucide-react'
+import { Lock, Eye, Sparkles, MapPin, Clock } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import PageTransition from '@/components/motion/PageTransition'
 
 export default function BlindCourseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { courses, unlockStop, setMode } = useCourseStore()
+  const { courses, setMode } = useCourseStore()
   const course = courses.find((c) => c.id === params.id)
 
   if (!course) return null
-
-  const handleUnlock = (stopOrder: number) => {
-    unlockStop(course.id, stopOrder)
-  }
 
   const handleSwitchToStandard = () => {
     setMode('standard')
@@ -31,9 +27,6 @@ export default function BlindCourseDetailPage() {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.06)',
   }
-
-  // Only first stop is initially unlocked; rest stay locked until GPS arrival
-  const unlockedCount = course.stops.filter((s) => s.isUnlocked).length
 
   return (
     <PageTransition className="min-h-screen bg-[#0B0B12] pb-32">
@@ -116,8 +109,8 @@ export default function BlindCourseDetailPage() {
           {course.stops.length}곳
         </span>
         <span className="flex items-center gap-1.5 text-[12px] text-indigo-400">
-          <Unlock className="w-3.5 h-3.5" />
-          {unlockedCount}/{course.stops.length} 공개
+          <Lock className="w-3.5 h-3.5" />
+          블라인드
         </span>
       </div>
 
@@ -152,70 +145,47 @@ export default function BlindCourseDetailPage() {
               {/* Timeline node */}
               <div
                 className="flex-shrink-0 w-[48px] h-[48px] rounded-full flex items-center justify-center z-10"
-                style={
-                  stop.isUnlocked
-                    ? { background: 'linear-gradient(135deg, #6366F1, #7C3AED)', boxShadow: '0 0 16px rgba(99,102,241,0.3)' }
-                    : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }
-                }
+                style={{
+                  background: i === 0
+                    ? 'linear-gradient(135deg, #6366F1, #7C3AED)'
+                    : 'rgba(255,255,255,0.06)',
+                  border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: i === 0 ? '0 0 16px rgba(99,102,241,0.3)' : 'none',
+                }}
               >
-                {stop.isUnlocked ? (
-                  <Unlock className="w-5 h-5 text-white" />
-                ) : (
-                  <Lock className="w-5 h-5 text-neutral-600" />
-                )}
+                <span className="text-[14px] font-bold" style={{ color: i === 0 ? 'white' : 'rgba(255,255,255,0.25)' }}>
+                  {stop.order}
+                </span>
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0 pb-1">
-                {stop.isUnlocked ? (
-                  /* Unlocked: show real info */
-                  <motion.div
-                    initial={{ filter: 'blur(8px)', scale: 0.97 }}
-                    animate={{ filter: 'blur(0px)', scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="rounded-2xl overflow-hidden"
-                    style={{ ...glass, boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
-                  >
-                    {stop.place.imageUrls[0] && (
-                      <div
-                        className="h-[130px] bg-cover bg-center"
-                        style={{ backgroundImage: `url(${stop.place.imageUrls[0]})` }}
-                      />
-                    )}
-                    <div className="p-4">
-                      <h3 className="text-[14px] font-bold text-neutral-200">{stop.place.name}</h3>
-                      <p className="text-[12px] text-neutral-500 mt-1 line-clamp-2">{stop.place.description}</p>
-                    </div>
-                  </motion.div>
-                ) : (
-                  /* Locked: no image, only hint */
+                <div className="rounded-2xl overflow-hidden" style={{ ...glass }}>
+                  {/* 사진 대신 간접 설명 영역 */}
                   <div
-                    className="rounded-2xl p-4"
-                    style={{ ...glass }}
+                    className="px-4 py-5 flex items-center justify-center min-h-[100px]"
+                    style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(124,58,237,0.06))' }}
                   >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[11px] font-semibold text-neutral-600 uppercase tracking-wider">
+                    <p className="text-[13px] text-neutral-500 text-center italic leading-relaxed">
+                      &ldquo;{stop.place.blindHint || stop.place.description || '도착하면 공개됩니다'}&rdquo;
+                    </p>
+                  </div>
+                  {/* 카테고리만 표시 (이름 숨김) */}
+                  <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="px-2 py-0.5 rounded-md text-[11px] font-semibold"
+                        style={{ background: 'rgba(99,102,241,0.1)', color: '#A5B4FC' }}
+                      >
+                        {stop.place.category}
+                      </span>
+                      <span className="text-[11px] text-neutral-600">
                         Stop {stop.order}
                       </span>
                     </div>
-                    <p className="text-[14px] font-semibold text-neutral-400 mb-1">
-                      {stop.place.blindTitle || '???'}
-                    </p>
-                    <p className="text-[12px] text-neutral-600 italic">
-                      &ldquo;{stop.place.blindHint || '도착하면 공개됩니다'}&rdquo;
-                    </p>
-
-                    {/* Simulate GPS unlock (dev only) */}
-                    <button
-                      onClick={() => handleUnlock(stop.order)}
-                      className="flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-lg text-[11px] font-medium"
-                      style={{ background: 'rgba(99,102,241,0.1)', color: '#818CF8', border: '1px solid rgba(99,102,241,0.15)' }}
-                    >
-                      <Navigation className="w-3 h-3" />
-                      잠금 해제
-                    </button>
+                    <Lock className="w-3.5 h-3.5 text-neutral-700" />
                   </div>
-                )}
+                </div>
               </div>
             </motion.div>
           ))}
