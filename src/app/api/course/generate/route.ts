@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateStructuredResponse } from '@/lib/api/gemini'
-import { searchPlacesByKeyword, searchImages } from '@/lib/api/naver'
+import { searchPlacesByKeyword, searchImages, searchBlogReviews } from '@/lib/api/naver'
 import { searchByArea, searchByKeyword, areaCodes, type TourSpot } from '@/lib/api/tourApi'
 import { getCourseGenerationPrompt } from '@/lib/prompts'
 
@@ -104,13 +104,74 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 5. 각 장소별 이미지 검색 (병렬)
+    // 5. 각 장소별 이미지 + 블로그 리뷰 검색 (병렬)
     const stopsRaw = courseData.stops || []
-    const imageResults = await Promise.allSettled(
-      stopsRaw.map((stop: Record<string, unknown>) =>
-        searchImages(String(stop.name), 3)
-      )
-    )
+    const [imageResults, blogResults] = await Promise.all([
+      Promise.allSettled(
+        stopsRaw.map((stop: Record<string, unknown>) =>
+          searchImages(String(stop.name), 3)
+        )
+      ),
+      Promise.allSettled(
+        stopsRaw.map((stop: Record<string, unknown>) =>
+          searchBlogReviews(String(stop.name), 3)
+        )
+      ),
+    ])
+
+    // 5-1. 블로그 리뷰 기반으로 blindHint 정제
+    const stopsWithReviews = stopsRaw.map((stop: Record<string, unknown>, i: number) => {
+      const blogResult = blogResults[i]
+      const reviews = blogResult.status === 'fulfilled' ? blogResult.value : []
+      const reviewSnippets = reviews
+        .map((r: { description: string }) => r.description)
+        .join(' ')
+        .slice(0, 300)
+      return { ...stop, reviewSnippets }
+    })
+
+    // 리뷰가 있는 장소가 하나라도 있으면 blindHint 정제 요청
+    const hasReviews = stopsWithReviews.some((s: { reviewSnippets: string }) => s.reviewSnippets.length > 20)
+    if (hasReviews) {
+      try {
+        const refinePrompt = `아래 장소들의 블로그 리뷰 요약을 참고하여, 각 장소의 blindHint를 더 실감나고 은유적으로 다시 작성해줘.
+
+규칙:
+- 리뷰에서 언급된 실제 특징(분위기, 인테리어, 맛, 뷰, 감성)을 반영해
+- 장소명, 주소는 절대 노출하지 마
+- 오감을 활용한 문학적 표현으로, 15~25자 내외
+- 방문객이 실제로 느낀 감성을 녹여내
+
+장소 데이터:
+${stopsWithReviews.map((s: { name: unknown; category: unknown; blindHint: unknown; reviewSnippets: string }, i: number) => `
+${i + 1}. ${s.name} (${s.category})
+현재 blindHint: "${s.blindHint}"
+리뷰 요약: "${s.reviewSnippets || '리뷰 없음'}"
+`).join('')}
+
+반드시 아래 JSON 형식으로만 응답 (다른 텍스트 없이):
+[${stopsRaw.map((_: unknown, i: number) => `"${i + 1}번 장소의 새로운 blindHint"`).join(', ')}]`
+
+        const refineResponse = await generateStructuredResponse(
+          refinePrompt,
+          '당신은 감성적인 한국어 카피라이터입니다. 장소의 분위기를 은유적으로 표현하는 전문가입니다. JSON 배열만 출력하세요.'
+        )
+
+        const hintsMatch = refineResponse.match(/\[[\s\S]*\]/)
+        if (hintsMatch) {
+          const refinedHints = JSON.parse(hintsMatch[0])
+          if (Array.isArray(refinedHints) && refinedHints.length === stopsRaw.length) {
+            stopsRaw.forEach((stop: Record<string, unknown>, i: number) => {
+              if (typeof refinedHints[i] === 'string' && refinedHints[i].length > 3) {
+                stop.blindHint = refinedHints[i]
+              }
+            })
+          }
+        }
+      } catch (e) {
+        console.error('BlindHint refinement failed (using original):', e)
+      }
+    }
 
     // 6. Course 형식으로 변환
     const course = {

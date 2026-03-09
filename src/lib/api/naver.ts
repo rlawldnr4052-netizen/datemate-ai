@@ -152,6 +152,39 @@ export async function searchPlacesByCategory(
   return searchPlacesByKeyword(categoryKeyword, options)
 }
 
+// 네이버 블로그 검색 API (장소 리뷰 수집용)
+export interface NaverBlogResult {
+  title: string
+  description: string
+  link: string
+}
+
+export async function searchBlogReviews(placeName: string, count: number = 5): Promise<NaverBlogResult[]> {
+  const params = new URLSearchParams({
+    query: `${placeName} 후기`,
+    display: String(Math.min(count, 10)),
+    sort: 'sim',
+  })
+
+  try {
+    const res = await fetch(
+      `${NAVER_SEARCH_URL}/blog.json?${params.toString()}`,
+      { headers: getHeaders() }
+    )
+
+    if (!res.ok) return []
+
+    const data = await res.json()
+    return (data.items || []).map((item: { title: string; description: string; link: string }) => ({
+      title: stripHtmlTags(item.title),
+      description: stripHtmlTags(item.description),
+      link: item.link,
+    }))
+  } catch {
+    return []
+  }
+}
+
 // 네이버 이미지 검색 API
 export interface NaverImage {
   title: string
