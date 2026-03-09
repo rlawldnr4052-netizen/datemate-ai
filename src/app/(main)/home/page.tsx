@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudDrizzle, CloudFog, Snowflake, CloudSun, Headphones, SunDim, Dices, Sparkles, type LucideIcon } from 'lucide-react'
+import { MessageCircle, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudDrizzle, CloudFog, Snowflake, CloudSun, Headphones, SunDim, Dices, type LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useCourseStore } from '@/stores/useCourseStore'
@@ -328,60 +328,19 @@ export default function HomePage() {
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.015 }}
             transition={{ type: 'spring', stiffness: 350, damping: 18, mass: 0.8 }}
-            onClick={() => router.push('/course/generate')}
+            onClick={() => router.push('/course/gacha')}
             className="flex-1 rounded-2xl p-5 text-left relative overflow-hidden"
             style={{ background: theme.ctaGradient, backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(0,0,0,0.3)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-px"
               style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
             <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-white/20">
-              <Plus className="w-5 h-5 text-white" />
+              <Dices className="w-5 h-5 text-white" />
             </div>
-            <p className="text-[15px] font-bold text-white">코스 만들기</p>
-            <p className="text-[12px] text-white/70 mt-0.5">AI 실시간 생성</p>
-          </motion.button>
-        </div>
-
-        {/* ── 가챠 데이트 배너 ── */}
-        <div className="px-5 mt-5">
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: 1.01 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 20 }}
-            onClick={() => router.push('/course/gacha')}
-            className="w-full rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(124,58,237,0.15))',
-              border: '1px solid rgba(99,102,241,0.2)',
-              backdropFilter: 'blur(12px)',
-            }}
-          >
-            {/* 배경 글로우 */}
-            <div
-              className="absolute -right-8 -top-8 w-32 h-32 rounded-full opacity-30"
-              style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.4), transparent)' }}
-            />
-            <div
-              className="absolute -left-4 -bottom-4 w-20 h-20 rounded-full opacity-20"
-              style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.4), transparent)' }}
-            />
-
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', boxShadow: '0 4px 15px rgba(99,102,241,0.3)' }}
-            >
-              <Dices className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1 text-left relative">
-              <div className="flex items-center gap-1.5">
-                <p className="text-[15px] font-bold text-white">가챠 데이트</p>
-                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-              </div>
-              <p className="text-[12px] text-indigo-300/70 mt-0.5">
-                모든 걸 랜덤으로 뽑아서 떠나는 모험
-              </p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-indigo-300/50 flex-shrink-0" />
+            <p className="text-[15px] font-bold text-white">
+              {activeCategory === 'friends' ? '가챠 놀기' : activeCategory === 'solo' ? '가챠 혼놀' : '가챠 데이트'}
+            </p>
+            <p className="text-[12px] text-white/70 mt-0.5">랜덤 뽑기</p>
           </motion.button>
         </div>
 

@@ -127,14 +127,120 @@ export const activityTypes: GachaOption[] = [
   { id: 'photo', label: '사진 스팟', color: '#14B8A6' },
 ]
 
-export interface GachaResult {
-  line: SubwayLine
-  station: string
-  meal: GachaOption
-  payer: GachaOption
-  cafeKeyword: GachaOption
-  activity: GachaOption
+// ═══════════════════════════
+// 모드 타입
+// ═══════════════════════════
+export type GachaMode = 'couple' | 'friends' | 'solo'
+
+// ═══════════════════════════
+// 친구 모드 전용 데이터
+// ═══════════════════════════
+export const friendsAreas: GachaOption[] = [
+  { id: 'hongdae', label: '홍대/연남', color: '#FF6B6B' },
+  { id: 'gangnam', label: '강남/역삼', color: '#4ECDC4' },
+  { id: 'seongsu', label: '성수/서울숲', color: '#45B7D1' },
+  { id: 'itaewon', label: '이태원/한남', color: '#96CEB4' },
+  { id: 'kondae', label: '건대/광진', color: '#FFEAA7' },
+  { id: 'jamsil', label: '잠실/송파', color: '#DDA0DD' },
+  { id: 'sinchon', label: '신촌/이대', color: '#98D8C8' },
+  { id: 'yeouido', label: '여의도', color: '#F7DC6F' },
+]
+
+export const friendsMeals: GachaOption[] = [
+  { id: 'chicken', label: '치킨', color: '#FFB347' },
+  { id: 'pork', label: '삼겹살', color: '#FF6B6B' },
+  { id: 'pizza', label: '피자', color: '#FF8C69' },
+  { id: 'sushi', label: '회/초밥', color: '#87CEEB' },
+  { id: 'tteok', label: '떡볶이', color: '#FF4444' },
+  { id: 'jokbal', label: '족발/보쌈', color: '#D4A574' },
+  { id: 'gopchang', label: '곱창', color: '#E8A87C' },
+  { id: 'chinese', label: '중식', color: '#FF6347' },
+]
+
+export const friendsPayers: GachaOption[] = [
+  { id: 'split', label: 'N빵', color: '#4ECDC4' },
+  { id: 'ladder', label: '사다리 타기', color: '#FF6B6B' },
+  { id: 'youngest', label: '막내가 쏜다', color: '#DDA0DD' },
+  { id: 'rps', label: '가위바위보 진 사람', color: '#FFD700' },
+]
+
+export const friendsActivities: GachaOption[] = [
+  { id: 'karaoke', label: '노래방', color: '#FF69B4' },
+  { id: 'board', label: '보드게임카페', color: '#4ECDC4' },
+  { id: 'escape', label: '방탈출', color: '#9B59B6' },
+  { id: 'arcade', label: '오락실', color: '#F39C12' },
+  { id: 'bowling', label: '볼링', color: '#3498DB' },
+  { id: 'pc', label: 'PC방', color: '#2ECC71' },
+  { id: 'dart', label: '다트바', color: '#E74C3C' },
+  { id: 'pocha', label: '포차', color: '#FF8C00' },
+]
+
+export const friendsPenalties: GachaOption[] = [
+  { id: 'truth', label: '진실 or 거짓', color: '#FF69B4' },
+  { id: 'sing', label: '랜덤 노래 부르기', color: '#FFD700' },
+  { id: 'selfie', label: '셀카 찍어 올리기', color: '#4ECDC4' },
+  { id: 'next', label: '다음 약속 잡기', color: '#9B59B6' },
+  { id: 'imitate', label: '성대모사 하기', color: '#FF6B6B' },
+  { id: 'aegyo', label: '애교 부리기', color: '#FF69B4' },
+]
+
+export const areaToRegion: Record<string, string> = {
+  '홍대/연남': '마포구',
+  '강남/역삼': '강남구',
+  '성수/서울숲': '성동구',
+  '이태원/한남': '용산구',
+  '건대/광진': '광진구',
+  '잠실/송파': '송파구',
+  '신촌/이대': '서대문구',
+  '여의도': '영등포구',
 }
+
+// ═══════════════════════════
+// 혼놀 모드 전용 데이터
+// ═══════════════════════════
+export const soloVibes: GachaOption[] = [
+  { id: 'emotional', label: '감성적', color: '#DDA0DD' },
+  { id: 'hip', label: '힙한', color: '#FF6B6B' },
+  { id: 'quiet', label: '조용한', color: '#87CEEB' },
+  { id: 'lively', label: '활기찬', color: '#FFD700' },
+  { id: 'retro', label: '레트로', color: '#D4A574' },
+  { id: 'nature', label: '자연속', color: '#98D8C8' },
+]
+
+export const soloMeals: GachaOption[] = [
+  { id: 'ramen', label: '라멘', color: '#FFB347' },
+  { id: 'donburi', label: '덮밥', color: '#FF8C69' },
+  { id: 'gukbap', label: '국밥', color: '#D4A574' },
+  { id: 'pasta', label: '파스타', color: '#FF6347' },
+  { id: 'curry', label: '카레', color: '#FFD700' },
+  { id: 'bunsik', label: '김밥/분식', color: '#FF4444' },
+  { id: 'bakery', label: '베이커리', color: '#DDA0DD' },
+  { id: 'salad', label: '샐러드', color: '#98D8C8' },
+]
+
+export const soloCafeTypes: GachaOption[] = [
+  { id: 'work', label: '작업하기 좋은', color: '#4ECDC4' },
+  { id: 'dessert', label: '디저트 맛집', color: '#FF69B4' },
+  { id: 'view', label: '뷰 좋은', color: '#87CEEB' },
+  { id: 'retro', label: '레트로 감성', color: '#D4A574' },
+  { id: 'reading', label: '조용한 독서', color: '#9B59B6' },
+  { id: 'cozy', label: '아늑한', color: '#FFB347' },
+]
+
+export const soloActivities: GachaOption[] = [
+  { id: 'bookstore', label: '서점', color: '#9B59B6' },
+  { id: 'gallery', label: '미술관/전시', color: '#E74C3C' },
+  { id: 'movie', label: '영화', color: '#3498DB' },
+  { id: 'park', label: '공원 산책', color: '#2ECC71' },
+  { id: 'spa', label: '찜질방', color: '#FFB347' },
+  { id: 'photo', label: '사진 스팟', color: '#FF69B4' },
+  { id: 'record', label: '레코드샵', color: '#D4A574' },
+  { id: 'class', label: '원데이클래스', color: '#4ECDC4' },
+]
+
+// ═══════════════════════════
+// 지역 매핑
+// ═══════════════════════════
 
 // 역 이름에서 가장 가까운 구/지역 추정
 export const stationToRegion: Record<string, string> = {
