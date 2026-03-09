@@ -157,7 +157,12 @@ export default function GachaPage() {
     setIsSpinning(true)
     const options = getOptions()
     let count = 0
-    const totalSpins = 20 + Math.floor(Math.random() * 10)
+
+    // Pick result FIRST, then align animation to land on it
+    const result = pickRandom(options)
+    const resultIndex = Math.max(0, options.indexOf(result))
+    const baseSpins = 20 + Math.floor(Math.random() * 10)
+    const totalSpins = baseSpins - ((baseSpins - 1) % options.length) + resultIndex
 
     spinInterval.current = setInterval(() => {
       setSpinDisplay(options[count % options.length])
@@ -165,7 +170,6 @@ export default function GachaPage() {
 
       if (count >= totalSpins) {
         if (spinInterval.current) clearInterval(spinInterval.current)
-        const result = pickRandom(options)
         setSpinDisplay(result)
 
         setTimeout(() => {
@@ -205,7 +209,7 @@ export default function GachaPage() {
           setTimeout(() => setCurrentStep(prev => prev + 1), 600)
         }, 300)
       }
-    }, count > totalSpins * 0.7 ? 150 : 60)
+    }, 60)
   }, [isSpinning, isDone, currentStepDef, getOptions, mode])
 
   useEffect(() => {
