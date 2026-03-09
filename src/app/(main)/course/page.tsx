@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Clock, MapPin, Bookmark, Wallet, Lock } from 'lucide-react'
+import { Clock, MapPin, Bookmark, Wallet, Lock, Dices } from 'lucide-react'
 import { useCourseStore } from '@/stores/useCourseStore'
 import { formatCost, BUDGET_RANGES } from '@/lib/formatCost'
 import { BudgetLevel } from '@/types/onboarding'
@@ -63,6 +63,33 @@ export default function CourseListPage() {
           </button>
         ))}
       </div>
+
+      {/* 가챠 데이트 배너 (블라인드 모드에서만) */}
+      {mode === 'blind' && (
+        <div className="px-5 pb-3">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => router.push('/course/gacha')}
+            className="w-full p-4 rounded-2xl flex items-center gap-3 cursor-pointer"
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(124,58,237,0.12))',
+              border: '1px solid rgba(99,102,241,0.15)',
+            }}
+          >
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)' }}
+            >
+              <Dices className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-[14px] font-bold text-indigo-300">가챠 데이트</p>
+              <p className="text-[11px] text-neutral-500">모든 걸 랜덤으로 뽑아서 떠나는 모험</p>
+            </div>
+            <span className="text-[20px]" style={{ color: '#A5B4FC' }}>&#8250;</span>
+          </motion.button>
+        </div>
+      )}
 
       <div className="px-5 flex flex-col gap-3">
         {filteredCourses.map((course, i) => (

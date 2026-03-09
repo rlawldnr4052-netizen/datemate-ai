@@ -139,13 +139,23 @@ export function getCourseGenerationPrompt(
   profile: UserProfile,
   naverPlaces: Array<{ place_name: string; category_name: string; address_name: string; x: string; y: string }>,
   tourSpots: Array<{ title: string; addr1: string; mapx: string; mapy: string; firstimage: string; contenttypeid: string }>,
-  request: { region: string; vibe?: string; dateType?: string; budget?: string }
+  request: { region: string; vibe?: string; dateType?: string; budget?: string; gachaContext?: { station: string; meal: string; cafeKeyword?: string; activity: string; payer?: string } }
 ): string {
   const age = calculateAge(profile.birthday)
   const likedLabels = getTagLabels(profile.likedTags)
 
-  return `아래 실제 장소 데이터와 사용자 프로필을 기반으로 최적의 데이트 코스를 만들어주세요.
+  const gachaSection = request.gachaContext ? `
+## 가챠 데이트 모드 (매우 중요!)
+이 코스는 랜덤 뽑기로 결정된 조건으로 만들어야 합니다. 반드시 아래 조건을 모두 반영하세요:
+- 기준 역: ${request.gachaContext.station} (이 역 주변 장소들로 구성)
+- 식사: 반드시 ${request.gachaContext.meal} 맛집을 포함하세요
+- 카페: ${request.gachaContext.cafeKeyword ? `"${request.gachaContext.cafeKeyword}" 키워드에 맞는 디저트/음료가 있는 카페` : '분위기 좋은 카페'}를 포함하세요
+- 놀거리: 반드시 ${request.gachaContext.activity} 관련 장소를 포함하세요
+- 코스 순서: 식사(${request.gachaContext.meal}) → 카페 → ${request.gachaContext.activity} 순서로 구성
+` : ''
 
+  return `아래 실제 장소 데이터와 사용자 프로필을 기반으로 최적의 데이트 코스를 만들어주세요.
+${gachaSection}
 ## 네이버 검색 장소 목록
 ${JSON.stringify(naverPlaces.slice(0, 30), null, 2)}
 

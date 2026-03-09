@@ -19,14 +19,24 @@ const regionSearchTerms: Record<string, string[]> = {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { userProfile, region, dateType, vibe, budget } = body
+    const { userProfile, region, dateType, vibe, budget, gachaContext } = body
 
     if (!region) {
       return NextResponse.json({ error: '지역을 지정해주세요.' }, { status: 400 })
     }
 
-    // 1. 네이버 API로 장소 검색
-    const searchTerms = regionSearchTerms[region] || [`${region} 카페`, `${region} 맛집`, `${region} 관광`]
+    // 1. 네이버 API로 장소 검색 (가챠 모드면 가챠 키워드 기반 검색)
+    let searchTerms: string[]
+    if (gachaContext) {
+      const station = gachaContext.station || region
+      searchTerms = [
+        `${station} ${gachaContext.meal || '맛집'}`,
+        `${station} 카페`,
+        `${station} ${gachaContext.activity || '놀거리'}`,
+      ]
+    } else {
+      searchTerms = regionSearchTerms[region] || [`${region} 카페`, `${region} 맛집`, `${region} 관광`]
+    }
 
     const naverResults = await Promise.allSettled(
       searchTerms.map((term) => searchPlacesByKeyword(term, { size: 5 }))
@@ -82,7 +92,7 @@ export async function POST(req: NextRequest) {
       },
       naverForPrompt,
       tourForPrompt,
-      { region, vibe, dateType, budget }
+      { region, vibe, dateType, budget, gachaContext }
     )
 
     const systemPrompt = '당신은 한국 데이트 코스 전문가입니다. 주어진 장소 데이터를 분석하여 최적의 코스를 JSON 형식으로 만들어주세요. JSON만 출력하고 다른 텍스트는 포함하지 마세요.'

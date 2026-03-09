@@ -27,6 +27,13 @@ interface CourseState {
     dateType?: string
     vibe?: string
     budget?: string
+    gachaContext?: {
+      station: string
+      meal: string
+      cafeKeyword?: string
+      activity: string
+      payer?: string
+    }
   }) => Promise<Course | null>
 }
 
