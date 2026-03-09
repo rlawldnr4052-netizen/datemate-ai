@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudDrizzle, CloudFog, Snowflake, CloudSun, Headphones, SunDim, type LucideIcon } from 'lucide-react'
+import { MessageCircle, Plus, Clock, MapPin, ChevronRight, Heart, Bookmark, Wallet, Users, UserPlus, Bell, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudDrizzle, CloudFog, Snowflake, CloudSun, Headphones, SunDim, Dices, Sparkles, type LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import { useCourseStore } from '@/stores/useCourseStore'
@@ -339,6 +339,49 @@ export default function HomePage() {
             </div>
             <p className="text-[15px] font-bold text-white">코스 만들기</p>
             <p className="text-[12px] text-white/70 mt-0.5">AI 실시간 생성</p>
+          </motion.button>
+        </div>
+
+        {/* ── 가챠 데이트 배너 ── */}
+        <div className="px-5 mt-5">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 20 }}
+            onClick={() => router.push('/course/gacha')}
+            className="w-full rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(124,58,237,0.15))',
+              border: '1px solid rgba(99,102,241,0.2)',
+              backdropFilter: 'blur(12px)',
+            }}
+          >
+            {/* 배경 글로우 */}
+            <div
+              className="absolute -right-8 -top-8 w-32 h-32 rounded-full opacity-30"
+              style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.4), transparent)' }}
+            />
+            <div
+              className="absolute -left-4 -bottom-4 w-20 h-20 rounded-full opacity-20"
+              style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.4), transparent)' }}
+            />
+
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative"
+              style={{ background: 'linear-gradient(135deg, #6366F1, #7C3AED)', boxShadow: '0 4px 15px rgba(99,102,241,0.3)' }}
+            >
+              <Dices className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1 text-left relative">
+              <div className="flex items-center gap-1.5">
+                <p className="text-[15px] font-bold text-white">가챠 데이트</p>
+                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+              </div>
+              <p className="text-[12px] text-indigo-300/70 mt-0.5">
+                모든 걸 랜덤으로 뽑아서 떠나는 모험
+              </p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-indigo-300/50 flex-shrink-0" />
           </motion.button>
         </div>
 
